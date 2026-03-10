@@ -1,0 +1,26 @@
+# Secrets
+.env
+
+# Source documents (too large for git)
+ficheros/
+output/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# RAG pipeline artifacts
+chunks/
+qdrant_db/
+conversion.log
+storacha/
+
+# Claude Code
+.claude/
+
+# Astro build artifacts
+site/dist/
+site/node_modules/
+site/.astro/
+site/public/pagefind/

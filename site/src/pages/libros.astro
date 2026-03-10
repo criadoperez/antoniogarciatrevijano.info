@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+import libros from "../data/libros.json";
+---
+
+<Base title="Libros" description="Obras publicadas de Antonio García-Trevijano">
+  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Libros</h1>
+  <p class="text-gray-600 mb-8">Obras publicadas de Antonio García-Trevijano.</p>
+
+  <div class="grid gap-6 max-w-3xl">
+    {libros.map((libro) => (
+      <div class="border border-gray-200 rounded-lg p-6">
+        <h2 class="text-xl font-bold font-serif text-brand-900 mb-1">
+          {libro.title}
+        </h2>
+        {libro.year && (
+          <p class="text-sm text-gray-500 mb-3">{libro.year}</p>
+        )}
+        <p class="text-gray-700 leading-relaxed">{libro.description}</p>
+      </div>
+    ))}
+  </div>
+</Base>

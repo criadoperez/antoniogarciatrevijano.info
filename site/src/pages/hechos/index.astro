@@ -1,0 +1,47 @@
+---
+import Base from "../../layouts/Base.astro";
+import catalog from "../../data/catalog.json";
+
+// Group HECHOS items by subcategory (event)
+const hechosItems = catalog.filter((i) => i.category === "AGT.HECHOS");
+const events = new Map<string, { name: string; docs: number; slug: string }>();
+
+for (const item of hechosItems) {
+  const key = item.subcategory || "otros";
+  if (!events.has(key)) {
+    // Build a display name from the folder name
+    const name = key
+      .replace(/\.AGT$/, "")
+      .replace(/\./g, " — ")
+      .replace(/-/g, " ");
+    events.set(key, {
+      name,
+      docs: 0,
+      // NOTE: slug logic must match [event].astro getStaticPaths
+      slug: key.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, ""),
+    });
+  }
+  events.get(key)!.docs++;
+}
+
+const sortedEvents = [...events.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+---
+
+<Base title="Hechos Históricos" description="Documentos sobre eventos clave en la vida de Antonio García-Trevijano">
+  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Hechos Históricos</h1>
+  <p class="text-gray-600 mb-8">
+    Documentos sobre eventos clave en la vida y obra de Antonio García-Trevijano.
+  </p>
+
+  <div class="grid gap-4">
+    {sortedEvents.map(([key, event]) => (
+      <a
+        href={`/hechos/${event.slug}/`}
+        class="block p-5 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all"
+      >
+        <h2 class="text-lg font-bold text-brand-900 mb-1">{event.name}</h2>
+        <p class="text-sm text-gray-500">{event.docs} documentos</p>
+      </a>
+    ))}
+  </div>
+</Base>

@@ -1,0 +1,109 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Archivo y obra de Antonio García-Trevijano" } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: "/", label: "Inicio" },
+  { href: "/articulos/", label: "Artículos" },
+  { href: "/hechos/", label: "Hechos" },
+  { href: "/libros/", label: "Libros" },
+  { href: "/audios/", label: "Audios" },
+  { href: "/videos/", label: "Vídeos" },
+  { href: "/chat/", label: "Chat IA" },
+];
+
+function isActive(href: string): boolean {
+  if (href === "/") return currentPath === "/";
+  return currentPath.startsWith(href);
+}
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} — Antonio García-Trevijano</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-white text-gray-900 font-sans">
+    <!-- Header -->
+    <header class="bg-brand-900 text-white">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <a href="/" class="text-xl font-bold tracking-tight hover:text-brand-100 transition-colors">
+          Antonio García-Trevijano
+        </a>
+        <nav class="flex flex-wrap gap-1 text-sm">
+          {navLinks.map(({ href, label }) => (
+            <a
+              href={href}
+              class:list={[
+                "px-3 py-1.5 rounded transition-colors",
+                isActive(href)
+                  ? "bg-white/20 text-white font-medium"
+                  : "text-brand-100 hover:bg-white/10 hover:text-white",
+              ]}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </div>
+      <!-- Search bar — always visible, Pagefind enhances it when available -->
+      <div class="max-w-6xl mx-auto px-4 pb-3">
+        <div id="search" class="pagefind-search">
+          <input
+            id="search-fallback"
+            type="text"
+            placeholder="Buscar en todos los artículos..."
+            class="w-full rounded-lg border border-white/30 bg-white/15 px-4 py-2 text-sm text-white placeholder-white/60 focus:bg-white/25 focus:border-white/50 focus:outline-none"
+          />
+        </div>
+      </div>
+    </header>
+
+    <script is:inline src="/pagefind/pagefind-ui.js"></script>
+    <script is:inline>
+      window.addEventListener('DOMContentLoaded', function() {
+        if (typeof PagefindUI === 'undefined') return;
+        // Remove fallback input — Pagefind will create its own
+        var fallback = document.getElementById('search-fallback');
+        if (fallback) fallback.remove();
+        new PagefindUI({
+          element: "#search",
+          showSubResults: false,
+          showImages: false,
+          translations: {
+            placeholder: "Buscar en todos los artículos...",
+            zero_results: "No se encontraron resultados para [SEARCH_TERM]",
+          }
+        });
+      });
+    </script>
+
+    <!-- Main content -->
+    <main class="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-50 border-t border-brand-100 text-gray-600 text-sm">
+      <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p>Archivo dedicado a la memoria de Antonio García-Trevijano (1928–2018)</p>
+        <p>
+          Contenido almacenado en
+          <a href="https://web3.storage" class="underline hover:text-brand-700" target="_blank" rel="noopener">IPFS</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

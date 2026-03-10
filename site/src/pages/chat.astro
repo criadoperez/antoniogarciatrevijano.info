@@ -1,0 +1,158 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Chat IA" description="Pregunta sobre el pensamiento de Antonio García-Trevijano">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Chat IA</h1>
+    <p class="text-gray-600 mb-6">
+      Pregunta sobre los escritos y el pensamiento de Antonio García-Trevijano.
+      El asistente busca en todos sus artículos y documentos para responder.
+    </p>
+
+    <!-- Chat container -->
+    <div id="chat-container" class="border border-gray-200 rounded-lg flex flex-col" style="height: 60vh;">
+      <!-- Messages area -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <div class="text-gray-500 text-sm italic">
+          Escribe tu pregunta para comenzar.
+        </div>
+      </div>
+
+      <!-- Input area -->
+      <div class="border-t border-gray-200 p-3">
+        <form id="chat-form" class="flex gap-2">
+          <input
+            type="text"
+            id="chat-input"
+            aria-label="Pregunta al chat"
+            placeholder="Escribe tu pregunta..."
+            class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-brand-700"
+            autocomplete="off"
+          />
+          <button
+            type="submit"
+            id="chat-send"
+            class="px-4 py-2 bg-brand-900 text-white rounded-lg text-sm hover:bg-brand-800 transition-colors disabled:opacity-50"
+          >
+            Enviar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://agt.criadoperez.com/chat";
+    const messagesDiv = document.getElementById("chat-messages")!;
+    const form = document.getElementById("chat-form") as HTMLFormElement;
+    const input = document.getElementById("chat-input") as HTMLInputElement;
+    const sendBtn = document.getElementById("chat-send") as HTMLButtonElement;
+
+    interface ChatMsg {
+      role: string;
+      content: string;
+    }
+
+    const history: ChatMsg[] = [];
+
+    function addMessage(role: string, html: string) {
+      const div = document.createElement("div");
+      div.className = role === "user"
+        ? "ml-8 p-3 rounded-lg bg-brand-50 text-gray-900 text-sm"
+        : "mr-8 p-3 rounded-lg bg-gray-50 text-gray-900 text-sm";
+      div.innerHTML = html;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      return div;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question) return;
+
+      input.value = "";
+      sendBtn.disabled = true;
+
+      // Clear placeholder on first message
+      if (history.length === 0) {
+        messagesDiv.innerHTML = "";
+      }
+
+      addMessage("user", escapeHtml(question));
+      history.push({ role: "user", content: question });
+
+      const responseDiv = addMessage("assistant", '<span class="text-gray-400">Pensando...</span>');
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history }),
+        });
+
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        if (!res.body) throw new Error("Sin respuesta del servidor");
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = "";
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.type === "text") {
+                fullText += data.text;
+                responseDiv.innerHTML = formatMarkdown(fullText);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+              } else if (data.type === "error") {
+                responseDiv.innerHTML += `<p class="text-red-600 mt-2">${escapeHtml(data.message)}</p>`;
+              }
+            } catch { /* skip malformed lines */ }
+          }
+        }
+
+        history.push({ role: "assistant", content: fullText });
+      } catch (err: any) {
+        responseDiv.innerHTML = `<span class="text-red-600">Error: ${escapeHtml(err.message)}</span>`;
+      }
+
+      sendBtn.disabled = false;
+      input.focus();
+    });
+
+    function escapeHtml(text: string): string {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatMarkdown(text: string): string {
+      // Minimal markdown: bold, italic, paragraphs, headings, links
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.+?)\*/g, "<em>$1</em>")
+        .replace(/^## (.+)$/gm, '<h3 class="font-bold mt-3 mb-1">$1</h3>')
+        .replace(/^### (.+)$/gm, '<h4 class="font-semibold mt-2 mb-1">$1</h4>')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" class="text-brand-700 underline">$1</a>')
+        .replace(/\n\n/g, "</p><p>")
+        .replace(/\n/g, "<br>")
+        .replace(/^/, "<p>")
+        .replace(/$/, "</p>");
+    }
+  </script>
+</Base>

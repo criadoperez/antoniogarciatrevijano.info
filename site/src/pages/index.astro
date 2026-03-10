@@ -1,0 +1,100 @@
+---
+import Base from "../layouts/Base.astro";
+import catalog from "../data/catalog.json";
+
+const totalArticles = catalog.filter((i) => i.category === "articulos").length;
+const totalHechos = new Set(
+  catalog.filter((i) => i.category === "AGT.HECHOS").map((i) => i.subcategory)
+).size;
+const years = catalog
+  .filter((i) => i.date)
+  .map((i) => i.date!.slice(0, 4));
+const minYear = Math.min(...years.map(Number));
+const maxYear = Math.max(...years.map(Number));
+---
+
+<Base title="Inicio">
+  <div class="max-w-3xl mx-auto">
+    <!-- Hero -->
+    <section class="text-center py-8">
+      <h1 class="text-4xl font-bold font-serif text-brand-900 mb-4">
+        Antonio García-Trevijano
+      </h1>
+      <p class="text-lg text-gray-500 mb-6">1928 – 2018</p>
+      <p class="text-lg text-gray-700 leading-relaxed">
+        Jurista, pensador político y defensor de la democracia formal en España.
+        Impulsor de la Junta Democrática, teórico de la República Constitucional
+        y fundador del Movimiento Ciudadano hacia la República Constitucional (MCRC).
+      </p>
+    </section>
+
+    <!-- Stats -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-8 border-y border-gray-200">
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{totalArticles}</p>
+        <p class="text-sm text-gray-500">Artículos</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{totalHechos}</p>
+        <p class="text-sm text-gray-500">Hechos históricos</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{minYear}</p>
+        <p class="text-sm text-gray-500">Primer artículo</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{maxYear}</p>
+        <p class="text-sm text-gray-500">Último artículo</p>
+      </div>
+    </section>
+
+    <!-- Navigation cards -->
+    <section class="grid sm:grid-cols-2 gap-6 py-8">
+      <a href="/articulos/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Artículos</h2>
+        <p class="text-gray-600">
+          {totalArticles} artículos publicados en prensa entre {minYear} y {maxYear}.
+          Busca por año, publicación o texto.
+        </p>
+      </a>
+
+      <a href="/hechos/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Hechos Históricos</h2>
+        <p class="text-gray-600">
+          Documentos sobre {totalHechos} eventos clave en la vida de García-Trevijano:
+          Guinea, la Junta Democrática, Carabanchel y más.
+        </p>
+      </a>
+
+      <a href="/libros/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Libros</h2>
+        <p class="text-gray-600">
+          Obras publicadas: Teoría Pura de la Democracia, Frente a la Gran Mentira,
+          Pasiones de Servidumbre y más.
+        </p>
+      </a>
+
+      <a href="/chat/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Chat IA</h2>
+        <p class="text-gray-600">
+          Pregunta sobre el pensamiento de García-Trevijano.
+          Un asistente con acceso a todos sus escritos te responderá.
+        </p>
+      </a>
+
+      <a href="/audios/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Audios</h2>
+        <p class="text-gray-600">
+          Grabaciones de Radio Libertad Constituyente en iVoox.
+        </p>
+      </a>
+
+      <a href="/videos/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Vídeos</h2>
+        <p class="text-gray-600">
+          Canal de YouTube del MCRC con conferencias y entrevistas.
+        </p>
+      </a>
+    </section>
+  </div>
+</Base>

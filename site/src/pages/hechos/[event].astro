@@ -1,0 +1,81 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { marked } from "marked";
+import Base from "../../layouts/Base.astro";
+import catalog from "../../data/catalog.json";
+
+export function getStaticPaths() {
+  const hechosItems = catalog.filter((i) => i.category === "AGT.HECHOS");
+
+  // Group by subcategory
+  const groups = new Map<string, typeof hechosItems>();
+  for (const item of hechosItems) {
+    const key = item.subcategory || "otros";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(item);
+  }
+
+  return [...groups.entries()].map(([key, docs]) => {
+    const slug = key.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "");
+    const name = key
+      .replace(/\.AGT$/, "")
+      .replace(/\./g, " — ")
+      .replace(/-/g, " ");
+    return {
+      params: { event: slug },
+      props: { name, docs },
+    };
+  });
+}
+
+const { name, docs } = Astro.props;
+const outputDir = join(process.cwd(), "..", "output", "publicos");
+---
+
+<Base title={name} description={`Documentos sobre ${name}`}>
+  <nav class="text-sm text-gray-500 mb-6">
+    <a href="/hechos/" class="hover:text-brand-700">Hechos Históricos</a>
+    <span class="mx-1">/</span>
+    <span class="text-gray-900">{name}</span>
+  </nav>
+
+  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">{name}</h1>
+  <p class="text-gray-600 mb-8">{docs.length} documentos</p>
+
+  <div class="space-y-6">
+    {docs.map((doc) => {
+      let htmlContent = "";
+      if (doc.has_text && doc.markdown_path) {
+        try {
+          const md = readFileSync(join(outputDir, doc.markdown_path), "utf-8");
+          htmlContent = marked.parse(md) as string;
+        } catch {
+          htmlContent = "<p><em>Texto no disponible.</em></p>";
+        }
+      }
+
+      return (
+        <div class="border border-gray-200 rounded-lg p-5">
+          <h2 class="text-lg font-bold text-brand-900 mb-1">{doc.title}</h2>
+          <div class="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
+            {doc.date && <span>{doc.date}</span>}
+            {doc.ipfs_url && (
+              <a href={doc.ipfs_url} target="_blank" rel="noopener" class="text-brand-700 underline">
+                Descargar (IPFS)
+              </a>
+            )}
+          </div>
+          {htmlContent && (
+            <details class="mt-2">
+              <summary class="cursor-pointer text-sm text-brand-700 hover:text-brand-900">
+                Ver texto
+              </summary>
+              <div class="article-body mt-3 pl-4 border-l-2 border-brand-100" set:html={htmlContent} />
+            </details>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</Base>

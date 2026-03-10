@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* Typography: readable serif for article body, sans for UI */
+@theme {
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Georgia", "Times New Roman", serif;
+  --color-brand-900: #1a2744;
+  --color-brand-800: #243560;
+  --color-brand-700: #2e4a7c;
+  --color-brand-100: #e8edf5;
+  --color-brand-50: #f4f6fb;
+}
+
+/* Pagefind search widget — styled for dark header */
+.pagefind-search .pagefind-ui__search-input {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: #fff !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.875rem !important;
+  padding: 0.5rem 1rem !important;
+  height: auto !important;
+}
+
+.pagefind-search .pagefind-ui__search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.pagefind-search .pagefind-ui__search-input:focus {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  outline: none !important;
+}
+
+.pagefind-search .pagefind-ui__search-clear {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Results dropdown — white background for readability */
+.pagefind-search .pagefind-ui__results-area {
+  position: absolute;
+  z-index: 50;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-height: 70vh;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+  width: 100%;
+}
+
+.pagefind-search .pagefind-ui__result-link {
+  color: var(--color-brand-900) !important;
+}
+
+.pagefind-search .pagefind-ui__result-excerpt {
+  color: #444 !important;
+}
+
+.pagefind-search .pagefind-ui__message {
+  color: #666 !important;
+}
+
+/* Hide the Pagefind logo/branding and form container border */
+.pagefind-search .pagefind-ui__form::before {
+  display: none !important;
+}
+
+.pagefind-search .pagefind-ui {
+  --pagefind-ui-border-width: 0 !important;
+}
+
+/* Make the container position relative for dropdown */
+.pagefind-search {
+  position: relative;
+}
+
+/* Article text styling */
+.article-body h1,
+.article-body h2,
+.article-body h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.article-body h1 { font-size: 1.5rem; }
+.article-body h2 { font-size: 1.25rem; }
+.article-body h3 { font-size: 1.1rem; }
+
+.article-body p {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.article-body blockquote {
+  border-left: 3px solid var(--color-brand-700);
+  padding-left: 1em;
+  margin: 1em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.article-body ul, .article-body ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.article-body li {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 0.3em;
+}
