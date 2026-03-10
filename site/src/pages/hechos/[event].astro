@@ -61,7 +61,7 @@ const outputDir = join(process.cwd(), "..", "output", "publicos");
           <div class="flex flex-wrap gap-3 text-sm text-gray-500 mb-3">
             {doc.date && <span>{doc.date}</span>}
             {doc.ipfs_url && (
-              <a href={doc.ipfs_url} target="_blank" rel="noopener" class="text-brand-700 underline">
+              <a href={doc.ipfs_url + (doc.source_filename ? "?filename=" + encodeURIComponent(doc.source_filename) : "")} target="_blank" rel="noopener" class="text-brand-700 underline">
                 Descargar (IPFS)
               </a>
             )}

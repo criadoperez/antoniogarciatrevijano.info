@@ -1,0 +1,75 @@
+---
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import Base from "../../layouts/Base.astro";
+
+const blogDir = join(process.cwd(), "..", "ficheros", "publicos", "blog_2006-2011");
+
+function parseHeader(content: string) {
+  const titleMatch = content.match(/^# (.+)/m);
+  const dateMatch = content.match(/\*\*Fecha:\*\*\s*(\d{4}-\d{2}-\d{2})/);
+  return {
+    title: titleMatch ? titleMatch[1].trim() : "Sin título",
+    date: dateMatch ? dateMatch[1] : null,
+  };
+}
+
+const posts = readdirSync(blogDir)
+  .filter((f) => f.endsWith(".md"))
+  .map((filename) => {
+    const content = readFileSync(join(blogDir, filename), "utf-8");
+    const { title, date } = parseHeader(content);
+    const slug = filename.replace(".md", "").replace("_", "-");
+    return { title, date, slug };
+  })
+  .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+
+// Group by year, newest first
+const byYear = new Map<string, typeof posts>();
+for (const post of posts) {
+  const year = post.date?.slice(0, 4) ?? "sin-fecha";
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(post);
+}
+const years = [...byYear.keys()].sort().reverse();
+---
+
+<Base title="Blog" description="Blog de Antonio García-Trevijano, 2006–2011">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold font-serif text-brand-900 mb-3">Blog</h1>
+    <p class="text-gray-600 leading-relaxed mb-10">
+      Entre 2006 y 2011, Antonio García-Trevijano publicó {posts.length} entradas
+      en su blog personal, en el que reflexionó sobre política, democracia y la
+      situación de España. Los textos se recogen aquí íntegros, junto con los
+      comentarios originales de los lectores, para garantizar su conservación y
+      continuidad.
+    </p>
+
+    {years.map((year) => (
+      <section class="mb-12">
+        <div class="flex items-center gap-4 mb-4">
+          <h2 class="text-lg font-semibold text-brand-700 shrink-0 tabular-nums">{year}</h2>
+          <div class="flex-1 h-px bg-gray-200" />
+          <span class="text-xs text-gray-400 shrink-0">
+            {byYear.get(year)!.length} entrada{byYear.get(year)!.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+        <ul class="space-y-2">
+          {byYear.get(year)!.map((post) => (
+            <li class="flex items-baseline gap-4">
+              <span class="text-xs text-gray-400 tabular-nums shrink-0 w-20">
+                {post.date ?? ""}
+              </span>
+              <a
+                href={`/blog/${post.slug}/`}
+                class="text-brand-700 hover:text-brand-900 hover:underline leading-snug"
+              >
+                {post.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Base>

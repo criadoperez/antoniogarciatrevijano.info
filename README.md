@@ -9,6 +9,7 @@ Guide to building a Retrieval-Augmented Generation (RAG) system from a folder of
 | Step | Script | Status | Notes |
 |------|--------|--------|-------|
 | 1 -- Document Conversion | `convert_documents.py` | Needs re-run | Dedup logic added; re-run with clean `output/` |
+| 1b -- Blog Conversion | `convert_blog.py` | Not yet run | Converts 168 blog posts (strips comments); run once |
 | 2 -- Chunking | `chunk_documents.py` | Needs re-run | Re-run with clean `chunks/` to pick up `date`/`publication` fields |
 | 3 -- IPFS Sync | `sync_to_ipfs.py` | Not started | KUBO node running at localhost:5001 |
 | 4+5 -- Embedding + Indexing | `embed_and_index.py` | Needs re-run | Re-run after step 2 with clean `qdrant_db/` to store `date`/`publication` |
@@ -117,7 +118,8 @@ agt/
 |-- venv/                            # Python virtual environment
 |-- requirements.txt                 # Python dependencies
 |-- .env                             # OPENAI_API_KEY, LLM_MODEL, RAG_API_KEY
-|-- convert_documents.py             # Step 1
+|-- convert_documents.py             # Step 1 (PDF, DOCX, images)
+|-- convert_blog.py                  # Step 1b — blog posts only (strips comments, preserves title/date/author)
 |-- chunk_documents.py               # Step 2
 |-- sync_to_ipfs.py              # Step 3 -- IPFS sync
 |-- embed_and_index.py               # Step 4+5
@@ -210,6 +212,7 @@ Source folder: `ficheros/` (recursively scans all subfolders)
 |-----------|-------------|
 | `ficheros/publicos/articulos/` | Press articles and reports |
 | `ficheros/publicos/AGT.LIBROS/` | Books and longer documents |
+| `ficheros/publicos/blog_2006-2011/` | Blog posts 2006–2011 (168 `.md` files). **Not processed by `convert_documents.py`** — use `convert_blog.py` instead (strips comments, preserves title/date/author) |
 | `ficheros/privados/` | Private documents -- RAG only |
 | `ficheros/publicos/fotos/` | **Excluded** — photographs, no text to extract |
 
@@ -218,6 +221,8 @@ Source folder: `ficheros/` (recursively scans all subfolders)
 SKIP_FOLDERS = {"fotos"}  # folders to exclude from RAG pipeline entirely
 ```
 Files in a `SKIP_FOLDERS` folder are not converted, not chunked, not indexed. They are still synced to IPFS by `sync_to_ipfs.py` and catalogued for the website by `build_catalog.py`. Add folder names here for any non-text content that should not enter the RAG pipeline.
+
+**Note:** `blog_2006-2011` is not in `SKIP_FOLDERS` but is also not in `SUPPORTED_EXTENSIONS` (`.md` files are ignored by `convert_documents.py`). Use the dedicated `convert_blog.py` script for blog posts.
 
 | Format | Count | Notes |
 |--------|------:|-------|
@@ -571,6 +576,7 @@ Every message sent through OpenWebUI is automatically augmented with relevant do
 ```
 1. Add files to ficheros/publicos/ or ficheros/privados/
 2. venv/bin/python convert_documents.py     # skips already-converted files
+   venv/bin/python convert_blog.py           # blog posts only (run after adding new posts)
 3. venv/bin/python chunk_documents.py       # skips already-chunked files
 4. venv/bin/python sync_to_ipfs.py      # uploads new public files, removes deleted ones
 5. systemctl stop rag-api
@@ -584,6 +590,7 @@ Every message sent through OpenWebUI is automatically augmented with relevant do
 ```bash
 rm -rf output/ chunks/ qdrant_db/
 venv/bin/python convert_documents.py        # ~90 min on GPU
+venv/bin/python convert_blog.py             # blog posts (fast, markdown only)
 venv/bin/python chunk_documents.py          # ~2 min
 venv/bin/python sync_to_ipfs.py         # cleans up old .docx uploads
 systemctl stop rag-api                      # or kill uvicorn
