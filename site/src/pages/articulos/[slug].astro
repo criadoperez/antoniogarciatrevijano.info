@@ -62,7 +62,7 @@ const next = idx < articles.length - 1 ? articles[idx + 1] : null;
       </div>
       {article.ipfs_url && (
         <a
-          href={article.ipfs_url}
+          href={article.ipfs_url + (article.source_filename ? "?filename=" + encodeURIComponent(article.source_filename) : "")}
           target="_blank"
           rel="noopener"
           class="inline-block mt-3 text-sm text-brand-700 hover:text-brand-900 underline"
@@ -79,7 +79,7 @@ const next = idx < articles.length - 1 ? articles[idx + 1] : null;
       <p class="text-gray-500 italic">
         El texto de este artículo no está disponible en formato digital.
         {article.ipfs_url && (
-          <a href={article.ipfs_url} class="underline">Descarga el documento original.</a>
+          <a href={article.ipfs_url + (article.source_filename ? "?filename=" + encodeURIComponent(article.source_filename) : "")} class="underline">Descarga el documento original.</a>
         )}
       </p>
     )}

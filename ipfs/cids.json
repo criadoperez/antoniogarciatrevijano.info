@@ -1,8 +1,4 @@
 {
-  "0.CRONOLOGÍA AGT. 2026.0124.docx": {
-    "cid": "QmYhcGjCYyM6gAD2vyPvWRhGfLGGUYw5MbQrCrwKSnRT6z",
-    "hash": "c8f6948e163236aec17e02eaaf2af36ef50872f3458ecedb82aefae1f8a2233d"
-  },
   "AGT.HECHOS/1967-GUINEA.AGT/0.CONSTITUCION DE GUINEA.1973.W.pdf": {
     "cid": "QmZFA5zpGNatJsKe71SFJxJdN3V8q4ubDq6kiPoyr2nkZ5",
     "hash": "0cf93a45db37a9e61512fcb20134f1c2b9fdc864c531599a97b6c53e7d08f654"
@@ -13747,6 +13743,682 @@
     "cid": "QmWEoEQm5NPFz16auq5cXzF6x98mk5cGNjTEKBkhTHQXQ1",
     "hash": "a190d7a7594544e58fb5d47fcd3f26cae2f7b0fd5498d304ee02a10f09f2ea6f"
   },
+  "blog_2006-2011/2006-05-13_saludo-republicano.md": {
+    "cid": "QmWx8fgu5Kpbao36Lye8kLwinT4UYKCByawZgy2HEuuoCk",
+    "hash": "2bb7add4e1f5891af1203e14896acb4c81b72477781472aad637aafd75595c93"
+  },
+  "blog_2006-2011/2006-05-15_palabras-locas.md": {
+    "cid": "QmciRXDH8cJXgx6Vtd8TGmc1hZSERwXoagQr7Xp4KeFBoj",
+    "hash": "f1456bfbf1a6fa6d90e8eede140be8a7e718828f8978828b98dd157120de39f9"
+  },
+  "blog_2006-2011/2006-05-17_el-drama-de-la-libertad.md": {
+    "cid": "QmaufJna7ejj9WiULinm3rBNiKzTnZSgpVX2TkZmLbGoGo",
+    "hash": "d06837b89166aab3c0fba086701f905cc8e5f7dca5fbb6e2ac370cc99f9c69d8"
+  },
+  "blog_2006-2011/2006-05-19_decir-republica-o-democracia-es-lo-mismo.md": {
+    "cid": "QmTQcNKGPeLE2aZPc6GZzxWkcopQKwfHXURkTvPbenz1T2",
+    "hash": "297a9375fd27423c4b8d69642071ad595bf76d69fe1b9fb38e9ad65b2f0ecc99"
+  },
+  "blog_2006-2011/2006-05-21_democracia-formal-y-democracia-material.md": {
+    "cid": "QmbkmB3CCBUSYbWSB4FrUZwbxmAon7iv64F7uJMccKZieK",
+    "hash": "579151192fecbdf1fd18aaf1513551ddaf041a616d6d632b86fee01726c29974"
+  },
+  "blog_2006-2011/2006-05-23_el-consenso-niega-la-politica.md": {
+    "cid": "QmP1xmWH2uQg78voiNvu7zW77gwkTrEgvhx1AX2CLspR1U",
+    "hash": "d5d5468029511638605c64d5c2751fbf5d020b113bc68aeaf64250216f68b9d7"
+  },
+  "blog_2006-2011/2006-05-25_los-electores-no-eligen.md": {
+    "cid": "QmP3fHw1ZYdn5HhuUzy3Q6EQDFDWFW6tNA5R3W8dcGFeZp",
+    "hash": "edb61aad86f3535c585c927d4fadab9926182427bd20cfd63dfec977d776d586"
+  },
+  "blog_2006-2011/2006-05-27_la-revolucion-del-sentido-comun.md": {
+    "cid": "QmPifnRWWwzwENq5s6p3Cttef39hZrTkwe8YZN54Kojrx6",
+    "hash": "64e9c86147ba13fd79b8b7c9d135a44d6b400225ab952af457a5bb8eb24f9269"
+  },
+  "blog_2006-2011/2006-05-28_opinion-publica.md": {
+    "cid": "QmdgdaSMx7j2buMTZssjpuLteNeQCe8AzJUQtdFi5JsTYf",
+    "hash": "93f4af120e878caa4ffcf6a48824a3a09c45477445d2e73acc2153002c3081f6"
+  },
+  "blog_2006-2011/2006-06-01_al-movimiento-ciudadano-por-la-republica-constitucional.md": {
+    "cid": "QmZ1ecYt8wcNwvSnxpAZ4EJ3y4eAyLd996kmkarnFPFzxq",
+    "hash": "04f64066e5007eed431429c155a2a3a7353f976e91db0f578597cb25935a6504"
+  },
+  "blog_2006-2011/2006-06-03_dialogar-con-batasuna.md": {
+    "cid": "QmdRS7FMx1d7degKwVKYxUNcBTrduCHFzAKyxqepybf5ST",
+    "hash": "8b5ac077a0d2ed0eac3a267f3526293915686b9849b31dc1699dbc1bbf955a66"
+  },
+  "blog_2006-2011/2006-06-05_la-monarquia-de-juan-carlos.md": {
+    "cid": "QmZqqR6BGRFSkUvSDu2s9P7WCj5wQWHZWsVDw8cT3rfA6R",
+    "hash": "eecb3c421d26a2d3c96eefcfc345f9e0225332597499da64d55232f54f41d227"
+  },
+  "blog_2006-2011/2006-06-10_los-monarcomanos-del-23f.md": {
+    "cid": "QmQk8BJCpeikxhaFQ8VhbiGMmWXg1ZHj6NkEEqQduVgReC",
+    "hash": "208a5bd0ccab287e9e3ee448cd15f4f85ce8afa205b5e4961348b645835ed8af"
+  },
+  "blog_2006-2011/2006-06-13_todas-las-leyes-de-la-monarquia-son-nulas.md": {
+    "cid": "QmTL5LGTir8zKbwdJqWqqEkm81VEGnNHUBzeznhgptjSqo",
+    "hash": "7fee0fe9ba3f1ce580f660a150912ff79a3c41fa202e163e262686b44a746fc6"
+  },
+  "blog_2006-2011/2006-06-15_los-partidos-de-la-monarquia-no-son-constitucionales.md": {
+    "cid": "QmcLw8pK3R1QK2cNkdeFofpYkh8NLxtHCP4b5bUcypDbCN",
+    "hash": "edbd9a7e97f3bddcdbaa93e7511dffd3ccdddfc98a78596a5cf51f44972c63d3"
+  },
+  "blog_2006-2011/2006-06-18_maravillosa-dignidad-de-la-abstencion.md": {
+    "cid": "Qmcf31YSMvwXtwLuCLuN3u4vxwy6dCrfihf5kyGtvkvgmz",
+    "hash": "4a75947886f2037459ef110ba5703ce8b0724f9049e4348988c3dea565d3071b"
+  },
+  "blog_2006-2011/2006-06-21_estatut-legal-pero-ilegitimo.md": {
+    "cid": "Qmdi7zmeSgHbRuM6B1EGo9fvLPJPLYCTDeH2e4wzQAYzYT",
+    "hash": "b3334bcd2adfdcc2710deee40cb24930b4e425a1f5a90313924baab04738b771"
+  },
+  "blog_2006-2011/2006-06-22_la-abstencion-factor-del-cambio-politico.md": {
+    "cid": "QmVfpDLQGUPVbfqEiW1KDh9Cg6N7d7F416GmviKsQ1dggF",
+    "hash": "4d42a0f1c8fc35d58bdfacaefa694286f1ca78efea15821a5d805549fbf1a423"
+  },
+  "blog_2006-2011/2006-06-24_la-paz-no-crea-el-derecho-vasco-a-la-autodeterminacion.md": {
+    "cid": "QmZYfo3CntuDnf9wkhRs8RnXnSYNeC7VCm4HwDto2QyExD",
+    "hash": "4db570665e04254d749358237189a5b3ac4cb4d3a903caa8d2ce9fa6a18e666e"
+  },
+  "blog_2006-2011/2006-06-28_la-cultura-como-negocio.md": {
+    "cid": "QmTZMndnQXAk5GAgJ1457kTDqytScjnHLL1kHystAfAvSQ",
+    "hash": "eb7aca2c2914ca8f01ea81fb88b081ac63c1c4ae2f1cd2b21174c54abb1a0fe7"
+  },
+  "blog_2006-2011/2006-07-03_zapatero-versus-espana.md": {
+    "cid": "Qmens6bxYF73bqqXMxAx1PozkiHPxr2ZrXijefpcfgKSZw",
+    "hash": "494acb30bd2aea1efabf2129594e50e262d8ab3a2a906e1aab7437efcae9eb90"
+  },
+  "blog_2006-2011/2006-07-07_autodeterminacion-%e2%80%93-independencia-%e2%80%93-secesion.md": {
+    "cid": "QmR3uJJncQsuYWNrLvUtAJdvweo2Z7BxpMUxFWj52yBBgJ",
+    "hash": "be6e4c480f0be9cc124e7d28d48c2a78b1dc1d9931687b9a15d831d918aac78d"
+  },
+  "blog_2006-2011/2006-07-10_el-nacionalismo-destruye-la-sociedad-civil.md": {
+    "cid": "QmXgjeKVbc2WSjLneBLur3Ec2RDQvkU5X4qY4ponpA5jFV",
+    "hash": "afe83b154f02c3a90907a5ba4c4665cc2e065bdea9985760915e48ac9202abf0"
+  },
+  "blog_2006-2011/2006-07-12_la-sociedad-civil.md": {
+    "cid": "QmbfZdktEF9FwqdQpsabX54nxZrdjZfWQ7sCTvUFfwiHeZ",
+    "hash": "f3b8c8017e4b4b9848c0d23caf3d6f5341d64af0dba8f58aa0acfa27e491e0d2"
+  },
+  "blog_2006-2011/2006-07-14_la-sociedad-familiar.md": {
+    "cid": "Qmawod9SdB4jgtonpSph8EdhAc8jvxfuzjBXAGvxsHKwNr",
+    "hash": "9743d72a49f755aa361affb054a1c26841eb84cd92d3817bf5a3516e7da88102"
+  },
+  "blog_2006-2011/2006-07-17_jovenes-ancianos-y-ancianos-jovenes.md": {
+    "cid": "QmaCSVWaSHbZvqKAc2CdteqEPPvJc2P5KLdUfBgBfd3edV",
+    "hash": "7ddd9c0417f3e4c3bf3dce8a44c412aa70e372e62ed9fe5ad2074cf8eecaa519"
+  },
+  "blog_2006-2011/2006-07-19_crisis-de-estado-sin-crisis-de-gobierno.md": {
+    "cid": "QmcKmosASJEiKNzMLiww8d5C1f9Z8zE4jNnCdpHGpgKvKc",
+    "hash": "21f30004b2a6371a091f2620a16502a474ff516d91b6e814beffc4f063d9bb79"
+  },
+  "blog_2006-2011/2006-07-22_sociedad-laboral.md": {
+    "cid": "QmV5AoRv9FETVmgunTxtqP9wJxxMxx6ZqMB1AqjvmmXXmf",
+    "hash": "f139fefe4eca04ecc75da491ad0fbfa670cf270a493dcac6dd2ab09fc69314db"
+  },
+  "blog_2006-2011/2006-07-25_sociedad-empresarial.md": {
+    "cid": "QmRLFNBgZbF68F9mPsgQqAQdmzfjCWTnhV859r68dg9rtD",
+    "hash": "57d1d941513e4fe256b0c401381e499cb06009ca1edc5042d9b74b7a01e67dce"
+  },
+  "blog_2006-2011/2006-07-27_sociedad-espectacular.md": {
+    "cid": "Qmb5Mb4CY2vgz5u5hCTMUehquGhfdcUjBtEBVMJZbERbqD",
+    "hash": "956a3c689b761a143274655251e38c737331960617aca6a7c48126a12b4e30d7"
+  },
+  "blog_2006-2011/2006-07-29_sociedad-feminista.md": {
+    "cid": "QmUHu4szaTa2Rvaq24YnPquvcx3Bs4CL67PgTV9WX8YNfu",
+    "hash": "59a2379ea53d82c6b5e961c51f036681aa89e36083e14bdc30c4bf84f2503ed7"
+  },
+  "blog_2006-2011/2006-08-01_la-sociedad-aparente.md": {
+    "cid": "QmU27EywQ5iBwqt4PhfJ4KZb5Cfe6eLyqBTARgBPSBWkAz",
+    "hash": "b26ee10afd5d21d8a0861a259bfef40d2a5429c19ea3a7cdf1b6bfa9bad79902"
+  },
+  "blog_2006-2011/2006-08-04_correspondencia-entre-lo-civil-y-lo-politico.md": {
+    "cid": "QmR9P1uqDMTVWQV3Uod25QkYSb4Lx3Fh7w54ZGXBxqESdg",
+    "hash": "bea238dce4e6d597d968e0b9bb8fe2ab5ba175d7f279d6020b57b10095f8f91d"
+  },
+  "blog_2006-2011/2006-08-07_organizar-la-decencia.md": {
+    "cid": "QmQA3N4kU9hSUZGviqaqK56XS6rfhzsTF4UwED8S9Ld5NN",
+    "hash": "25beb640de0c2d798bf49d8aeebdf4579a7333febf098028315a4d60378c878b"
+  },
+  "blog_2006-2011/2006-08-10_organizar-las-inteligencias.md": {
+    "cid": "QmcDFERRUAEbT8TQGp36jX4Ak7hzkxnez5mCF7zXMQfd6W",
+    "hash": "f324f1c0166e8543b47466315a4b19704aadebf0e5487593fb359ce0031f44a6"
+  },
+  "blog_2006-2011/2006-08-12_organizar-la-valentia.md": {
+    "cid": "QmVpYh8WfD8MtvR5C3nMpCNddGyFDf77aJ3RfuyxjKYNrP",
+    "hash": "3a882bfdae71ba13de87290fc634a5fe75047dbee1978f4b42095b42d6f7881f"
+  },
+  "blog_2006-2011/2006-08-15_lealtad-por-la-lealtad.md": {
+    "cid": "QmdoYL5ttDsZj13ZvTMWnScmKxD5G4r9SAgdDgAL8aKmTL",
+    "hash": "9594c323fbd11ecc36a0b9c06d71ff28fc27ba8d3e769e67bb1e613148e6558c"
+  },
+  "blog_2006-2011/2006-08-18_engano-de-la-solidaridad.md": {
+    "cid": "QmQm9UTmPUBnymdrMikRVPrtymtdLmNrnQBz68RkumbCt4",
+    "hash": "f4223ba05e5def3889433dd6de1a69f69aed619cce4335a7f0a5da98737d4ba6"
+  },
+  "blog_2006-2011/2006-08-21_reino-de-la-falsedad.md": {
+    "cid": "QmQmd1RkgSzoVCZvt78n4CjCYZ2yFi1Mt44v3Wr6bEbs9H",
+    "hash": "564e3606dd641662f504d06fbf6328638a1431922ddbdb6d3828c66a3108a532"
+  },
+  "blog_2006-2011/2006-08-25_reino-del-oportunismo.md": {
+    "cid": "QmRmik1T7u3tWKLCyw54C5URqHp3jpGT1b4hqfJs4Spd2n",
+    "hash": "0d8f7c28e18612470014ab6ee98218245b7a1248f52658a728ff293a8aee27ad"
+  },
+  "blog_2006-2011/2006-08-29_declaracionde-principios-y-de-valores.md": {
+    "cid": "QmfXiN5ydPmM5wvixEBqUDL8fVqKnMZSDN6Tt62CRYGPi6",
+    "hash": "244c233cd04803449fde8a45758f35757d041e5357fbe1fdc799483b3763c584"
+  },
+  "blog_2006-2011/2006-09-03_ideales-sin-ideologia.md": {
+    "cid": "QmZszfHW9XSnN8kbUC5KHU7X6p7FBUQEwfg7L42LsMPstE",
+    "hash": "829ad75eb89a3a4dc3daac76b422f4d18eb1507a1d0352a3cdbc49550f2a07b1"
+  },
+  "blog_2006-2011/2006-09-07_el-problema-y-la-solucion.md": {
+    "cid": "Qmewpsa86bianYTc7XzL1gEzbgiDENaHRPWRRDLHqdVUci",
+    "hash": "1fe70eedfeb21c22a0f458a05a53df46f09ae2a0ac6d09cdfbcdb6b2ea4103b0"
+  },
+  "blog_2006-2011/2006-09-11_solucion-accion.md": {
+    "cid": "QmfVU5xymNMkdEB9exWstjg6qExuvX14EoCdW6HqukuUCM",
+    "hash": "bd573d4b8e6bfe252080d73c3f12616a39e619618d52c4e5b85eb6569274364e"
+  },
+  "blog_2006-2011/2006-09-15_nacionalismo-catalan-infamante.md": {
+    "cid": "QmVrupus6rFYysPYsRB2qTJQ44ex6G6ofw3KUGJgMk6qGS",
+    "hash": "f6bffa56aa8e65635d4cb4cb15e7115bee651ad2cfa49c1717a5bf5dd34f495c"
+  },
+  "blog_2006-2011/2006-09-18_movimiento-de-legitimacion.md": {
+    "cid": "QmaLXRDvj33zPUvMXqeFQqPjmwHSdsT8y1CHB6sWcpEqWs",
+    "hash": "fe4db1564692cf1c3f431bba0970c20477e267e1093593cbe98e0eff3e42b7e9"
+  },
+  "blog_2006-2011/2006-09-21_balance-cuatrimestral.md": {
+    "cid": "QmP9JGfnVxnfKPAhm4dVK7dkRpNLZrFbJsrTkpCyxsj3Fc",
+    "hash": "330e66daad2f4c76a39f077ca598c0219d7d9dd0bd22fb948689bc47a1cd2947"
+  },
+  "blog_2006-2011/2006-09-24_corrupcion-judicial-feminisima.md": {
+    "cid": "QmW64FpS6VhoEJJWnpm3AF4erj5BxhYhy8FS1GrrMjGeYi",
+    "hash": "d22f986e3dc9d550f5e5a8599abaf03c367e35c1d490e801a663e043e31d3a71"
+  },
+  "blog_2006-2011/2006-09-27_republicanismo.md": {
+    "cid": "QmSk39zjx58bERjNr2RhMx8dZ7urt5MbG9B39Tiy5FjhrL",
+    "hash": "b6613d0038299c29adebbee876c690f6aacc12d0807451d6d64eb4e216aceada"
+  },
+  "blog_2006-2011/2006-09-30_estado-organizacion.md": {
+    "cid": "QmPZrx3zgx3av3JzXj41kcfgXjpbbkpnLEnFM2P6QZLRUZ",
+    "hash": "05a3ed68dc483f3250b1d52351529b8cb0ea9e769a5fc69127c794caaf6f323d"
+  },
+  "blog_2006-2011/2006-10-03_regimen-monarquico-sistema-republicano.md": {
+    "cid": "QmcgAAnVkvySa1DSyDQqGoDDDfdqejLXCfHj3EKCEnaRjG",
+    "hash": "35beda9adb01905ff2e9efb1bb9c565b83f644e67859c2a5c23eeb1859332d07"
+  },
+  "blog_2006-2011/2006-10-06_los-peores-estudiantes.md": {
+    "cid": "QmeqxirTAYm3MpsX35AEcxwT5mYWso3QzWMmzZkquXCDbY",
+    "hash": "c726a6040c6610037935d57dc22a6b7638c03c031f852733943e9769e1074360"
+  },
+  "blog_2006-2011/2006-10-09_voluntarismo-republicano.md": {
+    "cid": "Qma4Zb2JAtDRHgaq2o93qRsBzvbiynAo4iskgfAqTvUrm4",
+    "hash": "c1f3b781fa32e5569f44a55ec2de6d7bf79625a706c752fce3346e3a90b41dcc"
+  },
+  "blog_2006-2011/2006-10-13_noluntarismo-monarquico.md": {
+    "cid": "QmQSt4Fu6vDR2awGm3MAJkhiVkupJEJQCSML4qxv82dD2v",
+    "hash": "cf3d79be9c5f2c5db7c2ab01af61d1ece51df589f4236810c538b7adb37d4aac"
+  },
+  "blog_2006-2011/2006-10-16_buscando-la-solucion.md": {
+    "cid": "QmcopNzPgftc6rrCb4Mm161JWzHdYoj3KK8RrSu2wzEc3K",
+    "hash": "7c9ccb6f29e667bdae16e9bf379dc19dce1c9081729e36104d0f53cb1df30c61"
+  },
+  "blog_2006-2011/2006-10-19_lealtad-republicana.md": {
+    "cid": "QmX9xYw7h4zMB4wt5imJ12nmPRKqm4KUHhHrbMJMj5FzBi",
+    "hash": "b5e6da922832c7e69b9467ab370b9b53fb41fab93e3d09363b8ceb451a092594"
+  },
+  "blog_2006-2011/2006-10-22_espiritu-republicano.md": {
+    "cid": "QmX7vgGn3it1TzJXKCMaaoGXnzvVB22eoXUSuVzP2XzjHP",
+    "hash": "f65b176239be1c9af806a6f6502c1e0a37dd2baccb4e21b8f89a2568707f4463"
+  },
+  "blog_2006-2011/2006-10-24_principio-de-autoridad.md": {
+    "cid": "QmfChmAcYwa3uDQbKQKjbb6yEQ4Caik4o2MehsqrxWxgpW",
+    "hash": "217ec6cef757522eec0cc64402cf494af28a3cec930168b81df96acee0076947"
+  },
+  "blog_2006-2011/2006-10-28_modo-de-ser-republicano.md": {
+    "cid": "QmcL2DbjbE9sT5TPRSQ3g3Sx6ePeRj4ThinpAuMvPHeTwD",
+    "hash": "8e3fcf418df49b716ae6892e89ad550c02125b1ba3140174bc84827818e7be56"
+  },
+  "blog_2006-2011/2006-10-30_forma-republicana.md": {
+    "cid": "QmQv6pJuifDCpcHA6MNwPmLYq59GjvxPgPAvEWbp4pvrpe",
+    "hash": "8ce67079c2c15ef23170ba332a702d8bec1d545c21d0fbc6eedf13f346c17c3d"
+  },
+  "blog_2006-2011/2006-11-02_materia-republicana.md": {
+    "cid": "QmQnp8zxaDK9Mu3DnJ3CPktunYvgxKYU7MeuUA68ZTzK1r",
+    "hash": "b39978be08bf4b62b469669656811c952a115f2cf5153c83506aa1261978f2cb"
+  },
+  "blog_2006-2011/2006-11-05_libertad-de-pensar.md": {
+    "cid": "QmRhLGijoGUKCeQtnE4XohjQAHpjUEdW8QT8GYnSRY74uF",
+    "hash": "71803e4a3a5164eeaef0c9a44b92c1a581af37d96a77c8f49d0dbb8e8666cca4"
+  },
+  "blog_2006-2011/2006-11-08_libertad-de-obrar-sin-libertad-de-actuar.md": {
+    "cid": "QmWvXctom5o8zt2bBmRwi2e6wtz3SfkX4YWTC6KHVt2Yf8",
+    "hash": "f09e44e66e9ff2966420e461a595a2fa0426064c49e67a280c694a9693d21849"
+  },
+  "blog_2006-2011/2006-11-12_libertad-de-accion.md": {
+    "cid": "QmY6v9SvDWkngXCHUV4hCYLYJjtsvfB4mDSgxzDoe3U7gu",
+    "hash": "546a8b0426f73dfb37b414c42a4b6776380bfd99b9b1f4220759eda93d18b9c7"
+  },
+  "blog_2006-2011/2006-11-15_accion-de-libertad.md": {
+    "cid": "QmUYp84GGdLXM56VAabxR1dCW4HMMW1iYMhbA4Rwg8WktY",
+    "hash": "5cd980a552ce10016055a670607d38fd03c72bb9dcb032886a90625b68d25ee4"
+  },
+  "blog_2006-2011/2006-11-17_derecho-natural-republicano.md": {
+    "cid": "QmVLfZPpU48XnrhjykNAe5W829qFDPSzb2GSd9F4NZroZN",
+    "hash": "c7685cdb9db926d6e28e138110e0ee4510f568df2dd369054665621f1b3a198f"
+  },
+  "blog_2006-2011/2006-11-23_el-valor-de-lo-radical.md": {
+    "cid": "QmVT3S1r5gYLmGGpgkCvXP6EzCpnooRtBuM99C1519v3G4",
+    "hash": "1a8df5d6dc71b25e3b80e5bb2943e1d687aed9c50aec5e6ac2e4e8295c1fa547"
+  },
+  "blog_2006-2011/2006-12-02_lealtad-y-republica-vs-nepotismo-y-monarquia.md": {
+    "cid": "QmQhqBK8uR7wHdLqgbRT594gAkna5jKVVw8dkuS2cccAKq",
+    "hash": "4866d80ea055880229720599036ffc9ba3eaad7e08832db4bd050cd2f617064d"
+  },
+  "blog_2006-2011/2006-12-10_sentido-del-presidencialismo.md": {
+    "cid": "QmPuZ3QAPGqdM4oLfHvvT71R3QjHVefjWk1A5KVKYXFqmQ",
+    "hash": "55c8f7dfa4f5188df5ba578b41064ec57f874ed4901dcad138f01af373e9ad7d"
+  },
+  "blog_2006-2011/2006-12-15_inconvenientes-del-sistema-de-representacion-proporcional.md": {
+    "cid": "QmPRCKZKhSfhkCQ9a6KpcGdXgZD6VX52YWDKhtewaF5nxi",
+    "hash": "4d6c3cbebd33db69ec7c15e85144ac1b58888a611c957efab4794fb96d503edb"
+  },
+  "blog_2006-2011/2006-12-28_libertad-fundacional.md": {
+    "cid": "QmWhddo8DP9pCris4Q1Pcg94XSLrDJTXWkkALMxqyXUFLT",
+    "hash": "480f5102f07887dc844be911218c5405c9b5b740d1e1ccb05c59aea0dafe46c8"
+  },
+  "blog_2006-2011/2006-12-29_libertad-instrumental.md": {
+    "cid": "QmTqGpMQVHzC5TGhVV3LLPZvn6HnKHND1zVXjdEbXVa4EM",
+    "hash": "ce99f1f278118363ae00acbc92524936a77e4df65dbcb2c3c0571a4d6d72e6dc"
+  },
+  "blog_2006-2011/2006-12-30_libertad-soberanista.md": {
+    "cid": "QmepWTB2mDuuQmGPBz1zcTfUeowgdWH2FwjDrewrXkiMiw",
+    "hash": "23f76281724bcb40105829104cbeb574421f3b9f8cb8054fc6223475d635b086"
+  },
+  "blog_2006-2011/2007-01-02_estar-libre.md": {
+    "cid": "QmcCu6PmsmWJiC8efg7tcRXEJuAML9sMCbeDKn1uHUQ6b9",
+    "hash": "97b4ddfd2ae7f409e319b6f0171eb0f2c79271ac37a427574e8871240771438e"
+  },
+  "blog_2006-2011/2007-01-03_liberacion.md": {
+    "cid": "QmXg3gZWbhBWBixW6UeafhCKo549jdRXXJDNzrhHo8xDif",
+    "hash": "2c2c44fd025fefec87ce25af4f25c94cc6107bbf1b2a648471af40741d724571"
+  },
+  "blog_2006-2011/2007-01-06_sin-libertad-de-elegir.md": {
+    "cid": "QmdvoXw2qt3amYBhqVnJX1NEScFoMxZHEJ81uk44qU4sRM",
+    "hash": "f765cba89a0a698c67bc1bdeec1b97e7c4d5b755e1ac689f46422b7769684124"
+  },
+  "blog_2006-2011/2007-01-08_aporia-de-la-libertad.md": {
+    "cid": "QmRyBHhn8M6fkUHCC2GXJeyogH8LZzHCGeXt6VQhduHX8B",
+    "hash": "7115ee3c1903bc30dca59d6262936cc705fc8796e1be5d0d87965633c9c33530"
+  },
+  "blog_2006-2011/2007-01-11_paradojas-de-la-libertad.md": {
+    "cid": "QmcHRSrixwAiiXocLJCj5PjdDgisBuQcRt2XtQfgSyUaSb",
+    "hash": "42b50bc0861018aa58358f737a588d229d0dcd002362111270ea089379c3fae9"
+  },
+  "blog_2006-2011/2007-01-13_libertad-fundamentante.md": {
+    "cid": "QmZW4AzHpotydV3qJkzGWKUVkntGmKFwMHH7u7qYe4oKD2",
+    "hash": "b0993dd0c7dc6e72ec04de26557de52fdd7c507424aa6f9ab037e18b5435ae91"
+  },
+  "blog_2006-2011/2007-01-16_libertad-existencial.md": {
+    "cid": "QmaGQkWtfsEGLHJrLLrahe59u383gnrTaaxtGs5LF1DVSa",
+    "hash": "e07f4756659a528d42371551c38d9ccbeacb4cbfa75d83f5bfc9b0c5e7ab6c6a"
+  },
+  "blog_2006-2011/2007-01-21_advertencia-sobre-la-libertad.md": {
+    "cid": "QmWD7v4oacWRmrPuuHRiviouoejt6mmg4h4Jve4TKGs1Rj",
+    "hash": "85819e1e89b4fb2db2fb04cf0033871464b1d61230bfbc723b5ea16fbae63bde"
+  },
+  "blog_2006-2011/2007-01-25_sermon-de-las-diez-palabras.md": {
+    "cid": "QmT262oyP1Fg4o75vT3EgnvvM6d4Z4X4KeYYJJZfZ8kBuG",
+    "hash": "89d43afc0ea6703a7223904fbbaa6b8d1016ec6fd696f0c11f693c612cc4254e"
+  },
+  "blog_2006-2011/2007-01-28_sintesis-adefesica.md": {
+    "cid": "QmVLY9x29rGms1CkJz9shpq95gh8QARXhZQAeKC2W6j219",
+    "hash": "081934002cb4ed5042cea3cf9399abb5a232ec55f40163d83320d1c1b0ce3561"
+  },
+  "blog_2006-2011/2007-02-01_clases-de-libertad.md": {
+    "cid": "QmeotaP3dJLMDQshjaGbvoMCVZK3qtWk3HikFNLWqSbjzo",
+    "hash": "8c09a5568ad775bc44ff285f117eb0a5a5ffa9c21b4e4508f5dd17d4df03bd5b"
+  },
+  "blog_2006-2011/2007-02-04_doctrina-oficial.md": {
+    "cid": "Qmf6H356xTUNhJ38MtY9cZ9RiCXzC7PDp3SQ6eQeTAdA5G",
+    "hash": "a0dd660c4cd2ff8d49e4a93a89cff3ac7587d7ae3d82f0d9b87724a3363d140e"
+  },
+  "blog_2006-2011/2007-02-06_miedo-al-pueblo.md": {
+    "cid": "QmVCwY91F3K4uSYeKJhvpzqXJvfCCc11fGgrqeNDyoucNU",
+    "hash": "cb4bbaedfb7f4ac7315e12bfe19cd10c7800f5d846251ea5b1cc1a1d28d3ae58"
+  },
+  "blog_2006-2011/2007-02-11_comedia-politica.md": {
+    "cid": "QmezTKxrD4UVLwwTkSy8J2BwEN3Tc5wzAMsDWEzoW17usU",
+    "hash": "f8001880bfb437702a5b2b9f50c0e9afb3f63a4a4d251031006e5d43880513ce"
+  },
+  "blog_2006-2011/2007-02-17_pluralismo-politico.md": {
+    "cid": "QmSVKn7YoxrAFNSjRRFD3JdmirD6h9vyNcVrP4TnhwXsUL",
+    "hash": "aeeba926a31478c202b50dde948a52f315276237cbd40a4818399e0e50f5d62b"
+  },
+  "blog_2006-2011/2007-02-23_pluralismo-personalista.md": {
+    "cid": "QmW2TnNx5bZW9B691RcSCTpawWHTgfcihKh8zRzSsXWwv9",
+    "hash": "183d4a0e8b32f43ef171efb1efdb5358dd7aaea590aff62c6303717846627abb"
+  },
+  "blog_2006-2011/2007-02-27_henadas-monarquicas.md": {
+    "cid": "QmRAQLisptavbqtuWpuYNtQMkQHUbyPfgNHyJ9xfkUpW2F",
+    "hash": "effeef06da3c0873a319f3f5c1c222c1033bd9768047b13c8b445a1655622e01"
+  },
+  "blog_2006-2011/2007-03-02_monadas-republicanas.md": {
+    "cid": "Qmeke5dqy8HKsmonbUP8Huuk2wobUDDzBZqJLPg5gPULf7",
+    "hash": "ccd029925af2b61251ee84a61842762aa5b43f946e8acd435e9d4986833af4e8"
+  },
+  "blog_2006-2011/2007-03-06_mandato-imperativo.md": {
+    "cid": "QmcgyyvuPo3a6f3Y9zW7AaDJuHLqBHY3ZppWj47kSuW9aW",
+    "hash": "e8358c3b40a5c726e886657d26586daaa9d768289055c811d13cc0e1c6552921"
+  },
+  "blog_2006-2011/2007-03-09_pentecostes-politico.md": {
+    "cid": "QmRakLPKTo2sGzefqixLKitWNLUiBinfCoX7wdK2qjj3B2",
+    "hash": "f08b7f13f1048be3267c837618fcdf1b1bb99bdf515dade07c496a235f197978"
+  },
+  "blog_2006-2011/2007-03-13_reaccion-anticipada.md": {
+    "cid": "QmPV2Du5qV6n1H787aqQp6oUtPyuwi9qP5cugFLR2K5Sxt",
+    "hash": "f96010e8dbfeeea1219f43cf6d0c053d9792f6a84efde1c60d51ef7d3135b1a8"
+  },
+  "blog_2006-2011/2007-03-19_estar-en-campana.md": {
+    "cid": "QmUY1FPYQjqJUd2cDwAia21gyKc8hE1n9QgQoLXt5hmy8s",
+    "hash": "00304230b510ce94bf5bd57a3b11582fcc8def76f9adf5a9aad99f7a23781d5c"
+  },
+  "blog_2006-2011/2007-03-24_el-escenario.md": {
+    "cid": "QmQRL3aZQNRLQAhznSxTZJYKZaVosEUAvNoqGa74HFEJP4",
+    "hash": "4ac4cea79a32fabd2e7bfafaddb82d71bfc356b26b665c3585f7b65be1fa1fb7"
+  },
+  "blog_2006-2011/2007-03-27_partido-y-faccion.md": {
+    "cid": "QmbjA1qWs86Cipu41T1JPUnmGzDzWUNvRF9KRvVtBRZp8y",
+    "hash": "18581a1fa57989f64fbf2a27fa7322a383be93f26b668141aaf6bcae2861beb2"
+  },
+  "blog_2006-2011/2007-03-30_partidos-de-estado.md": {
+    "cid": "QmRyi6RheG5b7L4aUi3wL3s6nfvDgg9oZoWPt6jcRKtrnV",
+    "hash": "01000c22bf1559ab9ab9b1e57126e80b46059971b09b143165350d6abed1469c"
+  },
+  "blog_2006-2011/2007-04-05_abstencion.md": {
+    "cid": "QmVGbvv2pobhRkMoekzbXBTcjBCY1Puuh6DQmYztXupyp8",
+    "hash": "5de20fd571107cf35e1e042fc97a81dc2da2d1ec04329996f33d42a8e2a0e663"
+  },
+  "blog_2006-2011/2007-04-13_discurso-del-ateneo-12-abril-2007.md": {
+    "cid": "Qmc3A9Mtv5dL2ZVSmxf4TiT5sLE8jzgvZWgbhfE5gJcyye",
+    "hash": "5ce6459aa782826bda2dcb25d269c63a4c77d3e941c9ce343c7db25671a1d761"
+  },
+  "blog_2006-2011/2007-04-20_discurso-de-totana.md": {
+    "cid": "QmW2dMhaPQph4Gk3KSoMMMivHhAF1eYQFiVxEDHdFb64C4",
+    "hash": "284c4243fe14eb332b003a08606f2fe5b9b394b0aeaea25ac82e7c46f15aeb46"
+  },
+  "blog_2006-2011/2007-04-25_discurso-de-vigo.md": {
+    "cid": "QmVLooqVYMkaJb2Z12cyDm2o9T85hk23iAgQKsyJ4upk8q",
+    "hash": "305acd1f4b191510c668790b89c88939ae6d81f433b445ac442955821c2223a9"
+  },
+  "blog_2006-2011/2007-04-30_humanismo-republicano.md": {
+    "cid": "QmXkPLZ8JuUX9daKtYz3BfqN5gMeGecQSu1s6eDuYcTbsf",
+    "hash": "d44885a73ddcf72dfcf0c0edce33f81adf0c89a2f2fac393e509f4dbce334bdd"
+  },
+  "blog_2006-2011/2007-05-04_abstencionarios.md": {
+    "cid": "QmPsHbVN55TX7vKWRpN2Xwa7JACFbFiK8EwzUyGNcgd7Da",
+    "hash": "392f72487a2a1121b848f0c1cdcfc277203e59321d2105c153b4e72f2d793f90"
+  },
+  "blog_2006-2011/2007-05-08_elecciones-francesas.md": {
+    "cid": "QmXkogazbehqYJais7MZ6jKY914pKKE3PtQdUgo9aXe4EZ",
+    "hash": "a567d0742e8a3d8a769f3712e910a247fcc2738b2bd003ee4ed0594ab32071fa"
+  },
+  "blog_2006-2011/2007-05-11_elecciones-sin-eleccion.md": {
+    "cid": "QmfUTGaagS5WnpsPZbo1SkRVe22LWqUGgd3HoE9Kry3QZ1",
+    "hash": "67a13433db5149afcb9a54eaa1b1d7e3d5a68d019edd84e46c39bd3064439106"
+  },
+  "blog_2006-2011/2007-05-15_fantasmadas-electorales.md": {
+    "cid": "QmWsPKevtrsDo8wo5ZWvr3siYaR6hFJK9xZpB3jPhm25rQ",
+    "hash": "29060e13503c5b8409a873e23cbcf2e89bcff0a13c5b04e9b2234cb6e06dd019"
+  },
+  "blog_2006-2011/2007-05-21_abstencion-activa.md": {
+    "cid": "QmaopiWMWnWpLA2wKXhgXiUD6nur6Q4L6BnVT1GsUZZ1mz",
+    "hash": "f31a21e0f60b2cc9c81a127062dcee12038d76583d7fa0575b4be915cdf4f987"
+  },
+  "blog_2006-2011/2007-05-22_horizonte-electoral.md": {
+    "cid": "QmZpdjMxwUNUYys5BjptorrrmH5Bgviw22WHBaMfiEARsb",
+    "hash": "343ef950288943df033a5d82e8c5da577708e90432b6ce494a7da123e5fd05e2"
+  },
+  "blog_2006-2011/2007-05-25_jornada-de-reflexion.md": {
+    "cid": "QmaHNkhqpTfHa77S5UVz3i41XXjw9MfEAzzD5313dnRpjF",
+    "hash": "90648e353c8db72d5db6a5b2cd7cfa0c2a0dab1b17cdf35e4a5a5ad7e35dc4c4"
+  },
+  "blog_2006-2011/2007-05-28_postelectoralismo.md": {
+    "cid": "QmRa4Dah67uuh8885G1gqtEANgo5foPxQt5fPinwWVDTWe",
+    "hash": "3eec809287df14a4b7c45d0f81c112e0106b0b4f871ffd041c3f9fd2f115f669"
+  },
+  "blog_2006-2011/2007-05-30_el-momento.md": {
+    "cid": "QmSx2nZazsFcMbTn28DtBdH1bFqPuQYaSo2b6qF5vhYcmn",
+    "hash": "41d2be6e2d4e2096c808167184ff6f5f811fea46892eaf7cc16f9d780a982fde"
+  },
+  "blog_2006-2011/2007-06-01_republico.md": {
+    "cid": "Qme3Z8GKxJ4nBnScayCuEeFkZwH7NbrBTCNPDLGVsPaRii",
+    "hash": "17472d4f206a1b87c11f0fdb9cccfe4f5d202d1a10461f473535080703fa961d"
+  },
+  "blog_2006-2011/2007-06-03_republica-en-potencia.md": {
+    "cid": "QmU6ShDTqK77u5NvZg5t1jrtkCrBW3nMfLMRXrqEyoAb8X",
+    "hash": "478ef1c953a858138733aa128136a10348bfa91f29209bd5a49f9c288eab5433"
+  },
+  "blog_2006-2011/2007-06-05_probabilidad-de-la-republica.md": {
+    "cid": "QmYpyTBnehniGFmPitWGX7iRCfrx4XV4H6Nmr7cdkQEVqs",
+    "hash": "420e27bf2a5a6554e964bac4671edfeb39980703807dd569362ef4363b5c5df6"
+  },
+  "blog_2006-2011/2007-06-07_procesion-de-paz.md": {
+    "cid": "QmZPnmTH86F6pDRDMgd5fBL4KfsfoYNZaXrQQytBozPMvP",
+    "hash": "de97abbc780408bde6c8a505ef635a1c8835e4a0d3bb6183cec3076fb1c5b566"
+  },
+  "blog_2006-2011/2007-06-10_toison-a-suarez.md": {
+    "cid": "QmeFwkhXmrF3pH19kN5koKLMTqHYjCSShergRutevjKwj1",
+    "hash": "b5253634fd04536d944ff3afab22fb5993bce8724c48ba9f20ae541fd0451a06"
+  },
+  "blog_2006-2011/2007-06-12_inteligencia-institucional.md": {
+    "cid": "QmcVn9jUS8ZhBX1jpjqKxjC92g75Bw7TRKYsEP2XRGHKeR",
+    "hash": "20cbb75e435c7f460ac560c91ba3a40648d1916aad7c4c5479f5d9d47587cf31"
+  },
+  "blog_2006-2011/2007-06-14_navarra-y-arrow.md": {
+    "cid": "QmcnVykBYx8WEH8RZKySiDU6NV7UwVSMtKP3qccp8gUvDY",
+    "hash": "cf565a651366ab00f6af45a4b49ce54876e378a3a9c2d4db2c938b0281c52023"
+  },
+  "blog_2006-2011/2007-06-16_mayorias-en-navarra.md": {
+    "cid": "QmYBEtWhHAzW9x3AHqYKYHmhazG9yAaCqNtFL1vxAVrpk5",
+    "hash": "f73c746735de5110566772df389a22dbc828cc1bddf6b5a5e99da641cc3b80b7"
+  },
+  "blog_2006-2011/2007-06-17_republicanizar-espana.md": {
+    "cid": "QmfG7mRJw7vACGvwaTauzwCKGjp9hqMypfBzrNGhmqd8ZS",
+    "hash": "0fdefccb8d8e8d7d98008550e4554ff9e726ff920be93950d2d520b2f3d8b0e0"
+  },
+  "blog_2006-2011/2007-06-19_derecha-izquierda.md": {
+    "cid": "QmW1H7qvQmWxMm3ocMRGhBDsXdbH1FLqt7oRSBPcSAGTUs",
+    "hash": "25a7bfec1088bfd0d86b2b3d639325a7e8a8cc06cb3b6f15d473b8da9f0ebdbc"
+  },
+  "blog_2006-2011/2007-06-22_citraizquierda-espanola.md": {
+    "cid": "QmfJE69bk63SCQE8m38ff8AB7RBdrjFDnChfdjsZL51kDp",
+    "hash": "c18dcd79cb46e51ba1f1d49ea190512e71aab021c0d62c752a0846e1a9594e5b"
+  },
+  "blog_2006-2011/2007-06-24_la-derecha-espanola.md": {
+    "cid": "QmTjF6F1HyTnZmRiYxVBokY7wtp2KnTrcbHPb4USvfjcgA",
+    "hash": "8836a1d6bf5842a3783b813395ea5d18e3d6b5fa16219b60f0e7dee90ae8d443"
+  },
+  "blog_2006-2011/2007-06-27_tres-ideas-fuerza.md": {
+    "cid": "QmW9h1iysv3r2fVJtuoSWeBwEX15GpH7rSuYdSNsqkvfkB",
+    "hash": "f64a47ea6785f2a32fd5284ed2ab3e78d32bf68084cdf92e004e5bdefb3626f4"
+  },
+  "blog_2006-2011/2007-06-28_impotencia-de-la-monarquia.md": {
+    "cid": "QmV9a6sCfR6E7smG9grcaC528auJNBmdRR83La4cWkfQKE",
+    "hash": "56f96306eeb96b72a27b7015894be0102364c0dc7aab317b28b2e73bf8551edd"
+  },
+  "blog_2006-2011/2007-06-30_potencia-republicana.md": {
+    "cid": "QmYfsbqeEGM5evyDYztYKb5TgKmb9icMHLdoGujqadnotQ",
+    "hash": "89503a9c017d9f8148cd3f24065f3aedc685d10f1e938be32625fe4b02b294f2"
+  },
+  "blog_2006-2011/2007-07-02_esquema-republicano.md": {
+    "cid": "QmQin44882gnNDSTVgaq33yXd3F9jAhWZgZPbeXns3Z8R3",
+    "hash": "75ccad6697289f98648ada0c0735417a0571a3b21063e30a7940e04e0f00ea5b"
+  },
+  "blog_2006-2011/2007-07-05_proceso-republicano.md": {
+    "cid": "QmXwUQ5gTwsc3SMQbsK9QCmBx4CstmrXZQz1zUJ9N1A2YW",
+    "hash": "c9a2689eb18b1e877d3930ecc7375abe3630c1417f2860dd57cc3ed3b33b8a45"
+  },
+  "blog_2006-2011/2007-07-09_partidos-in-existentes.md": {
+    "cid": "Qmb7CDpinfuDNEdbr6n7Gfo5PWj3DScor7ThrqtY4fd7fG",
+    "hash": "f9128ee153cae3d1d07e804c86c10da4a24c9caac03a0c21662e54d533c8e5a1"
+  },
+  "blog_2006-2011/2007-07-27_iniciativas-republicanas.md": {
+    "cid": "QmX25PpFj6AdbNxwnDfSTRPtsz1hLiFQk768ZWTDGcHgdx",
+    "hash": "035005f370d4ca108168f96be7d8d496b60a2d7db0e363ab5325d0bbd9bba4d4"
+  },
+  "blog_2006-2011/2007-08-02_mito-de-la-unidad.md": {
+    "cid": "QmQHw4x251fj3YZeQsqLczAipr9iqBQT41dV8qqqQKEgpF",
+    "hash": "204341cc66055e94658c684b5233c82f2cd436166e5de9e7a34ba0d88093cdc8"
+  },
+  "blog_2006-2011/2007-08-09_verdad-libertad.md": {
+    "cid": "QmRp22LPZewCVCFAeR2dF6vWwvNL3NRdFJZSThryo4bLBf",
+    "hash": "bc11d4e875dd6f56e288a820b3abaa9b67df784d0098901cc87a1b5ad88d4c5e"
+  },
+  "blog_2006-2011/2007-08-19_unidad-politica.md": {
+    "cid": "QmUgwmwvrqsDmUzmFa65qYgKirw2yrdoea9umFi2JWo3kt",
+    "hash": "029cd754854724d9730aa4e141bbfa68d369fc505c3216380ea6c60660e3a885"
+  },
+  "blog_2006-2011/2007-08-27_espontaneidad-unitaria.md": {
+    "cid": "QmVKcsEwKDnWomgapiSyc8zvXviKocsXagANEsXAeq5WTh",
+    "hash": "44b1a8f4af95e66b2e88501876c2b71651113be6b324d45c16c8828ceb609dc1"
+  },
+  "blog_2006-2011/2007-09-02_accion-crucial.md": {
+    "cid": "QmdxtbPerLLdhuuYTeoDDd9oG1ucttP6F2MsJUsmd2DR2D",
+    "hash": "1a5b66de94d752e5614368095cb91433ce477883a2aa793a4c7a743cc2d25083"
+  },
+  "blog_2006-2011/2007-09-09_vinculo-substancial.md": {
+    "cid": "QmXsMKZqsufG9T9tsenHwMbRsHDJYfcHtztdZoAuMwkX7R",
+    "hash": "5683a14c162703f479528fbb7e88351b53a3f3748c81f5c18038c17cbfd8d0b1"
+  },
+  "blog_2006-2011/2007-09-16_contra-el-escepticismo.md": {
+    "cid": "QmQztUYSJcnTY44VcYvmMi7Twg4ozfeEKm68mZXNq9omAg",
+    "hash": "f8b72dba23ef8fb70fdc998ec053a4d0f6af43c8779568eb02ee309b00da79f9"
+  },
+  "blog_2006-2011/2007-09-23_idealidad-republicana.md": {
+    "cid": "QmXEUNkkMkEioXvyauFeqqqtuD12ruLHQghYx7SHBCevFf",
+    "hash": "ac9ec1c45e78cc84d2debf4dccf6d5b1124c55dbb0eed9acd1742370b0414699"
+  },
+  "blog_2006-2011/2007-09-29_legalidad-republica.md": {
+    "cid": "Qmd9aLsec7GBnXt1XYmsHE9vtNnst5ZqgtvMden3hByAr4",
+    "hash": "228191136b28a2371bd7fe69c144383b111e9b1930820e8f2e5787326333e1d3"
+  },
+  "blog_2006-2011/2007-10-07_principio-de-mediacion.md": {
+    "cid": "Qmde2TmakpgYveSuaMbVLY7yQYCaoJhHbyJFYGCZcbWBv2",
+    "hash": "07898bb985bd602d7d37fe9f0e2042cd13336db3d0effae1aa53cdc332254709"
+  },
+  "blog_2006-2011/2007-10-12_mediacion-institucional.md": {
+    "cid": "QmU38Jzrt8m5pNjRMYoJCaS6dDvmUFnH614pGvZj1NVJVR",
+    "hash": "e00ebe59fedd52a25249cd11cb8552a03c800ed4271fa3941e619932812ae7b0"
+  },
+  "blog_2006-2011/2007-10-20_azar-y-continuidad.md": {
+    "cid": "QmcgzomBhHT8H4F3WgyYwSVvYW8q8N1Ffcjkxjabipf3rk",
+    "hash": "38eefc764f67676b905a82d22c53e201e360ceef200f921b5eea1319fdc8fd46"
+  },
+  "blog_2006-2011/2007-10-28_principio-de-individuacion.md": {
+    "cid": "QmcHMpEENKZ2oSDdQXpuLYD9c6QSWEFTDySCByAZDAUaga",
+    "hash": "ec225f20aad462b81d633e91724e9f23a55bcd4dcdd0b4671905a3a70b12ab0f"
+  },
+  "blog_2006-2011/2007-11-04_accion-gradual.md": {
+    "cid": "Qme8fkBjxPi1xGWaF4zQMRqYp8sgRUWZPHc1TAgt18ebaM",
+    "hash": "9f249dcf89c62e5540cc38c286907cff24874a9d22eae4cd1be36d2db0df497d"
+  },
+  "blog_2006-2011/2007-11-11_somos-republicos.md": {
+    "cid": "QmaPXwVhcfAVu518tgiSWKNa7dKkNYFJWc2wFhy2C7JNjQ",
+    "hash": "d84c31d7254855f496a44f21bf8d343ad3696602aab5ba4df85bc0a97c053e72"
+  },
+  "blog_2006-2011/2007-11-18_diario-espanol.md": {
+    "cid": "QmVpm3GeDugMbnDjTVJBLP3rrPsCUBeggLz84A83Ns9G2w",
+    "hash": "16291131bed9009fd76e5d7f8b550cba4e84563c243f4461cbe2a23194004eae"
+  },
+  "blog_2006-2011/2007-11-24_diseno-00.md": {
+    "cid": "QmPScHq4QSwZxmg2iHRXPngzqGDgK6hJnE2g5QEUysCBEj",
+    "hash": "a0ccafe91578ab82f8316d85f4d61bfd1b0df6631c171b86f5f32df2f85f6a08"
+  },
+  "blog_2006-2011/2007-11-27_enmendar-errores.md": {
+    "cid": "QmVH44Tjg6deECcqZHmH2Xvonw5ViMuur7aYvzmA3XtAwC",
+    "hash": "71516f306a94729e86d859d9746bf908bacc6affc986bdc3b9e98aeb5022d3de"
+  },
+  "blog_2006-2011/2007-12-07_diseno-definitivo.md": {
+    "cid": "QmbGyzqgGN4ggNj7RumEyx58EpAb727UohDcQ6wqj3p5kp",
+    "hash": "af39b17528b42918c3b10f1ded7d286a7f32804b4ddeea02c0d2dfe8f8bc099d"
+  },
+  "blog_2006-2011/2007-12-14_funcion-del-diseno.md": {
+    "cid": "QmW9y7jCc4wvU524Xpugziujmmv6mxCYPuH1weUs1ApeFz",
+    "hash": "1069dfdebdfd48395ec2a8d41872eef86bf8e760dd01b1cf36fc9a44a950f345"
+  },
+  "blog_2006-2011/2008-01-08_el-diario-en-2008.md": {
+    "cid": "QmW3RXvkAQZ9bNn9dbJ9d8S3iNBUEvBDqhyCN1WpeeqacB",
+    "hash": "bdf9b8b1b541fa6eff94af8727850792714b9048f7c478838f5a5043e988195e"
+  },
+  "blog_2006-2011/2008-03-03_diario-de-la-libertad.md": {
+    "cid": "QmQB1V9XGriZnBjnGYc1UdLNNrtY2EwcYRb7FcSDHLxRLc",
+    "hash": "b847a8c3411d54d13ce63033ad0a3f477050a8430b0e6675e2ee14186edaa201"
+  },
+  "blog_2006-2011/2008-04-06_convocatoria-republicana.md": {
+    "cid": "QmYKDkwmSgpKQGT4qUEeoZhMSU54dfhrXSeXt9AhwKgXZJ",
+    "hash": "4fc65e290519f1b2ce3424a7987141012d05041d563e156f6d44b7f19c9c56a2"
+  },
+  "blog_2006-2011/2008-09-26_nueva-etapa-del-diario.md": {
+    "cid": "QmWA7pu8cq7Sga42DZjzxQUjf7jPCepSpkkYmrRmAbFJab",
+    "hash": "7e833659383e5466fd8e3d4b6c18ee10c54246ac3f6a274695481c60ee26ae81"
+  },
+  "blog_2006-2011/2008-12-15_mujeres-en-marcha-el-independiente-8-10-1989.md": {
+    "cid": "QmYVmV9Ey5rXixs9Y4LzHoMpZvd9Vvq7KBVEMUAcrrijjD",
+    "hash": "20f6f182e2db3b7ba8b803e4e2d0822bbf7b84133e00c8279639e483721ec549"
+  },
+  "blog_2006-2011/2009-03-26_el-gran-miedo.md": {
+    "cid": "QmVC7gg9Gyy3rtiES3to49cviNTdkAJHpEAZmCExnUPbGr",
+    "hash": "199deda7dfb0fb549966051bbec78e82d4a9fa8966e9f97eb427633a95533c7d"
+  },
+  "blog_2006-2011/2009-05-27_declaracion-de-independencia.md": {
+    "cid": "QmW8LTL45QrzuRXMud6C7wrrxjijVjW7m5xPcEweVZFVjP",
+    "hash": "0711191e9ba7e4e14dc1264d48bbd89bed5a6a91796f2b4ced789d2db6bea24a"
+  },
+  "blog_2006-2011/2009-07-02_fracaso-revolucionario.md": {
+    "cid": "QmapEucJBh2s7voPpqC8WUEsmTkfxMFZKmphFr9Ec9Ao7Y",
+    "hash": "0c09b3357c2dc8b1661cb64fb0b7807ccb650454d5d3cbebfa6bce4571ba02e6"
+  },
+  "blog_2006-2011/2009-07-22_las-nuevas-tablas-de-la-ley.md": {
+    "cid": "QmPvaa4q7iUBrytZrjxPWmSR2WxBKbSEquenWF1NyXp69G",
+    "hash": "19ecdd4d995043d63549a0eebb39c98b79fc5d4c5723c81a8cec53ca9de70aa0"
+  },
+  "blog_2006-2011/2009-10-06_analfabetismo-politico.md": {
+    "cid": "QmeF9UMqRnzWBTZyT7GvfY92GRZ9YRDB8Frg35e65qWSZr",
+    "hash": "796b07aa88aebb5c5ea0561cf988dc44dd3788fd45b13e7f16523f6ca8cf908d"
+  },
+  "blog_2006-2011/2009-10-26_voluntad-general-de-los-espanoles.md": {
+    "cid": "QmbgzbcvUYtYVWLVZybT4Wg34fLwfukAXY9XLBWcRnfUjj",
+    "hash": "3dd309af0c78405fe62001e293d0f43cc3eef56abc1acdaf339932055c38b08b"
+  },
+  "blog_2006-2011/2010-03-24_gobernar-desde.md": {
+    "cid": "QmUo4rqdgyAmQheeZw2cBD7AQmGRTMQmgTTugWs62ZtdW6",
+    "hash": "be83cb9d5221d4ea8146308468547369a54cc8939d3200c3f4cd557521992fb6"
+  },
+  "blog_2006-2011/2010-05-31_ley-universal-de-la-mendacidad.md": {
+    "cid": "QmNxZWbEVQtGytkYYKnNBepgkq851fZTn8bwNajfgjFDdA",
+    "hash": "9e80a794730d75e7feb0dd471975e5ba7f4629eaa06f8763350bf0fb4ee3ffcd"
+  },
+  "blog_2006-2011/2010-07-07_la-patria-no-se-hace-la-democracia-si.md": {
+    "cid": "QmWB2LvAR9NuycVrxeacywqgaaaMLkAU4w68QccsAXrSna",
+    "hash": "18e8ca82f5bdad7b9a40e8f2a90d48661783d8ede543048db118ac082be12b88"
+  },
+  "blog_2006-2011/2010-10-01_saboteadores-de-ideales.md": {
+    "cid": "QmdLcgwzk2pvsyKeuxhm3GZsaHR35bMTZ4dGvNiwC2zSse",
+    "hash": "3d1a0b5cce21322fbceb1da40826ce3c8946fd016da1176b7daf57ee219ebd41"
+  },
+  "blog_2006-2011/2011-05-23_situacion-pre-revolucionaria.md": {
+    "cid": "QmXkpn4WcQecUsCQcRmhfKQMxLzrn2pWjJjn1GiVvQt5D5",
+    "hash": "33736b77fceee89f9eee55171760ddcdcdfd1058f63402a625d20b2ba589a903"
+  },
+  "blog_2006-2011/2011-08-04_lo-que-se-vota.md": {
+    "cid": "QmQRqtVvPkDTgJsL45a9feL3AkVaGb36vdc4RxfwZYEQJh",
+    "hash": "e6947a464178d09e1f838a22e5e781d4327a31308f86786bb657c50ab356e5bf"
+  },
+  "cronología/0.CRONOLOGÍA AGT. 2026.0124.docx": {
+    "cid": "QmYhcGjCYyM6gAD2vyPvWRhGfLGGUYw5MbQrCrwKSnRT6z",
+    "hash": "c8f6948e163236aec17e02eaaf2af36ef50872f3458ecedb82aefae1f8a2233d"
+  },
   "fotos/1070086_398515276924259_11569444_n.jpg": {
     "cid": "QmP6U3DwDjrp8iRQmgpoH6mdKRdygXqyTsB4oEwWYnMma3",
     "hash": "31e060490ef1e3f841411265c2c09242fac1466e1422de4a785ba324d3b089c3"
@@ -14470,5 +15142,9 @@
   "fotos/trevijano_pueblo-1024x391.webp": {
     "cid": "QmZQ7dXZxcbfd4cWdB5gbAr1J3qMDgv3dGaU3LpVW4UTB9",
     "hash": "1dd0a93586b01a9f69e30f89f6c8c44576ad1b4b34035b8fe67b1804b13d5c26"
+  },
+  "garciatrevijano-wordpress-com.zip": {
+    "cid": "QmQ9dKkFNfzbFUw81eaeTJAX2WCTwRuKgYMaMizqNNHgXi",
+    "hash": "eb3c3996b6959e5125b74ccacf104075d90fba7fd61580f0b3f55c6cdf99127a"
   }
 }

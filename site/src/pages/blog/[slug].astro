@@ -1,0 +1,99 @@
+---
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { marked } from "marked";
+import Base from "../../layouts/Base.astro";
+
+const blogDir = join(process.cwd(), "..", "ficheros", "publicos", "blog_2006-2011");
+
+function parseHeader(content: string) {
+  const titleMatch = content.match(/^# (.+)/m);
+  const dateMatch = content.match(/\*\*Fecha:\*\*\s*(\d{4}-\d{2}-\d{2})/);
+  const urlMatch = content.match(/\*\*URL original:\*\*\s*(https?:\/\/\S+)/);
+  return {
+    title: titleMatch ? titleMatch[1].trim() : "Sin título",
+    date: dateMatch ? dateMatch[1] : null,
+    originalUrl: urlMatch ? urlMatch[1] : null,
+  };
+}
+
+export function getStaticPaths() {
+  const dir = join(process.cwd(), "..", "ficheros", "publicos", "blog_2006-2011");
+  const files = readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .sort();
+
+  return files.map((filename, i) => ({
+    params: { slug: filename.replace(".md", "").replace("_", "-") },
+    props: {
+      filename,
+      prevSlug: i > 0 ? files[i - 1].replace(".md", "").replace("_", "-") : null,
+      prevTitle: i > 0 ? (() => {
+        const c = readFileSync(join(dir, files[i - 1]), "utf-8");
+        return c.match(/^# (.+)/m)?.[1]?.trim() ?? "";
+      })() : null,
+      nextSlug: i < files.length - 1 ? files[i + 1].replace(".md", "").replace("_", "-") : null,
+      nextTitle: i < files.length - 1 ? (() => {
+        const c = readFileSync(join(dir, files[i + 1]), "utf-8");
+        return c.match(/^# (.+)/m)?.[1]?.trim() ?? "";
+      })() : null,
+    },
+  }));
+}
+
+const { filename, prevSlug, prevTitle, nextSlug, nextTitle } = Astro.props;
+const content = readFileSync(join(blogDir, filename), "utf-8");
+const { title, date, originalUrl } = parseHeader(content);
+
+// Split header from body at the first horizontal rule
+const bodyStart = content.indexOf("\n---\n");
+const body = bodyStart !== -1 ? content.slice(bodyStart + 5) : content;
+const html = marked.parse(body) as string;
+---
+
+<Base title={title} description={`${title} — Blog de Antonio García-Trevijano`}>
+  <div class="max-w-3xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-500 mb-6">
+      <a href="/blog/" class="hover:text-brand-700">Blog</a>
+      <span class="mx-1">/</span>
+      <span class="text-gray-900">{title}</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold font-serif text-brand-900 mb-3">{title}</h1>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+        {date && <span>{date}</span>}
+        <span>Antonio García-Trevijano</span>
+        {originalUrl && (
+          <a
+            href={originalUrl}
+            target="_blank"
+            rel="noopener"
+            class="text-brand-700 hover:text-brand-900 underline"
+          >
+            Entrada original
+          </a>
+        )}
+      </div>
+    </header>
+
+    <!-- Post body + comments -->
+    <div class="article-body" set:html={html} data-pagefind-body />
+
+    <!-- Prev / Next -->
+    <nav class="flex justify-between items-start gap-4 mt-12 pt-6 border-t border-gray-200 text-sm">
+      {prevSlug ? (
+        <a href={`/blog/${prevSlug}/`} class="text-brand-700 hover:text-brand-900">
+          &larr; {prevTitle}
+        </a>
+      ) : <span />}
+      {nextSlug ? (
+        <a href={`/blog/${nextSlug}/`} class="text-right text-brand-700 hover:text-brand-900">
+          {nextTitle} &rarr;
+        </a>
+      ) : <span />}
+    </nav>
+  </div>
+</Base>
