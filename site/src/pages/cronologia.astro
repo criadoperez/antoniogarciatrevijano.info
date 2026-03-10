@@ -13,19 +13,175 @@ const mdPath = join(
   "0.CRONOLOGÍA AGT. 2026.md"
 );
 
-let htmlContent = "";
+type Section = { year: string | null; html: string };
+let sections: Section[] = [];
+
 try {
   const md = readFileSync(mdPath, "utf-8");
-  htmlContent = marked.parse(md) as string;
+  const lines = md.split("\n");
+
+  let currentYear: string | null = null;
+  let currentLines: string[] = [];
+
+  for (const line of lines) {
+    const m = line.match(/^\*\*(\d{4})\*\*$/);
+    if (m) {
+      sections.push({
+        year: currentYear,
+        html: marked.parse(currentLines.join("\n")) as string,
+      });
+      currentYear = m[1];
+      currentLines = [];
+    } else {
+      currentLines.push(line);
+    }
+  }
+  // Push the last section
+  sections.push({
+    year: currentYear,
+    html: marked.parse(currentLines.join("\n")) as string,
+  });
 } catch {
-  htmlContent = "<p><em>Contenido no disponible.</em></p>";
+  sections = [{ year: null, html: "<p><em>Contenido no disponible.</em></p>" }];
+}
+
+const yearSections = sections.filter((s): s is Section & { year: string } => s.year !== null);
+const introSection = sections[0]?.year === null ? sections[0] : null;
+
+// Group years by decade for sidebar navigation
+const byDecade = new Map<string, string[]>();
+for (const s of yearSections) {
+  const d = s.year.slice(0, 3) + "0s";
+  if (!byDecade.has(d)) byDecade.set(d, []);
+  byDecade.get(d)!.push(s.year);
 }
 ---
 
 <Base title="Cronología" description="Cronología, datos, hechos y testimonios de Antonio García-Trevijano">
-  <div class="max-w-3xl mx-auto">
+  <div class="max-w-5xl mx-auto">
     <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Cronología</h1>
-    <p class="text-gray-500 mb-10">Datos, hechos y testimonios de Antonio García-Trevijano · 1927–2018</p>
-    <div class="article-body" set:html={htmlContent} data-pagefind-body />
+    <p class="text-gray-500 mb-8">
+      Datos, hechos y testimonios de Antonio García-Trevijano · 1927–2018
+    </p>
+
+    <!-- Mobile: year jump -->
+    <div class="lg:hidden mb-6">
+      <select
+        id="year-jump"
+        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-brand-700 focus:outline-none"
+      >
+        <option value="">Ir a un año...</option>
+        {yearSections.map((s) => <option value={s.year}>{s.year}</option>)}
+      </select>
+    </div>
+
+    <div class="flex gap-10 items-start">
+
+      <!-- Sidebar: sticky year navigator (desktop only) -->
+      <aside class="hidden lg:block w-16 shrink-0 sticky top-6">
+        <div class="max-h-[calc(100vh-6rem)] overflow-y-auto text-xs space-y-5 pr-1">
+          {[...byDecade.entries()].map(([decade, ys]) => (
+            <div>
+              <p class="text-gray-400 font-bold tracking-widest mb-1.5 text-[10px]">
+                {decade}
+              </p>
+              <ul class="space-y-0.5">
+                {ys.map((y) => (
+                  <li>
+                    <a
+                      href={`#year-${y}`}
+                      class="year-link block py-0.5 text-gray-400 hover:text-brand-700 transition-colors tabular-nums"
+                      data-year={y}
+                    >
+                      {y}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      <!-- Timeline -->
+      <div class="flex-1 min-w-0">
+
+        <!-- Intro text (before first year) -->
+        {introSection && (
+          <div
+            class="article-body mb-10 pb-10 border-b border-gray-200 text-gray-600"
+            set:html={introSection.html}
+            data-pagefind-body
+          />
+        )}
+
+        <!-- Vertical spine + year entries -->
+        <div class="relative">
+          <div class="absolute left-0 top-2 bottom-0 w-px bg-brand-100" aria-hidden="true" />
+
+          {yearSections.map((s) => (
+            <div
+              id={`year-${s.year}`}
+              class="relative pl-10 pb-12 timeline-section"
+            >
+              <!-- Dot -->
+              <div
+                class="absolute left-0 top-1.5 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-brand-700 ring-2 ring-white"
+                aria-hidden="true"
+              />
+              <!-- Year heading -->
+              <h2 class="text-base font-bold text-brand-700 tabular-nums mb-3 -mt-0.5">
+                {s.year}
+              </h2>
+              <!-- Content -->
+              <div class="article-body" set:html={s.html} data-pagefind-body />
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      // Mobile year-jump select
+      var sel = document.getElementById("year-jump");
+      if (sel) {
+        sel.addEventListener("change", function () {
+          if (!sel.value) return;
+          var el = document.getElementById("year-" + sel.value);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          sel.value = "";
+        });
+      }
+
+      // Scroll spy: highlight active year in sidebar
+      var sections = Array.from(document.querySelectorAll(".timeline-section[id]"));
+      var links = Array.from(document.querySelectorAll(".year-link"));
+      if (!sections.length || !links.length) return;
+
+      function setActive(year) {
+        links.forEach(function (l) {
+          var on = l.dataset.year === year;
+          l.classList.toggle("text-brand-700", on);
+          l.classList.toggle("font-bold", on);
+          l.classList.toggle("text-gray-400", !on);
+        });
+      }
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActive(entry.target.id.replace("year-", ""));
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -75% 0px", threshold: 0 }
+      );
+
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
 </Base>
