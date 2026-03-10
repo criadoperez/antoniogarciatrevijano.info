@@ -1,0 +1,212 @@
+---
+import Base from "../layouts/Base.astro";
+import catalog from "../data/catalog.json";
+
+type Photo = {
+  category: string;
+  slug: string;
+  title: string;
+  date: string | null;
+  ipfs_cid: string | null;
+  ipfs_url: string | null;
+  source_filename: string;
+};
+
+// Only photos that have an IPFS URL (sync_to_ipfs.py must have run)
+const allPhotos = (catalog as unknown as Photo[])
+  .filter((i) => i.category === "fotos" && i.ipfs_url)
+  .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
+
+// Group by year; photos without a date go under "sin-fecha"
+const byYear = new Map<string, Photo[]>();
+for (const photo of allPhotos) {
+  const key = photo.date?.slice(0, 4) ?? "sin-fecha";
+  if (!byYear.has(key)) byYear.set(key, []);
+  byYear.get(key)!.push(photo);
+}
+
+// Years newest-first; undated at end
+const years = [...byYear.keys()]
+  .filter((y) => y !== "sin-fecha")
+  .sort()
+  .reverse();
+if (byYear.has("sin-fecha")) years.push("sin-fecha");
+
+// Flat ordered list — used by the lightbox for prev/next navigation
+const flatPhotos = years.flatMap((y) => byYear.get(y)!);
+---
+
+<Base title="Fotos" description="Galería fotográfica de Antonio García-Trevijano, 1939–2017">
+  <div data-pagefind-ignore>
+    <h1 class="text-3xl font-bold font-serif text-brand-900 mb-1">Fotos</h1>
+    <p class="text-gray-500 mb-10">{allPhotos.length} fotografías · 1939–2017</p>
+
+    {years.map((year) => (
+      <section class="mb-14">
+
+        <!-- Year divider -->
+        <div class="flex items-center gap-4 mb-4">
+          <h2 class="text-lg font-semibold text-brand-700 shrink-0 tabular-nums">
+            {year === "sin-fecha" ? "Sin fecha" : year}
+          </h2>
+          <div class="flex-1 h-px bg-gray-200" />
+          <span class="text-xs text-gray-400 shrink-0">
+            {byYear.get(year)!.length} foto{byYear.get(year)!.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+
+        <!-- Masonry columns (free-form natural sizes) -->
+        <div class="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-2">
+          {byYear.get(year)!.map((photo) => {
+            const idx = flatPhotos.indexOf(photo);
+            return (
+              <figure
+                class="break-inside-avoid mb-2 relative overflow-hidden rounded group cursor-pointer"
+                data-idx={String(idx)}
+              >
+                <img
+                  src={photo.ipfs_url!}
+                  alt={photo.title || "Fotografía de Antonio García-Trevijano"}
+                  loading="lazy"
+                  class="w-full block"
+                />
+                {photo.title && (
+                  <figcaption class="absolute bottom-0 inset-x-0 px-2 py-2 bg-gradient-to-t from-black/75 to-transparent text-white text-xs leading-snug opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    {photo.title}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          })}
+        </div>
+
+      </section>
+    ))}
+
+    <!-- Lightbox overlay -->
+    <div
+      id="lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Visor de fotos"
+      class="fixed inset-0 z-50 bg-black/92 hidden"
+    >
+      <!-- Close -->
+      <button
+        id="lb-close"
+        aria-label="Cerrar"
+        class="absolute top-4 right-5 text-white/70 hover:text-white text-4xl font-light leading-none z-10"
+      >&times;</button>
+
+      <!-- Prev -->
+      <button
+        id="lb-prev"
+        aria-label="Foto anterior"
+        class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-5xl font-light leading-none select-none px-2 z-10"
+      >&#8249;</button>
+
+      <!-- Image + caption (centred) -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center px-14 py-10 gap-4">
+        <img
+          id="lb-img"
+          src=""
+          alt=""
+          class="max-w-full max-h-[80vh] object-contain shadow-2xl"
+        />
+        <div class="text-center">
+          <p id="lb-caption" class="text-white text-sm"></p>
+          <p id="lb-date" class="text-white/50 text-xs mt-1"></p>
+        </div>
+      </div>
+
+      <!-- Next -->
+      <button
+        id="lb-next"
+        aria-label="Foto siguiente"
+        class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-5xl font-light leading-none select-none px-2 z-10"
+      >&#8250;</button>
+    </div>
+  </div>
+
+  <!-- Embed photo metadata for the lightbox -->
+  <script
+    id="gallery-data"
+    type="application/json"
+    set:html={JSON.stringify(
+      flatPhotos.map((p) => ({
+        url: p.ipfs_url,
+        title: p.title ?? "",
+        date: p.date ?? "",
+      }))
+    )}
+  />
+
+  <script is:inline>
+    (function () {
+      const photos = JSON.parse(
+        document.getElementById("gallery-data").textContent
+      );
+      const lightbox = document.getElementById("lightbox");
+      const lbImg = document.getElementById("lb-img");
+      const lbCaption = document.getElementById("lb-caption");
+      const lbDate = document.getElementById("lb-date");
+      const lbPrev = document.getElementById("lb-prev");
+      const lbNext = document.getElementById("lb-next");
+      const lbClose = document.getElementById("lb-close");
+
+      let current = 0;
+
+      function show(idx) {
+        current = (idx + photos.length) % photos.length;
+        const p = photos[current];
+        lbImg.src = p.url;
+        lbImg.alt = p.title;
+        lbCaption.textContent = p.title;
+        lbDate.textContent = p.date;
+        // Hide nav when there's only one photo
+        const showNav = photos.length > 1;
+        lbPrev.style.display = showNav ? "" : "none";
+        lbNext.style.display = showNav ? "" : "none";
+      }
+
+      function open(idx) {
+        show(idx);
+        lightbox.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        lbClose.focus();
+      }
+
+      function close() {
+        lightbox.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+
+      // Open on figure click
+      document.addEventListener("click", function (e) {
+        const fig = e.target.closest("figure[data-idx]");
+        if (fig) open(parseInt(fig.dataset.idx, 10));
+      });
+
+      // Close on backdrop click (not on image or buttons)
+      lightbox.addEventListener("click", function (e) {
+        if (
+          e.target === lightbox ||
+          e.target === lightbox.querySelector(".absolute.inset-0")
+        ) {
+          close();
+        }
+      });
+
+      lbClose.addEventListener("click", close);
+      lbPrev.addEventListener("click", function () { show(current - 1); });
+      lbNext.addEventListener("click", function () { show(current + 1); });
+
+      document.addEventListener("keydown", function (e) {
+        if (lightbox.classList.contains("hidden")) return;
+        if (e.key === "Escape") close();
+        if (e.key === "ArrowLeft") show(current - 1);
+        if (e.key === "ArrowRight") show(current + 1);
+      });
+    })();
+  </script>
+</Base>

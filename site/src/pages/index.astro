@@ -6,6 +6,7 @@ const totalArticles = catalog.filter((i) => i.category === "articulos").length;
 const totalHechos = new Set(
   catalog.filter((i) => i.category === "AGT.HECHOS").map((i) => i.subcategory)
 ).size;
+const totalFotos = catalog.filter((i) => i.category === "fotos" && i.ipfs_url).length;
 const years = catalog
   .filter((i) => i.date)
   .map((i) => i.date!.slice(0, 4));
@@ -39,17 +40,24 @@ const maxYear = Math.max(...years.map(Number));
         <p class="text-sm text-gray-500">Hechos históricos</p>
       </div>
       <div class="text-center">
-        <p class="text-3xl font-bold text-brand-900">{minYear}</p>
-        <p class="text-sm text-gray-500">Primer artículo</p>
+        <p class="text-3xl font-bold text-brand-900">{totalFotos}</p>
+        <p class="text-sm text-gray-500">Fotografías</p>
       </div>
       <div class="text-center">
-        <p class="text-3xl font-bold text-brand-900">{maxYear}</p>
-        <p class="text-sm text-gray-500">Último artículo</p>
+        <p class="text-3xl font-bold text-brand-900">{minYear}–{maxYear}</p>
+        <p class="text-sm text-gray-500">Años documentados</p>
       </div>
     </section>
 
     <!-- Navigation cards -->
     <section class="grid sm:grid-cols-2 gap-6 py-8">
+      <a href="/cronologia/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Cronología</h2>
+        <p class="text-gray-600">
+          Datos, hechos y testimonios biográficos desde 1927 hasta 2018.
+        </p>
+      </a>
+
       <a href="/articulos/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
         <h2 class="text-xl font-bold text-brand-900 mb-2">Artículos</h2>
         <p class="text-gray-600">
@@ -63,6 +71,14 @@ const maxYear = Math.max(...years.map(Number));
         <p class="text-gray-600">
           Documentos sobre {totalHechos} eventos clave en la vida de García-Trevijano:
           Guinea, la Junta Democrática, Carabanchel y más.
+        </p>
+      </a>
+
+      <a href="/fotos/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Fotos</h2>
+        <p class="text-gray-600">
+          {totalFotos} fotografías de 1939 a 2017: retratos, actos públicos,
+          la Junta Democrática y los últimos años.
         </p>
       </a>
 

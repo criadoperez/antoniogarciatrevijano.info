@@ -9,9 +9,9 @@ using BAAI/bge-m3 (dense vectors, 1024 dimensions) on GPU, and upserts them
 into a local Qdrant collection stored at qdrant_db/.
 
 IPFS support:
-    If storacha/cids.json exists (produced by sync_to_storacha.py), each chunk
+    If ipfs/cids.json exists (produced by sync_to_ipfs.py), each chunk
     from a public file gets its IPFS CID and a permanent download_url stored in
-    the Qdrant payload. Run sync_to_storacha.py before this script.
+    the Qdrant payload. Run sync_to_ipfs.py before this script.
     If cids.json is absent, indexing still works — chunks just won't have
     download URLs until you run the sync and re-index.
 
@@ -38,11 +38,11 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 # ── Configuration ──────────────────────────────────────────────────────
 
 CHUNKS_FILE     = Path("chunks/chunks.jsonl")
-CIDS_FILE       = Path("storacha/cids.json")
+CIDS_FILE       = Path("ipfs/cids.json")
 QDRANT_PATH     = Path("qdrant_db")
 COLLECTION_NAME = "documents"
 EMBEDDING_MODEL = "BAAI/bge-m3"
-IPFS_GATEWAY    = "https://w3s.link/ipfs"
+IPFS_GATEWAY    = "https://ipfs.antoniogarciatrevijano.info/ipfs"
 VECTOR_SIZE     = 1024   # bge-m3 dense output dimension
 BATCH_SIZE      = 256    # tuned for 64GB RAM + RTX 3070 Ti 8GB VRAM
 MAX_LENGTH      = 512    # max tokens per chunk fed to the model
@@ -52,7 +52,7 @@ MAX_LENGTH      = 512    # max tokens per chunk fed to the model
 
 def load_cids() -> dict[str, str]:
     """
-    Load the relative-path → CID mapping produced by sync_to_storacha.py.
+    Load the relative-path → CID mapping produced by sync_to_ipfs.py.
     Keys are paths relative to ficheros/publicos/, e.g. "articulos/foo.pdf".
     Returns a flat {path: cid} dict. Handles both old format (path → cid string)
     and new format (path → {cid, hash}).
@@ -69,7 +69,7 @@ def load_cids() -> dict[str, str]:
         return data
 
     print(f"NOTE: {CIDS_FILE} not found — download_url will be null for all chunks.")
-    print("      Run sync_to_storacha.py first, then re-run this script.")
+    print("      Run sync_to_ipfs.py first, then re-run this script.")
     return {}
 
 
@@ -97,7 +97,7 @@ def get_cid_and_url(
     Return (cid, download_url) for a chunk.
     cid is "" and download_url is None for private files or unmapped public files.
 
-    When a chunk comes from a .docx but the original .pdf exists in Storacha,
+    When a chunk comes from a .docx but the original .pdf is pinned on the KUBO node,
     the PDF's CID is returned (the .docx was used for RAG text quality, but the
     .pdf is the original source document).
     """

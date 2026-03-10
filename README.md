@@ -10,7 +10,7 @@ Guide to building a Retrieval-Augmented Generation (RAG) system from a folder of
 |------|--------|--------|-------|
 | 1 -- Document Conversion | `convert_documents.py` | Needs re-run | Dedup logic added; re-run with clean `output/` |
 | 2 -- Chunking | `chunk_documents.py` | Needs re-run | Re-run with clean `chunks/` to pick up `date`/`publication` fields |
-| 3 -- IPFS Sync | `sync_to_storacha.py` | Not started | Needs Storacha account + w3 CLI setup |
+| 3 -- IPFS Sync | `sync_to_ipfs.py` | Not started | KUBO node running at localhost:5001 |
 | 4+5 -- Embedding + Indexing | `embed_and_index.py` | Needs re-run | Re-run after step 2 with clean `qdrant_db/` to store `date`/`publication` |
 | 6 -- Query Interface | `rag_api.py` | Running | Single FastAPI service: RAG + LLM + streaming + OpenAI-compatible API |
 
@@ -20,7 +20,7 @@ Three dedup mechanisms prevent duplicate content from entering the pipeline:
 
 1. **`.doc` → `.docx` pre-step** (`convert_documents.py`): all `.doc` files are converted to `.docx` in-place using LibreOffice before anything else. The `.docx` becomes the canonical source file; `.doc` is ignored by all subsequent steps.
 
-2. **`.docx` preferred over `.pdf`** (`convert_documents.py`, `sync_to_storacha.py`): when the same filename stem exists as both `.docx` and `.pdf` in the same folder, the `.docx` is used for RAG (cleaner text from handmade transcription) and the `.pdf` is uploaded to Storacha (original source). `embed_and_index.py` links chunks from the `.docx` to the `.pdf`'s download URL.
+2. **`.docx` preferred over `.pdf`** (`convert_documents.py`, `sync_to_ipfs.py`): when the same filename stem exists as both `.docx` and `.pdf` in the same folder, the `.docx` is used for RAG (cleaner text from handmade transcription) and the `.pdf` is pinned on the KUBO node (original source). `embed_and_index.py` links chunks from the `.docx` to the `.pdf`'s download URL.
 
 3. **Content hash dedup** (`convert_documents.py`): files are hashed (SHA-256) before Docling conversion. If two files anywhere in `ficheros/` have identical content (different names, paths, or extensions), only the first is converted. Duplicates are logged and listed in `conversion_report.json`.
 
@@ -88,7 +88,7 @@ OpenWebUI (or any OpenAI-compatible client) can connect via the `/v1/chat/comple
 ```
 agt/
 |-- ficheros/                        # Source documents (input)
-|   |-- publicos/                    # Public files -- indexed + hosted on IPFS via Storacha
+|   |-- publicos/                    # Public files -- indexed + hosted on local KUBO node
 |   |   |-- articulos/               # Press articles (~2,500 files)
 |   |   '-- AGT.LIBROS/              # Books (~40 files)
 |   '-- privados/                    # Private files -- indexed for RAG only, never served
@@ -107,7 +107,7 @@ agt/
 |   |-- chunking_progress.json       # Resume tracker
 |   '-- chunking_report.json
 |
-|-- storacha/                        # Step 3 output
+|-- ipfs/                            # Step 3 output
 |   |-- cids.json                    # Maps relative path -> IPFS CID for every public file
 |   |                                # DO NOT DELETE -- this is the sync state
 |   '-- root_cid.txt                 # Root directory CID (for pinning on other IPFS nodes)
@@ -119,7 +119,7 @@ agt/
 |-- .env                             # OPENAI_API_KEY, LLM_MODEL, RAG_API_KEY
 |-- convert_documents.py             # Step 1
 |-- chunk_documents.py               # Step 2
-|-- sync_to_storacha.py              # Step 3 -- IPFS sync
+|-- sync_to_ipfs.py              # Step 3 -- IPFS sync
 |-- embed_and_index.py               # Step 4+5
 |-- rag_api.py                       # Step 6 -- FastAPI service (RAG + LLM + streaming)
 '-- README.md                        # This file
@@ -176,7 +176,6 @@ venv/bin/pip install -r requirements.txt
 |------|---------|
 | `libreoffice` | Converts `.doc` (legacy Word format) to `.docx`. Install: `sudo apt install libreoffice` |
 | `gs` (Ghostscript) | Converts PDFs to PDF/A-2b for long-term archival. Install: `sudo apt install ghostscript` |
-| `w3` CLI | Storacha (web3.storage) client for IPFS uploads. Install: `npm install -g @web3-storage/w3cli` |
 
 ### OCR engine choice: EasyOCR vs RapidOCR
 
@@ -192,7 +191,7 @@ The RAG pipeline has 6 steps:
 
 1. **Document Conversion** -- Pre-convert `.doc` → `.docx`, dedup, then extract text into DoclingDocument JSON (Docling)
 2. **Chunking** -- Split the text into smaller passages (Docling HybridChunker)
-3. **IPFS Sync** -- Upload public files to Storacha (skips `.docx` when `.pdf` exists), record CIDs in `storacha/cids.json`
+3. **IPFS Sync** -- Pin public files on the local KUBO node (skips `.docx` when `.pdf` exists), record CIDs in `ipfs/cids.json`
 4. **Embedding** -- Convert each chunk into a vector (BAAI/bge-m3), store CID in payload
 5. **Vector Store** -- Store vectors + metadata (incl. IPFS CID) in Qdrant
 6. **Query Interface** -- FastAPI RAG API with `/chat` (streaming), `/search`, and OpenAI-compatible `/v1/chat/completions` endpoints
@@ -212,6 +211,13 @@ Source folder: `ficheros/` (recursively scans all subfolders)
 | `ficheros/publicos/articulos/` | Press articles and reports |
 | `ficheros/publicos/AGT.LIBROS/` | Books and longer documents |
 | `ficheros/privados/` | Private documents -- RAG only |
+| `ficheros/publicos/fotos/` | **Excluded** — photographs, no text to extract |
+
+**`SKIP_FOLDERS`** — folders excluded from the entire RAG pipeline. Defined in `convert_documents.py`:
+```python
+SKIP_FOLDERS = {"fotos"}  # folders to exclude from RAG pipeline entirely
+```
+Files in a `SKIP_FOLDERS` folder are not converted, not chunked, not indexed. They are still synced to IPFS by `sync_to_ipfs.py` and catalogued for the website by `build_catalog.py`. Add folder names here for any non-text content that should not enter the RAG pipeline.
 
 | Format | Count | Notes |
 |--------|------:|-------|
@@ -303,48 +309,39 @@ Splits each `DoclingDocument` JSON into smaller passages suitable for embedding 
 
 ## Step 3: IPFS Sync
 
-### Why IPFS / Storacha
+### Why host on KUBO
 
-Public documents are hosted on IPFS via [Storacha](https://storacha.network/) (web3.storage), backed by Filecoin. This is part of a broader plan to build a permanent digital archive of the author's work. Key properties:
+Public documents are served directly from the self-hosted KUBO node at `ipfs.antoniogarciatrevijano.info`. Key properties:
 
-- **Permanent** -- content-addressed by hash (CID). Files never change, so CIDs never expire.
-- **Decentralised** -- content is replicated across the Filecoin network and accessible via any IPFS gateway. Survives any single server going down.
+- **Content-addressed** -- files are identified by CID (SHA-256 hash). Same content always produces the same CID.
+- **No third-party dependency** -- files are pinned and served locally; no Storacha/Filecoin account required.
 - **Integrity** -- the CID is a cryptographic proof that content hasn't changed.
-- **Private files stay off IPFS** -- only `ficheros/publicos/` is uploaded. `ficheros/privados/` never leaves the local machine.
+- **Private files stay off IPFS** -- only `ficheros/publicos/` is pinned. `ficheros/privados/` never leaves the local machine.
 
 ### Sync script
 
-**Script:** `sync_to_storacha.py`
+**Script:** `sync_to_ipfs.py`
 
-**Run:** `venv/bin/python sync_to_storacha.py`
+**Run:** `venv/bin/python sync_to_ipfs.py`
 
-**Storacha account:** Credentials stored in `.env` (not committed).
-
-**Prerequisites:**
-```bash
-npm install -g @web3-storage/w3cli
-w3 login <email>
-w3 space use <space-did>
-```
+**Prerequisites:** KUBO node running (`docker compose up -d` in `/var/www/ipfs`). No account or CLI setup needed.
 
 **What it does:**
 
 1. Scans `ficheros/publicos/` for all files. Skips `.docx` files when a `.pdf` with the same stem exists in the same folder (the `.pdf` is the original source document).
-2. Loads `storacha/cids.json` (the sync state — stores CID + SHA-256 hash per file)
+2. Loads `ipfs/cids.json` (the sync state — stores CID + SHA-256 hash per file)
 3. Detects **new** files (not in mapping), **modified** files (hash changed), and **deleted** files (in mapping but not on disk)
 4. Re-uploads modified files (removes old CID, uploads new version)
 5. Uploads new files (`w3 up --no-wrap`) -- saves after each upload, safe to interrupt
-6. Removes CIDs from Storacha for deleted files (`w3 rm`). This also cleans up `.docx` files that were previously uploaded but now have a `.pdf` sibling.
-7. Saves updated `storacha/cids.json`
-8. Uploads the entire `ficheros/publicos/` directory (without `--no-wrap`) to generate a **root directory CID** that wraps all files into a single browsable IPFS directory. Saves to `storacha/root_cid.txt`.
+6. Unpins CIDs from KUBO for deleted files (`/api/v0/pin/rm`). This also cleans up `.docx` files that were previously pinned but now have a `.pdf` sibling.
+7. Saves updated `ipfs/cids.json`
+8. Rebuilds the MFS directory tree on KUBO and stats it to generate a **root directory CID** that wraps all files into a single browsable IPFS directory. Saves to `ipfs/root_cid.txt`.
 
-**`--no-wrap`**: uploads the file directly so its CID refers to the file itself. URL: `https://w3s.link/ipfs/<CID>` serves the file directly.
+**Root directory CID:** The final step rebuilds the MFS directory tree on KUBO and produces a single CID that contains the full folder tree (paths + filenames). This CID can be pinned on another IPFS node (`ipfs pin add <root-cid>`) to recursively pin every file in one operation. The root CID is regenerated on every run that has changes.
 
-**Root directory CID:** The final step uploads the whole directory to produce a single CID that contains the full folder tree (paths + filenames). This CID can be pinned on another IPFS node (`ipfs pin add <root-cid>`) to recursively pin every file in one operation, adding redundancy. Since IPFS is content-addressed, duplicate files in different folders appear twice in the directory structure but share the same underlying blocks (no storage duplication). The root CID is regenerated on every run that has changes.
+**On deletion:** unpinning removes the file from the local KUBO node. It will no longer be served via the gateway once garbage collection runs (`ipfs repo gc`).
 
-**On deletion:** `w3 rm` removes the upload from your Storacha space (stops being served via gateway immediately). Data already committed to Filecoin deals persists until those deals expire (~18 months). For a public archive, this is acceptable.
-
-**`storacha/cids.json`** -- do not delete. If lost, re-running the script is safe (same content = same CID on IPFS), but creates duplicate upload records in your Storacha space.
+**`ipfs/cids.json`** -- do not delete. If lost, re-running the script is safe (same content = same CID on IPFS) and will re-pin all files from scratch.
 
 **After running:** re-run `embed_and_index.py` (after deleting `qdrant_db/`) so the new CIDs are stored in the Qdrant payload.
 
@@ -365,11 +362,11 @@ w3 space use <space-did>
 
 **Script:** `embed_and_index.py`
 
-**Run:** `venv/bin/python embed_and_index.py`  (after `sync_to_storacha.py`)
+**Run:** `venv/bin/python embed_and_index.py`  (after `sync_to_ipfs.py`)
 
 **What it does:**
 
-1. Loads `storacha/cids.json` -- maps public filenames to IPFS CIDs
+1. Loads `ipfs/cids.json` -- maps public filenames to IPFS CIDs
 2. Counts total chunks in `chunks/chunks.jsonl`
 3. Creates (or opens) a local Qdrant collection at `qdrant_db/`
 4. **Resumable:** skips already-indexed chunks
@@ -377,7 +374,7 @@ w3 space use <space-did>
 6. Processes chunks in batches of 256, embeds with `max_length=512`
 7. Upserts each batch into Qdrant with full metadata + IPFS info as payload
 
-**PDF fallback for download URLs:** when a chunk comes from a `.docx` (used for better RAG text), `embed_and_index.py` looks up the `.pdf` CID in Storacha first. This way the download URL points to the original PDF source, not the `.docx` transcription.
+**PDF fallback for download URLs:** when a chunk comes from a `.docx` (used for better RAG text), `embed_and_index.py` looks up the `.pdf` CID on the KUBO node first. This way the download URL points to the original PDF source, not the `.docx` transcription.
 
 **Payload stored per point:**
 
@@ -392,13 +389,13 @@ w3 space use <space-did>
     "date":            "1967-04-18",
     "publication":     "YA",
     "cid":             "bafybei...",
-    "download_url":    "https://w3s.link/ipfs/bafybei..."
+    "download_url":    "https://ipfs.antoniogarciatrevijano.info/ipfs/bafybei..."
 }
 ```
 
 `date` and `publication` are parsed from the filename convention (see Step 2). Empty strings when the filename doesn't match.
 
-`cid` and `download_url` are `""` / `null` for `privados/` files and for public files not yet synced to Storacha.
+`cid` and `download_url` are `""` / `null` for `privados/` files and for public files not yet pinned on KUBO.
 
 ### Vector DB choice: Qdrant
 
@@ -488,7 +485,7 @@ Lower-level access to the RAG retrieval without the LLM call. Useful for debuggi
             "date": "1996-01-29",
             "publication": "EL MUNDO",
             "cid": "bafybei...",
-            "download_url": "https://w3s.link/ipfs/bafybei..."
+            "download_url": "https://ipfs.antoniogarciatrevijano.info/ipfs/bafybei..."
         }
     ]
 }
@@ -523,7 +520,7 @@ venv/bin/pip install -r requirements.txt
 # 2. Run the processing pipeline (steps 1-5)
 venv/bin/python convert_documents.py
 venv/bin/python chunk_documents.py
-venv/bin/python sync_to_storacha.py
+venv/bin/python sync_to_ipfs.py
 venv/bin/python embed_and_index.py
 
 # 3. Start the API (bge-m3 downloads automatically on first run, ~2.3 GB)
@@ -575,7 +572,7 @@ Every message sent through OpenWebUI is automatically augmented with relevant do
 1. Add files to ficheros/publicos/ or ficheros/privados/
 2. venv/bin/python convert_documents.py     # skips already-converted files
 3. venv/bin/python chunk_documents.py       # skips already-chunked files
-4. venv/bin/python sync_to_storacha.py      # uploads new public files, removes deleted ones
+4. venv/bin/python sync_to_ipfs.py      # uploads new public files, removes deleted ones
 5. systemctl stop rag-api
    rm -rf qdrant_db/
    venv/bin/python embed_and_index.py       # re-indexes with updated CIDs
@@ -588,7 +585,7 @@ Every message sent through OpenWebUI is automatically augmented with relevant do
 rm -rf output/ chunks/ qdrant_db/
 venv/bin/python convert_documents.py        # ~90 min on GPU
 venv/bin/python chunk_documents.py          # ~2 min
-venv/bin/python sync_to_storacha.py         # cleans up old .docx uploads
+venv/bin/python sync_to_ipfs.py         # cleans up old .docx uploads
 systemctl stop rag-api                      # or kill uvicorn
 venv/bin/python embed_and_index.py          # ~few min
 systemctl start rag-api                     # or: venv/bin/uvicorn rag_api:app --host 0.0.0.0 --port 8000

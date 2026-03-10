@@ -11,8 +11,10 @@ const currentPath = Astro.url.pathname;
 
 const navLinks = [
   { href: "/", label: "Inicio" },
+  { href: "/cronologia/", label: "Cronología" },
   { href: "/articulos/", label: "Artículos" },
   { href: "/hechos/", label: "Hechos" },
+  { href: "/fotos/", label: "Fotos" },
   { href: "/libros/", label: "Libros" },
   { href: "/audios/", label: "Audios" },
   { href: "/videos/", label: "Vídeos" },
@@ -99,10 +101,7 @@ function isActive(href: string): boolean {
     <footer class="bg-brand-50 border-t border-brand-100 text-gray-600 text-sm">
       <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
         <p>Archivo dedicado a la memoria de Antonio García-Trevijano (1928–2018)</p>
-        <p>
-          Contenido almacenado en
-          <a href="https://web3.storage" class="underline hover:text-brand-700" target="_blank" rel="noopener">IPFS</a>
-        </p>
+        <p>Contenido almacenado en IPFS</p>
       </div>
     </footer>
   </body>

@@ -1,0 +1,31 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { marked } from "marked";
+import Base from "../layouts/Base.astro";
+
+const mdPath = join(
+  process.cwd(),
+  "..",
+  "output",
+  "publicos",
+  "cronología",
+  "0.CRONOLOGÍA AGT. 2026.md"
+);
+
+let htmlContent = "";
+try {
+  const md = readFileSync(mdPath, "utf-8");
+  htmlContent = marked.parse(md) as string;
+} catch {
+  htmlContent = "<p><em>Contenido no disponible.</em></p>";
+}
+---
+
+<Base title="Cronología" description="Cronología, datos, hechos y testimonios de Antonio García-Trevijano">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Cronología</h1>
+    <p class="text-gray-500 mb-10">Datos, hechos y testimonios de Antonio García-Trevijano · 1927–2018</p>
+    <div class="article-body" set:html={htmlContent} data-pagefind-body />
+  </div>
+</Base>

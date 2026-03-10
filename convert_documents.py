@@ -6,7 +6,7 @@ Usage:
 
 Pre-step: all .doc files in ficheros/ are converted to .docx in-place using
 LibreOffice. The .docx becomes the canonical source file for the rest of the
-pipeline (hashing, conversion, chunking, Storacha upload). The original .doc
+pipeline (hashing, conversion, chunking, IPFS upload). The original .doc
 is left untouched but ignored by all subsequent steps.
 
 Then reads all supported files from ficheros/ (recursively), deduplicates by
@@ -41,6 +41,7 @@ INPUT_DIR = Path("ficheros")
 OUTPUT_DIR = Path("output")
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".jpg", ".jpeg", ".png"}
 SKIP_EXTENSIONS = {".lnk", ".url", ".doc"}  # .doc handled by pre-step
+SKIP_FOLDERS = {"fotos"}  # folders to exclude from RAG pipeline entirely
 
 # ── Setup converter ────────────────────────────────────────────────────
 
@@ -86,7 +87,12 @@ def convert_all_doc_to_docx(input_dir: Path) -> list[tuple[Path, Path]]:
     directory using LibreOffice. Returns list of (doc_path, docx_path) for
     files that were converted. Skips if the .docx already exists.
     """
-    doc_files = sorted(p for p in input_dir.rglob("*") if p.is_file() and p.suffix.lower() == ".doc")
+    doc_files = sorted(
+        p for p in input_dir.rglob("*")
+        if p.is_file()
+        and p.suffix.lower() == ".doc"
+        and not SKIP_FOLDERS.intersection(p.relative_to(input_dir).parts)
+    )
     if not doc_files:
         return []
 
@@ -135,6 +141,9 @@ def collect_files(input_dir: Path) -> list[tuple[Path, str | None]]:
     candidates = []
     for path in sorted(input_dir.rglob("*")):
         if not path.is_file():
+            continue
+        # Skip files inside excluded folders (e.g. fotos/ — no text to extract)
+        if SKIP_FOLDERS.intersection(path.relative_to(input_dir).parts):
             continue
         ext = path.suffix.lower()
         if path.name.endswith(".pdfa.tmp.pdf"):

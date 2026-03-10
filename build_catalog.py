@@ -3,13 +3,17 @@ Generate website catalog from processed documents.
 
 Scans output/publicos/ for Docling JSON files, reads origin.filename from
 each, parses metadata from the filename convention, cross-references with
-storacha/cids.json for IPFS links, and outputs site/src/data/catalog.json.
+ipfs/cids.json for IPFS links, and outputs site/src/data/catalog.json.
 
 Usage:
     python build_catalog.py
 
-Run after convert_documents.py and sync_to_storacha.py — it needs
-output/*.json for source filenames and storacha/cids.json for IPFS CIDs.
+Run after convert_documents.py and sync_to_ipfs.py — it needs
+output/*.json for source filenames and ipfs/cids.json for IPFS CIDs.
+
+Two-pass catalog:
+  Pass 1 — articles and historical docs (via Docling output/*.json)
+  Pass 2 — photos (scanned directly from ficheros/publicos/fotos/)
 """
 
 import json
@@ -21,9 +25,12 @@ from pathlib import Path
 # ── Configuration ─────────────────────────────────────────────────────
 
 OUTPUT_DIR = Path("output/publicos")
-CIDS_FILE = Path("storacha/cids.json")
+FOTOS_DIR = Path("ficheros/publicos/fotos")
+CIDS_FILE = Path("ipfs/cids.json")
 CATALOG_FILE = Path("site/src/data/catalog.json")
-GATEWAY = "https://w3s.link/ipfs"
+GATEWAY = "https://ipfs.antoniogarciatrevijano.info/ipfs"
+
+PHOTO_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".avif", ".tif", ".tiff"}
 
 # Known publications extracted from corpus analysis.
 # Used to distinguish publication from title in filenames.
@@ -207,6 +214,161 @@ def _title_case(text: str) -> str:
         else:
             result.append(w.lower())
     return " ".join(result)
+
+
+# ── Photo filename parser ─────────────────────────────────────────────
+
+def _make_photo_caption(rest: str) -> str:
+    """
+    Build a readable caption from the non-date portion of a photo filename.
+
+    Strips author suffixes, sequence numbers, technical codes (IMG_, WA, URLs,
+    resolutions), then joins the remaining dot-separated parts with ' · ' and
+    applies title case.
+    """
+    # Strip _AGT suffix (author tag used in article filenames, occasionally in photos)
+    agt_idx = rest.upper().rfind("_AGT")
+    if agt_idx > 0:
+        rest = rest[:agt_idx]
+    else:
+        # Strip trailing _AUTHOR NAME (underscore followed by 3+ uppercase letters)
+        us = rest.rfind("_")
+        if us > 0 and re.search(r"[A-Z]{3}", rest[us + 1 :]):
+            rest = rest[:us]
+
+    # Split on dots and clean each part
+    raw_parts = [p.strip() for p in rest.split(".")]
+    clean = []
+    for p in raw_parts:
+        if not p:
+            continue
+        if p.lower() == "o":                               # stray letter suffix
+            continue
+        if re.fullmatch(r"\d+", p):                        # pure number (series, year)
+            continue
+        if re.fullmatch(r"(IMG|MG)_\d+", p, re.I):        # camera codes IMG_1234
+            continue
+        if re.fullmatch(r"-?WA\d+", p, re.I):             # WhatsApp codes WA0001
+            continue
+        if re.fullmatch(r"\d{6,}", p):                     # timestamps 124208
+            continue
+        if re.search(r"https?:|www\.", p, re.I):           # URLs
+            continue
+        if re.fullmatch(r"\d+[xX×]\d+", p):               # resolutions 1536x864
+            continue
+        clean.append(p)
+
+    # Strip trailing standalone sequence number from last part
+    if clean:
+        last = re.sub(r"\s*[(\[]\d+[)\]]\s*$", "", clean[-1])   # trailing (1) or [1]
+        last = re.sub(r"[\s._]+\d+\s*$", "", last).strip()       # trailing .1 or _1
+        if last:
+            clean[-1] = last
+        else:
+            clean.pop()
+
+    if not clean:
+        return ""
+
+    # Apply title case to uniform-case parts (all-upper or all-lower);
+    # leave mixed-case parts as-is (they already have intentional casing).
+    titled = []
+    for p in clean:
+        bare = p.replace(" ", "").replace("-", "")
+        titled.append(_title_case(p) if (bare.isupper() or bare.islower()) else p)
+    return " · ".join(titled)
+
+
+def parse_photo_filename(stem: str) -> dict:
+    """
+    Parse a photo filename stem into date and caption.
+
+    Expected patterns (best-effort, many filenames are informal):
+      YYYY.MMDD.CONTEXT.DESCRIPTION.N  →  date=YYYY-MM-DD, caption from rest
+      YYYY.MMDD_SOMETHING              →  date=YYYY-MM-DD, caption from rest
+      YYYY.CONTEXT.N                   →  date=YYYY, caption from rest
+      CONTEXT                          →  date=None, caption from whole stem
+
+    Returns dict with: date (ISO string or None), title (str).
+    """
+    # Strip _page-NNNN suffix (scans of magazine pages)
+    stem = re.sub(r"_page-\d+$", "", stem, flags=re.I)
+    # Strip trailing dimension suffixes like -150x150 or -1024x391
+    stem = re.sub(r"-\d+[xX]\d+$", "", stem)
+
+    # Try full date: YYYY + sep + MMDD + sep + rest
+    # Accept . - _ , or space as separator after MMDD
+    m = re.match(r"^(\d{4})[.\- ,](\d{2})(\d{2})[.\-_, ](.+)", stem)
+    if m:
+        year, month, day, rest = m.groups()
+        # Validate month/day to avoid false matches like 1976.1994.1104...
+        if int(month) <= 12 and int(day) <= 31:
+            if month == "00":
+                date = year
+            elif day == "00":
+                date = f"{year}-{month}"
+            else:
+                date = f"{year}-{month}-{day}"
+            return {"date": date, "title": _make_photo_caption(rest.lstrip(". "))}
+
+    # Try year-only: YYYY + sep + rest
+    m = re.match(r"^(\d{4})[.\- ,](.+)", stem)
+    if m:
+        year, rest = m.groups()
+        return {"date": year, "title": _make_photo_caption(rest.lstrip(". "))}
+
+    # No date prefix — clean up the whole stem as caption
+    return {"date": None, "title": _make_photo_caption(stem)}
+
+
+def build_fotos_entries(cids: dict) -> list[dict]:
+    """
+    Scan FOTOS_DIR and return a catalog entry for each image file.
+
+    Photos are not processed by Docling, so metadata comes entirely from the
+    filename. CIDs are looked up directly from ipfs/cids.json using the key
+    "fotos/{filename}" (relative to ficheros/publicos/).
+    """
+    if not FOTOS_DIR.exists():
+        print(f"Warning: {FOTOS_DIR} not found — skipping photos")
+        return []
+
+    entries = []
+    for photo_path in sorted(FOTOS_DIR.iterdir()):
+        if not photo_path.is_file():
+            continue
+        if photo_path.suffix.lower() not in PHOTO_EXTENSIONS:
+            continue
+
+        stem = photo_path.stem
+        # Strip double extension artefact (e.g. "name.JPG.jpg" → "name")
+        # PHOTO_EXTENSIONS contains dotted forms (".jpg"), so prepend "." when comparing.
+        if "." in stem and "." + stem.rsplit(".", 1)[1].lower() in PHOTO_EXTENSIONS:
+            stem = stem.rsplit(".", 1)[0]
+
+        metadata = parse_photo_filename(stem)
+
+        # CIDs are stored relative to ficheros/publicos/, so key = "fotos/{filename}"
+        cid_entry = cids.get(f"fotos/{photo_path.name}")
+        ipfs_cid = cid_entry.get("cid") if cid_entry else None
+
+        entries.append({
+            "category": "fotos",
+            "subcategory": None,
+            "title": metadata["title"],
+            "date": metadata["date"],
+            "date_raw": None,
+            "publication": None,
+            "series_number": None,
+            "has_text": False,
+            "markdown_path": None,
+            "ipfs_cid": ipfs_cid,
+            "ipfs_url": f"{GATEWAY}/{ipfs_cid}" if ipfs_cid else None,
+            "source_filename": photo_path.name,
+            "slug": slugify(stem) or slugify(photo_path.name),
+        })
+
+    return entries
 
 
 # ── Slug generation ───────────────────────────────────────────────────
@@ -395,6 +557,10 @@ def build_catalog():
         catalog.append(entry)
         stats["ok"] += 1
 
+    # Pass 2: photos (scanned directly from ficheros/publicos/fotos/)
+    fotos = build_fotos_entries(cids)
+    catalog.extend(fotos)
+
     # Sort by category then date
     catalog.sort(key=lambda x: (x["category"], x.get("date") or "0000"))
 
@@ -409,12 +575,15 @@ def build_catalog():
     has_text_count = sum(1 for item in catalog if item["has_text"])
     has_cid_count = sum(1 for item in catalog if item["ipfs_cid"])
 
+    fotos_with_cid = sum(1 for f in fotos if f["ipfs_cid"])
+
     print(f"\nCatalog written to {CATALOG_FILE}")
     print(f"  Total items:  {len(catalog)}")
     print(f"  With text:    {has_text_count}")
     print(f"  With IPFS:    {has_cid_count}")
     print(f"  Deduplicated: {stats['deduped']}")
     print(f"  No origin:    {stats['no_origin']}")
+    print(f"\nPhotos: {len(fotos)} found, {fotos_with_cid} with IPFS CIDs")
     print(f"\nCategories:")
     for cat, count in categories.most_common():
         print(f"  {cat}: {count}")

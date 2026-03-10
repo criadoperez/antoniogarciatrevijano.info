@@ -12,6 +12,9 @@ Phase 1 complete. The site generates 1,887 static pages:
 - Client-side full-text search via Pagefind (1,856 pages indexed, 50,543 words)
 - Prev/next navigation on every article page
 
+In progress:
+- Photo gallery (`/fotos/`) — timeline grid of ~130 photographs, 1939–2017
+
 ```bash
 # Quick build
 cd site && npm run build
@@ -29,10 +32,12 @@ ficheros/publicos/           Source documents (articles, historical docs)
         │
         ├── convert_documents.py  →  output/publicos/*.md *.json   (existing RAG pipeline)
         ├── chunk_documents.py    →  chunks/chunks.jsonl
-        ├── sync_to_storacha.py   →  storacha/cids.json            (IPFS upload)
+        ├── sync_to_ipfs.py   →  ipfs/cids.json            (IPFS upload)
         ├── embed_and_index.py    →  qdrant_db/                    (vector DB)
         │
-        └── build_catalog.py      →  site/src/data/catalog.json    (NEW: website catalog)
+        ├── build_catalog.py      →  site/src/data/catalog.json    (website catalog)
+        │                                     │
+        └── ficheros/publicos/fotos/  ──────►─┘  (scanned directly, not via Docling)
                                           │
                                      astro build
                                           │
@@ -41,7 +46,9 @@ ficheros/publicos/           Source documents (articles, historical docs)
 
 **Two independent outputs from the same source documents:**
 1. **RAG pipeline** — chunks, embeddings, Qdrant, LLM chat (existing, runs on agt.criadoperez.com)
-2. **Static website** — browsable archive of articles, events, books, audio/video links, and chat widget
+2. **Static website** — browsable archive of articles, events, books, photo gallery, audio/video links, and chat widget
+
+**Note:** `ficheros/publicos/fotos/` is excluded from the RAG pipeline (`SKIP_FOLDERS` in `convert_documents.py`) — photos contain no extractable text. They are synced to IPFS normally and scanned directly by `build_catalog.py` for the website catalog.
 
 ---
 
@@ -55,10 +62,13 @@ agt/
 │   │   │   ├── DOC/                Organized copies (docx only)
 │   │   │   ├── JPG/                Scanned articles (jpg only)
 │   │   │   └── PDF/                Original scans (pdf only)
-│   │   └── AGT.HECHOS/             Historical events, each in a subfolder
-│   │       ├── 1967-GUINEA.AGT/
-│   │       ├── 1973.JUNTA DEMOCRATICA DE ESPAÑA.AGT/
-│   │       └── ...
+│   │   ├── AGT.HECHOS/             Historical events, each in a subfolder
+│   │   │   ├── 1967-GUINEA.AGT/
+│   │   │   ├── 1973.JUNTA DEMOCRATICA DE ESPAÑA.AGT/
+│   │   │   └── ...
+│   │   └── fotos/                  ~130 photographs, 1939–2017
+│   │                               RAG pipeline SKIPPED — photos only, no text
+│   │                               IPFS-synced; scanned by build_catalog.py
 │   └── privados/
 │       └── AGT.LIBROS/             11 books (listed on site, not downloadable)
 │
@@ -66,7 +76,7 @@ agt/
 │   ├── articulos/*.md *.json       ~1,298 converted articles
 │   └── AGT.HECHOS/**/*.md *.json   Converted historical docs
 │
-├── storacha/cids.json              IPFS CIDs for all public files (3,437 entries)
+├── ipfs/cids.json              IPFS CIDs for all public files (3,437 entries)
 │
 ├── build_catalog.py                Generates catalog.json for the website
 │
@@ -85,6 +95,7 @@ agt/
 │   │   │   ├── articulos/[slug].astro      Individual article (full text + IPFS link)
 │   │   │   ├── hechos/index.astro          Historical events list
 │   │   │   ├── hechos/[event].astro        Documents for one event
+│   │   │   ├── fotos.astro                 Photo gallery (timeline grid, lightbox)
 │   │   │   ├── libros.astro                Book listing (no download)
 │   │   │   ├── audios.astro                Link to iVoox channel
 │   │   │   ├── videos.astro                Link to YouTube channel
@@ -103,12 +114,46 @@ agt/
 
 ### Catalog generation (`build_catalog.py`)
 
+Two-pass catalog builder:
+
+**Pass 1 — Articles and historical documents** (from Docling output):
 1. Walks `output/publicos/` for all `.json` files (Docling output)
 2. Reads `origin.filename` from each JSON (first 1KB) to get the original source filename
 3. Parses the filename: `YYYY.MMDD.PUBLICATION.TITLE_AUTHOR.ext`
-4. Cross-references `storacha/cids.json` for IPFS download URLs
+4. Cross-references `ipfs/cids.json` for IPFS download URLs
 5. Checks for companion `.md` file (converted article text)
-6. Outputs `site/src/data/catalog.json`
+
+**Pass 2 — Photos** (directly from source folder):
+1. Scans `ficheros/publicos/fotos/` for image files (jpg, jpeg, png, webp, avif, tif)
+2. Parses year and caption from filename (best-effort — see "Photo filename parsing" below)
+3. Cross-references `ipfs/cids.json` for IPFS URLs (must run `sync_to_ipfs.py` first)
+4. Adds entries with `category: "fotos"` — no `has_text`, no `publication`
+
+Both passes write to `site/src/data/catalog.json`.
+
+### Photo filename parsing
+
+Photo filenames follow varied, informal conventions. The parser (`parse_photo_filename` in `build_catalog.py`) is best-effort:
+
+```
+YYYY.MMDD.CONTEXT.DESCRIPTION.N.ext  →  date=YYYY-MM-DD, caption from rest
+YYYY.MMDD_CODE.ext                   →  date=YYYY-MM-DD, caption empty (time/WA codes filtered)
+YYYY.CONTEXT.N.ext                   →  date=YYYY,       caption from rest
+CONTEXT.ext                          →  date=None,       caption from whole stem
+```
+
+Caption cleaning (`_make_photo_caption`):
+- Strips trailing `_AUTHOR NAME` (underscore-prefixed person name after title)
+- Strips `_page-NNNN` scan suffixes and `_AGT` author tags
+- Splits on dots; filters out pure numbers, `IMG_`/`MG_` camera codes, `WA` codes, timestamps, URLs, resolution strings
+- Strips trailing series numbers (`.1`, `.2`, `(1)` etc.) from the last part
+- Applies title case to all-uppercase or all-lowercase parts; leaves mixed-case as-is
+- Joins remaining parts with ` · `
+
+Known limitations:
+- Facebook/social media photo IDs (`1070086_398515276924259_n.jpg`) produce no meaningful caption
+- Filenames with year embedded mid-string (`LIBRERIA RUEDO IBERICO.PARIS.1970.jpg`) are placed in "Sin fecha" since there is no year prefix
+- Informal URLs in filenames (`1972. httpsfotos.europapress...`) partially leak into the caption
 
 ### Filename convention
 
@@ -157,19 +202,29 @@ The chat page embeds a JavaScript widget that calls the RAG API:
 
 ## Adding new content
 
+### Articles / historical documents
 1. Drop new files in `ficheros/publicos/` (follow the naming convention)
 2. Run the pipeline:
    ```bash
    python convert_documents.py      # Convert to markdown
    python chunk_documents.py        # Chunk for RAG
-   python sync_to_storacha.py       # Upload to IPFS
+   python sync_to_ipfs.py           # Pin to KUBO
    python embed_and_index.py        # Update vector DB
    python build_catalog.py          # Regenerate website catalog
    cd site && npm run build         # Rebuild static site
    ```
-3. Deploy `site/dist/` to IPFS or web server
 
-New categories: just create a new subfolder under `ficheros/publicos/`. The catalog builder auto-discovers all subdirectories. Add a corresponding Astro route in `site/src/pages/`.
+### Photos
+Photos go in `ficheros/publicos/fotos/`. They are **excluded from the RAG pipeline** (`SKIP_FOLDERS` in `convert_documents.py`) — only IPFS sync and the catalog builder run on them:
+```bash
+python sync_to_ipfs.py       # Pin photos to KUBO (adds CIDs to ipfs/cids.json)
+python build_catalog.py      # Scan fotos/ and add to catalog
+cd site && npm run build     # Rebuild static site
+```
+No `convert_documents.py`, `chunk_documents.py`, or `embed_and_index.py` needed.
+
+New text categories: create a new subfolder under `ficheros/publicos/`. The catalog builder auto-discovers all subdirectories. Add a corresponding Astro route in `site/src/pages/`.
+New non-text categories (like `fotos`): add the folder name to `SKIP_FOLDERS` in `convert_documents.py`, then add scanning logic to `build_catalog.py` and an Astro route.
 
 ---
 
@@ -179,7 +234,7 @@ New categories: just create a new subfolder under `ficheros/publicos/`. The cata
 |-----------|------|-----|
 | Static site | IPFS via Kubo | www.antoniogarciatrevijano.info |
 | IPFS gateway | Kubo | ipfs.antoniogarciatrevijano.info |
-| Original documents | IPFS (Storacha upload, Kubo gateway) | w3s.link/ipfs/{cid} |
+| Original documents | IPFS (KUBO upload, Kubo gateway) | ipfs.antoniogarciatrevijano.info/ipfs/{cid} |
 | RAG API | VPS | agt.criadoperez.com |
 
 DNS: `www.antoniogarciatrevijano.info` served via Kubo IPFS gateway. `ipfs.antoniogarciatrevijano.info` points to the Kubo node API/gateway.
@@ -188,8 +243,9 @@ DNS: `www.antoniogarciatrevijano.info` served via Kubo IPFS gateway. `ipfs.anton
 
 ## Phases
 
-### Phase 1 (current) — Article archive + Chat
+### Phase 1 (current) — Article archive + Chat + Photos
 - Static site with all articles, historical events, book listing
+- Photo gallery (`/fotos/`) — timeline grid with lightbox, ~130 photographs
 - Client-side search (Pagefind)
 - AI chat widget
 - Audio/video pages as links to iVoox/YouTube channels
@@ -210,6 +266,9 @@ DNS: `www.antoniogarciatrevijano.info` served via Kubo IPFS gateway. `ipfs.anton
 ## Known limitations
 
 - **42 HECHOS documents have no parsed date** — their filenames don't follow the `YYYY.MMDD` convention (e.g., `0.CONSTITUCION DE GUINEA.1973.W.pdf`, `CITAS DE AGT SOBRE GUINEA.docx`). They still appear in the site with their title but no date.
+- **Photos require IPFS sync before catalog build** — if `sync_to_ipfs.py` hasn't run for a photo, it has no `ipfs_url` and is silently skipped by the gallery page. Always run `sync_to_ipfs.py` before `build_catalog.py` when adding new photos.
+- **Photo caption quality** — captions come entirely from filename parsing (no manual metadata). Filenames with Facebook/social IDs, YouTube links, or non-standard formats produce empty or noisy captions. See "Photo filename parsing" section for details.
+- **fotos/ excluded from RAG** — `SKIP_FOLDERS = {"fotos"}` in `convert_documents.py`. Intentional: photos yield no useful text for the vector DB. Add other non-text folder names to `SKIP_FOLDERS` as needed.
 - **Slug generation** in `hechos/index.astro` and `hechos/[event].astro` must stay in sync — both compute slugs from subcategory folder names using the same regex. If one changes, links will break.
 - **New publications** not in the `KNOWN_PUBLICATIONS` set in `build_catalog.py` will not be separated from the title. Add them to the set when new publications appear.
 - **Pagefind** runs as a post-build step. The `npm run build` script chains it: `astro build && npx pagefind --site dist`.
