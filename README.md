@@ -515,6 +515,18 @@ The `source_file` field in Qdrant reflects the subfolder prefix:
 
 `download_url` and `cid` are pre-computed at index time by `embed_and_index.py`. No URL logic lives in the API.
 
+### After cloning: restore source documents from IPFS
+
+`ficheros/publicos/` is not tracked in git. After cloning, restore it using the root directory CID stored in `ipfs/root_cid.txt`:
+
+```bash
+ipfs get $(cat ipfs/root_cid.txt) -o ficheros/publicos/
+```
+
+This requires the [IPFS CLI (Kubo)](https://docs.ipfs.tech/install/command-line/) to be installed. It downloads the full directory tree in one command and is resumable — safe to interrupt and re-run.
+
+---
+
 ### Server setup
 
 ```bash
