@@ -65,12 +65,13 @@ The bug exists **only in 1.17.0**. All versions 1.13.x-1.16.2 are clean.
 Single machine running everything: document processing (steps 1-5), vector database, RAG API, and LLM calls.
 
 ```
-Static site (IPFS)            Server (agt.criadoperez.com)
+www.antoniogarciatrevijano.info       Server (agt.criadoperez.com)
+(IPFS via Kubo + IPNS)
 +----------------+            +------------------------------+
 |  HTML/JS       |--POST /chat-->  RAG API (rag_api.py)      |
 |  chat widget   |<--stream---|    |- bge-m3 (embedding)     |
 +----------------+            |    |- Qdrant (vector DB)     |
-                              |    '- OpenAI API (LLM)       |
+www2: nginx static fallback   |    '- OpenAI API (LLM)       |
 OpenWebUI (LAN)               |                              |
 +----------------+            |                              |
 |  Chat UI       |--/v1/chat/completions-->                  |

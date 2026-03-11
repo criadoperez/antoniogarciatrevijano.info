@@ -16,11 +16,11 @@ In progress:
 - Photo gallery (`/fotos/`) — timeline grid of ~130 photographs, 1939–2017
 
 ```bash
-# Quick build
+# Quick build (site only, no IPFS publish)
 cd site && npm run build
 
-# Full rebuild (catalog + site + search index)
-cd /root/agt && ./build.sh
+# Full rebuild (catalog + site + deploy to www2 + publish to IPFS/IPNS)
+cd /root/antoniogarciatrevijano.info && ./build.sh
 ```
 
 ---
@@ -41,7 +41,11 @@ ficheros/publicos/           Source documents (articles, historical docs)
                                           │
                                      astro build
                                           │
-                                     site/dist/   →  IPFS / web server
+                                     site/dist/
+                                          │
+                              ┌───────────┴───────────┐
+                              ▼                       ▼
+                    IPFS/Kubo (www)          nginx static (www2)
 ```
 
 **Two independent outputs from the same source documents:**
@@ -232,13 +236,49 @@ New non-text categories (like `fotos`): add the folder name to `SKIP_FOLDERS` in
 
 | Component | Host | URL |
 |-----------|------|-----|
-| Static site | IPFS via Kubo | www.antoniogarciatrevijano.info |
+| Static site (IPFS) | Kubo gateway (nginx proxy) | www.antoniogarciatrevijano.info |
+| Static site (nginx) | nginx, serves site/dist directly | www2.antoniogarciatrevijano.info |
 | IPFS gateway | Kubo | ipfs.antoniogarciatrevijano.info |
-| Original documents | IPFS (KUBO upload, Kubo gateway) | ipfs.antoniogarciatrevijano.info/ipfs/{cid} |
+| Original documents | IPFS (Kubo) | ipfs.antoniogarciatrevijano.info/ipfs/{cid} |
 | RAG API | VPS | agt.criadoperez.com |
 
-DNS: `www.antoniogarciatrevijano.info` served via Kubo IPFS gateway. `ipfs.antoniogarciatrevijano.info` points to the Kubo node API/gateway.
+### DNS
 
+- `www` -- A record (grey cloud), nginx proxies to Kubo gateway on `localhost:8080`. Kubo resolves the DNSLink TXT record and serves the pinned site.
+- `www2` -- A record (orange cloud), nginx serves `/var/www/www-site` directly from disk.
+- `_dnslink.www` -- TXT record: `dnslink=/ipns/k51qzi5uqu5dm9uonrvozk33zarhrb5mql3mzyfy3rzecedoucnhkx4gh8lbf1`
+
+### IPNS
+
+The site is published under a named IPNS key (`antoniogarciatrevijano`) so the DNS TXT record never needs to change. After each build, `build.sh` publishes the new CID to IPNS:
+
+```bash
+docker exec kubo ipfs name publish --key=antoniogarciatrevijano <CID>
+```
+
+IPNS key ID: `k51qzi5uqu5dm9uonrvozk33zarhrb5mql3mzyfy3rzecedoucnhkx4gh8lbf1`
+
+### Kubo DNS resolver
+
+Kubo runs inside Docker and by default uses the host's ISP nameservers, which may return NXDOMAIN for newly created DNS records. Kubo is configured to use Cloudflare DNS-over-HTTPS for all DNSLink lookups:
+
+```bash
+docker exec kubo ipfs config --json DNS.Resolvers '{".":" https://cloudflare-dns.com/dns-query"}'
+docker restart kubo
+```
+
+Without this, DNSLink resolution fails silently and the gateway returns 404.
+
+### Adding new nginx config files
+
+Each nginx `.conf` file must be explicitly bind-mounted into the nginx container -- there is no wildcard mount. To add a new vhost:
+
+1. Create the file in `/var/www/archivo-trevijano/config/nginx/`
+2. Add the mount to the `nginx` service in `/var/www/archivo-trevijano/docker-compose.prod.yml`:
+   ```yaml
+   - ./config/nginx/newfile.conf:/etc/nginx/conf.d/newfile.conf:ro
+   ```
+3. Recreate the container: `cd /var/www/archivo-trevijano && docker compose -f docker-compose.prod.yml up -d --no-deps nginx`
 ---
 
 ## Phases
