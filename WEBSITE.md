@@ -16,12 +16,15 @@ In progress:
 - Photo gallery (`/fotos/`) — timeline grid of ~130 photographs, 1939–2017
 
 ```bash
-# Quick build (site only, no IPFS publish)
-cd site && npm run build
-
-# Full rebuild (catalog + site + deploy to www2 + publish to IPFS/IPNS)
+# Full rebuild (catalog + site + publish to IPFS/IPNS) — use this for deploys
 cd /root/antoniogarciatrevijano.info && ./build.sh
+
+# Site only, skip catalog (still publishes to IPFS/IPNS)
+cd /root/antoniogarciatrevijano.info && ./build.sh --site
 ```
+
+> **Note:** `cd site && npm run build` only builds to `site/dist/` — it does NOT publish
+> to IPFS or update IPNS. Always use `./build.sh` (or `./build.sh --site`) for deploys.
 
 ---
 

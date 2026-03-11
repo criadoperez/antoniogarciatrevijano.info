@@ -10,6 +10,8 @@ Guide to building a Retrieval-Augmented Generation (RAG) system from a folder of
 |------|--------|--------|-------|
 | 1 -- Document Conversion | `convert_documents.py` | Needs re-run | Dedup logic added; re-run with clean `output/` |
 | 1b -- Blog Conversion | `convert_blog.py` | Not yet run | Converts 168 blog posts (strips comments); run once |
+| 1c -- Audio Download | `download_audios.py` | Not started | Downloads 1,967 iVoox audio files (run on GPU laptop, resumable) |
+| 1d -- Audio Transcription | `transcribe_audios.py` | Not started | Transcribes with faster-whisper large-v3/es (run on GPU laptop, resumable) |
 | 2 -- Chunking | `chunk_documents.py` | Needs re-run | Re-run with clean `chunks/` to pick up `date`/`publication` fields |
 | 3 -- IPFS Sync | `sync_to_ipfs.py` | Not started | KUBO node running at localhost:5001 |
 | 4+5 -- Embedding + Indexing | `embed_and_index.py` | Needs re-run | Re-run after step 2 with clean `qdrant_db/` to store `date`/`publication` |
@@ -93,6 +95,10 @@ agt/
 |   |-- publicos/                    # Public files -- indexed + hosted on local KUBO node
 |   |   |-- articulos/               # Press articles (~2,500 files)
 |   |   '-- AGT.LIBROS/              # Books (~40 files)
+|   |   '-- audios/                  # Audio files + transcripts (step 1c/1d output)
+|   |       |-- <id>.mp3             # Original iVoox audio (original quality)
+|   |       |-- <id>.md              # Transcript with YAML frontmatter (feeds RAG + site)
+|   |       '-- <id>.srt             # Timestamped subtitles (for site player)
 |   '-- privados/                    # Private files -- indexed for RAG only, never served
 |
 |-- output/                          # Step 1 output -- pipeline intermediate (not served)
@@ -121,6 +127,9 @@ agt/
 |-- .env                             # OPENAI_API_KEY, LLM_MODEL, RAG_API_KEY
 |-- convert_documents.py             # Step 1 (PDF, DOCX, images)
 |-- convert_blog.py                  # Step 1b — blog posts only (strips comments, preserves title/date/author)
+|-- download_audios.py               # Step 1c — download iVoox audio files (run on GPU laptop)
+|-- transcribe_audios.py             # Step 1d — transcribe audio with faster-whisper large-v3 (run on GPU laptop)
+|-- ivoox_links.txt                  # 1,967 iVoox URLs extracted from cronología
 |-- chunk_documents.py               # Step 2
 |-- sync_to_ipfs.py              # Step 3 -- IPFS sync
 |-- embed_and_index.py               # Step 4+5
@@ -193,6 +202,9 @@ Both are available in Docling. We chose **EasyOCR** because:
 The RAG pipeline has 6 steps:
 
 1. **Document Conversion** -- Pre-convert `.doc` → `.docx`, dedup, then extract text into DoclingDocument JSON (Docling)
+1b. **Blog Conversion** -- Convert 168 blog post Markdown files (strips comments, preserves metadata)
+1c. **Audio Download** -- Download 1,967 iVoox audio files in original format (`download_audios.py`, GPU laptop)
+1d. **Audio Transcription** -- Transcribe with faster-whisper large-v3, forced Spanish; outputs `.md` + `.srt` per file (`transcribe_audios.py`, GPU laptop)
 2. **Chunking** -- Split the text into smaller passages (Docling HybridChunker)
 3. **IPFS Sync** -- Pin public files on the local KUBO node (skips `.docx` when `.pdf` exists), record CIDs in `ipfs/cids.json`
 4. **Embedding** -- Convert each chunk into a vector (BAAI/bge-m3), store CID in payload
@@ -272,6 +284,97 @@ Docling offers two conversion pipelines:
 8. Saves `output/conversion_report.json` (includes lists of content dupes and docx-preferred skips)
 
 ---
+
+## Audio Pipeline (Steps 1c-1d)
+
+Audio files and their transcripts are processed on a separate GPU machine (not the production server) due to the compute requirements of faster-whisper. The outputs -- `.mp3` audio and `.md` / `.srt` transcript files -- are then rsynced into `ficheros/publicos/audios/` on the server and fed into the normal pipeline (steps 2-5).
+
+### Requirements (GPU machine)
+
+```bash
+pip install yt-dlp faster-whisper tqdm
+```
+
+No CUDA toolkit install needed -- faster-whisper bundles its own CTranslate2 CUDA runtime.
+
+Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, faster-whisper large-v3 FP16 (~3.5 GB VRAM).
+
+### Step 1c: Audio Download
+
+**Script:** `download_audios.py`
+
+**Run:** `python download_audios.py`  (from project root, on GPU laptop)
+
+**Input:** `ivoox_links.txt` -- 1,967 iVoox page URLs extracted from the cronologia document.
+
+**What it does:**
+
+1. Reads all URLs from `ivoox_links.txt`
+2. Downloads each audio in original format (iVoox serves MP3 128 kbps)
+3. Saves `{id}.mp3` + `{id}.info.json` (full yt-dlp metadata) to `ficheros/publicos/audios/`
+4. Waits 3-8 s between requests to avoid iVoox rate-limiting
+5. Tracks completed downloads in `.yt-dlp-archive.txt` -- safe to Ctrl+C and re-run
+
+**Output filename:** iVoox numeric ID as stem (e.g. `1463648.mp3`). Human-readable title lives in the `.info.json` and `.md` frontmatter.
+
+**Errors:** unavailable or deleted files are skipped and logged to `.download-errors.txt`.
+
+**Estimated time:** ~3-4 hours for 1,967 files (dominated by the polite delays, not bandwidth).
+
+### Step 1d: Audio Transcription
+
+**Script:** `transcribe_audios.py`
+
+**Run:** `python transcribe_audios.py`  (from project root, on GPU laptop, after step 1c)
+
+**What it does:**
+
+1. Scans `ficheros/publicos/audios/` for audio files (`.mp3`, `.m4a`, `.ogg`, etc.)
+2. Skips files where `{stem}.md` already exists (resumable)
+3. Loads `faster-whisper large-v3` on GPU with FP16
+4. Transcribes each file with:
+   - Language forced to Spanish (`language="es"`) -- no detection overhead
+   - Beam size 5 -- best quality
+   - VAD filter enabled -- removes silence/music, improves accuracy and speed
+5. Writes two output files per audio:
+   - `{id}.md` -- clean transcript with YAML frontmatter (title, date, uploader, ivoox_url, duration)
+   - `{id}.srt` -- timestamped subtitles (for future site player sync)
+6. Logs failures to `.transcribe-failures.txt`; continues on error
+
+**`.md` frontmatter fields:**
+
+| Field | Source | Notes |
+|-------|--------|-------|
+| `title` | yt-dlp `title` | Episode title from iVoox |
+| `date` | yt-dlp `upload_date` | ISO YYYY-MM-DD |
+| `uploader` | yt-dlp `uploader` | Channel/show name |
+| `ivoox_url` | yt-dlp `webpage_url` | Original iVoox page |
+| `ivoox_id` | yt-dlp `id` | Numeric iVoox ID |
+| `duration_seconds` | yt-dlp `duration` | Integer seconds |
+| `audio_filename` | filename | e.g. `1463648.mp3` |
+| `audio_cid` | (empty) | Filled in by `sync_to_ipfs.py` |
+
+**Estimated time:** ~3 days continuous on RTX 3070 Ti (large-v3 FP16, ~15-25x real-time factor). Fully resumable across sessions.
+
+### Syncing results to the server
+
+After both scripts finish, rsync the outputs to the production server:
+
+```bash
+rsync -avz --progress ficheros/publicos/audios/ root@antoniogarciatrevijano.info:/root/antoniogarciatrevijano.info/ficheros/publicos/audios/
+```
+
+Then run the normal pipeline on the server (steps 2-5) to index the new transcripts.
+
+### Workflow for adding new audio files
+
+```
+1. Add new iVoox URLs to ivoox_links.txt
+2. python download_audios.py          # skips already-downloaded files
+3. python transcribe_audios.py        # skips already-transcribed files
+4. rsync ficheros/publicos/audios/ to server
+5. On server: run steps 2-5 (chunk -> IPFS sync -> re-index)
+```
 
 ## Step 2: Chunking
 
@@ -590,6 +693,7 @@ Every message sent through OpenWebUI is automatically augmented with relevant do
 1. Add files to ficheros/publicos/ or ficheros/privados/
 2. venv/bin/python convert_documents.py     # skips already-converted files
    venv/bin/python convert_blog.py           # blog posts only (run after adding new posts)
+   # For audio: run download_audios.py + transcribe_audios.py on GPU laptop, then rsync audios/
 3. venv/bin/python chunk_documents.py       # skips already-chunked files
 4. venv/bin/python sync_to_ipfs.py      # uploads new public files, removes deleted ones
 5. systemctl stop rag-api
