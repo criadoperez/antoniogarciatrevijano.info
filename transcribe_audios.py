@@ -20,7 +20,7 @@ Usage:
 import json
 import sys
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 try:
@@ -126,6 +126,20 @@ def write_md(segments: list, info: dict, audio_path: Path) -> None:
         body += ["", "---", ""]
 
     body.append(transcript)
+
+    # Append comments if present in info.json (fetched by download_audios.py --writecomments)
+    comments = info.get("comments") or []
+    if comments:
+        body += ["", "---", "", "## Comentarios", ""]
+        for c in comments:
+            author    = (c.get("author") or "Anónimo").strip()
+            text      = (c.get("text") or "").strip()
+            timestamp = c.get("timestamp")
+            date_str  = ""
+            if timestamp:
+                date_str = f" · {datetime.fromtimestamp(timestamp, tz=timezone.utc).strftime('%Y-%m-%d')}"
+            if text:
+                body += [f"**{author}**{date_str}", "", text, ""]
 
     md_path = audio_path.with_suffix(".md")
     with open(md_path, "w", encoding="utf-8") as f:

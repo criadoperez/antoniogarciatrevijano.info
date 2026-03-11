@@ -4,7 +4,8 @@ download_audios.py — Download iVoox audio files listed in ivoox_links.txt
 
 Output per file:
   ficheros/publicos/audios/{id}.{ext}       — audio in original format
-  ficheros/publicos/audios/{id}.info.json   — full yt-dlp metadata
+  ficheros/publicos/audios/{id}.info.json   — full yt-dlp metadata (title, description,
+                                              upload date, duration, comments, ...)
 
 Resumable: .yt-dlp-archive.txt tracks completed downloads; safe to Ctrl+C and re-run.
 
@@ -27,6 +28,11 @@ LINKS_FILE = BASE_DIR / "ivoox_links.txt"
 OUTPUT_DIR = BASE_DIR / "ficheros" / "publicos" / "audios"
 ARCHIVE_FILE = OUTPUT_DIR / ".yt-dlp-archive.txt"
 ERRORS_FILE = OUTPUT_DIR / ".download-errors.txt"
+
+# Browser to read cookies from — helps bypass Cloudflare bot detection.
+# Change to "chrome", "chromium", "brave", "edge", etc. if you don't use Firefox.
+# Must be a browser you have installed and have visited ivoox.com with recently.
+COOKIES_BROWSER = "firefox"
 
 
 def main():
@@ -53,8 +59,15 @@ def main():
         "format": "bestaudio/best",
         # Output filename: use iVoox numeric ID as stem (e.g. 1463648.mp3)
         "outtmpl": str(OUTPUT_DIR / "%(id)s.%(ext)s"),
-        # Save full metadata JSON alongside each audio file
+        # Save full metadata JSON alongside each audio file (includes title, description,
+        # upload date, duration — and comments when available)
         "writeinfojson": True,
+        # Fetch comments and store them in the info.json under the "comments" key.
+        # iVoox comment support depends on the yt-dlp extractor; silently skipped if unavailable.
+        "writecomments": True,
+        # Pass browser cookies to bypass Cloudflare bot detection.
+        # Format: (browser, profile, keyring, container) — profile/keyring/container can be None.
+        "cookiesfrombrowser": (COOKIES_BROWSER, None, None, None),
         # Resume support: tracks downloaded IDs, skips on re-run
         "download_archive": str(ARCHIVE_FILE),
         # Conservative delays to avoid iVoox rate-limiting (~3–8s per file, ~3–4h total)
