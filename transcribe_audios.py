@@ -93,7 +93,7 @@ def srt_time(seconds: float) -> str:
 
 
 def translate_speaker(label: str) -> str:
-    Translate pyannote speaker labels to Spanish: SPEAKER_XX → LOCUTOR_XX.
+    """Translate pyannote speaker labels to Spanish: SPEAKER_XX -> LOCUTOR_XX."""
     return label.replace("SPEAKER_", "LOCUTOR_").replace("UNKNOWN", "DESCONOCIDO")
 
 
