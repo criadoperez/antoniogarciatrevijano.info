@@ -1,32 +1,51 @@
 #!/usr/bin/env python3
 """
-transcribe_audios.py — Transcribe iVoox audio files using faster-whisper large-v3 (GPU).
+transcribe_audios.py — Transcribe + diarize iVoox audio using WhisperX.
 
-Input:  ficheros/publicos/audios/{id}.mp3  +  {id}.info.json
-Output per file:
-  {id}.md   — clean transcript with YAML frontmatter (feeds RAG pipeline + static site)
-  {id}.srt  — timestamped subtitles (for site player sync, future use)
+Pipeline per file:
+  1. Transcribe  — faster-whisper large-v3, float16, beam_size=10, forced Spanish
+  2. Align       — forced word-level alignment (wav2vec2)
+  3. Diarize     — pyannote speaker-diarization-3.1 (requires HF_TOKEN)
+  4. Assign      — merge speaker turns into transcript segments
 
-Resumable: skips files where {id}.md already exists. Safe to Ctrl+C and re-run.
+Input:   ficheros/publicos/audios/{id}.mp3  +  {id}.info.json
+Output:  {id}.md   — YAML frontmatter + speaker-labelled transcript
+         {id}.srt  — timestamped subtitles with speaker labels
+
+Resumable: skips {id}.md if it already exists. Safe to Ctrl+C and re-run.
 
 Requirements:
-    pip install faster-whisper tqdm
-    CUDA toolkit + NVIDIA drivers (RTX 3070 Ti — large-v3 fits in FP16, ~3.5 GB VRAM)
+    pip install whisperx
+    CUDA + NVIDIA drivers (RTX 3070 Ti — large-v3 float16 fits in ~4 GB VRAM)
+    HF_TOKEN env var — HuggingFace token with access to:
+      https://huggingface.co/pyannote/speaker-diarization-3.1
+      https://huggingface.co/pyannote/segmentation-3.0
 
 Usage:
-    python transcribe_audios.py
+    python transcribe_audios.py  # HF_TOKEN is read from .env
 """
 
 import json
+import os
 import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+# Load .env from project root
+_env_path = Path(__file__).parent / ".env"
+if _env_path.exists():
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _, _v = _line.partition("=")
+                os.environ.setdefault(_k.strip(), _v.strip())
+
 try:
-    from faster_whisper import WhisperModel
+    import whisperx
 except ImportError:
-    print("faster-whisper not installed. Run: pip install faster-whisper")
+    print("whisperx not installed. Run: pip install whisperx")
     sys.exit(1)
 
 try:
@@ -37,19 +56,26 @@ except ImportError:
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
-BASE_DIR = Path(__file__).parent
+BASE_DIR  = Path(__file__).parent
 AUDIO_DIR = BASE_DIR / "ficheros" / "publicos" / "audios"
 
 AUDIO_EXTENSIONS = {".mp3", ".m4a", ".ogg", ".opus", ".wav", ".flac", ".aac", ".wma"}
 
-MODEL_SIZE    = "large-v3"   # Best available Whisper model
-LANGUAGE      = "es"         # Force Spanish — skip language detection
-BEAM_SIZE     = 5            # Standard beam search width, good quality/speed balance
-COMPUTE_TYPE  = "float16"    # FP16 on GPU: ~3.5 GB VRAM, fastest
-DEVICE        = "cuda"
-# VAD (voice activity detection) removes silence/music, improves accuracy
-VAD_FILTER    = True
-VAD_MIN_SILENCE_MS = 500
+MODEL_SIZE   = "large-v3"  # Best available Whisper model
+LANGUAGE     = "es"        # Force Spanish — skip language detection
+BEAM_SIZE    = 10          # Max practical quality (default is 5)
+COMPUTE_TYPE = "float16"   # FP16: ~4 GB VRAM, native Whisper precision
+DEVICE       = "cuda"
+BATCH_SIZE   = 16          # WhisperX batches 30s chunks; 16 works well on 8 GB VRAM
+
+MIN_SPEAKERS = 1
+MAX_SPEAKERS = 10          # Upper bound; pyannote detects the actual number
+
+# HuggingFace token for pyannote diarization models.
+# Get a token at: https://huggingface.co/settings/tokens
+# Accept terms at: https://huggingface.co/pyannote/speaker-diarization-3.1
+#                  https://huggingface.co/pyannote/segmentation-3.0
+HF_TOKEN = os.environ.get("HF_TOKEN", "")
 
 FAILURES_FILE = AUDIO_DIR / ".transcribe-failures.txt"
 
@@ -57,7 +83,6 @@ FAILURES_FILE = AUDIO_DIR / ".transcribe-failures.txt"
 
 def srt_time(seconds: float) -> str:
     """Convert float seconds to SRT timestamp: HH:MM:SS,mmm"""
-    # Work in integer milliseconds to avoid floating-point rounding producing ms=1000
     total_ms = round(seconds * 1000)
     ms = total_ms % 1000
     total_s = total_ms // 1000
@@ -67,12 +92,23 @@ def srt_time(seconds: float) -> str:
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
 
+def translate_speaker(label: str) -> str:
+    Translate pyannote speaker labels to Spanish: SPEAKER_XX → LOCUTOR_XX.
+    return label.replace("SPEAKER_", "LOCUTOR_").replace("UNKNOWN", "DESCONOCIDO")
+
+
 def write_srt(segments: list, path: Path) -> None:
+    idx = 1
     with open(path, "w", encoding="utf-8") as f:
-        for i, seg in enumerate(segments, 1):
-            f.write(f"{i}\n")
-            f.write(f"{srt_time(seg.start)} --> {srt_time(seg.end)}\n")
-            f.write(f"{seg.text.strip()}\n\n")
+        for seg in segments:
+            text = seg.get("text", "").strip()
+            if not text:
+                continue
+            speaker = translate_speaker(seg.get("speaker", "UNKNOWN"))
+            f.write(f"{idx}\n")
+            f.write(f"{srt_time(seg['start'])} --> {srt_time(seg['end'])}\n")
+            f.write(f"[{speaker}] {text}\n\n")
+            idx += 1
 
 
 def parse_date(raw: str) -> str:
@@ -80,7 +116,7 @@ def parse_date(raw: str) -> str:
     raw = (raw or "").strip()
     if len(raw) == 8 and raw.isdigit():
         return f"{raw[:4]}-{raw[4:6]}-{raw[6:]}"
-    return raw  # already formatted or empty
+    return raw
 
 
 def load_info(audio_path: Path) -> dict:
@@ -93,7 +129,7 @@ def load_info(audio_path: Path) -> dict:
 
 
 def write_md(segments: list, info: dict, audio_path: Path) -> None:
-    """Write YAML-frontmatter markdown transcript."""
+    """Write YAML-frontmatter markdown transcript grouped by speaker turns."""
     title       = info.get("title") or audio_path.stem
     date        = parse_date(info.get("upload_date", ""))
     uploader    = info.get("uploader") or "iVoox"
@@ -102,9 +138,9 @@ def write_md(segments: list, info: dict, audio_path: Path) -> None:
     duration    = int(info.get("duration") or 0)
     description = (info.get("description") or "").strip()
 
-    transcript = "\n\n".join(seg.text.strip() for seg in segments if seg.text.strip())
+    # Collect unique speaker IDs for frontmatter
+    speakers = sorted({translate_speaker(seg.get("speaker", "UNKNOWN")) for seg in segments if seg.get("text", "").strip()})
 
-    # YAML frontmatter — title and uploader are JSON-quoted to handle special chars
     frontmatter = [
         "---",
         f"title: {json.dumps(title, ensure_ascii=False)}",
@@ -115,22 +151,36 @@ def write_md(segments: list, info: dict, audio_path: Path) -> None:
         f"duration_seconds: {duration}",
         f'audio_filename: "{audio_path.name}"',
         'audio_cid: ""',      # filled in later by sync_to_ipfs.py
+        f"speakers: {json.dumps(speakers)}",
         "---",
         "",
     ]
 
     body = []
     if description:
-        # Include original episode description as a blockquote before the transcript
         body += [f"> {line}" if line else ">" for line in description.splitlines()]
         body += ["", "---", ""]
 
-    body.append(transcript)
+    # Group consecutive segments by speaker into turns
+    turns = []
+    for seg in segments:
+        text = seg.get("text", "").strip()
+        if not text:
+            continue
+        speaker = translate_speaker(seg.get("speaker", "UNKNOWN"))
+        if turns and turns[-1][0] == speaker:
+            turns[-1][1].append(text)
+        else:
+            turns.append((speaker, [text]))
 
-    # Append comments if present in info.json (fetched by download_audios.py --writecomments)
+    for speaker, texts in turns:
+        body.append(f"**{speaker}:** {' '.join(texts)}")
+        body.append("")
+
+    # Append comments from info.json
     comments = info.get("comments") or []
     if comments:
-        body += ["", "---", "", "## Comentarios", ""]
+        body += ["---", "", "## Comentarios", ""]
         for c in comments:
             author    = (c.get("author") or "Anónimo").strip()
             text      = (c.get("text") or "").strip()
@@ -158,6 +208,14 @@ def human_duration(seconds: float) -> str:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    if not HF_TOKEN:
+        print("Error: HF_TOKEN environment variable not set.")
+        print("  Get a token : https://huggingface.co/settings/tokens")
+        print("  Accept terms: https://huggingface.co/pyannote/speaker-diarization-3.1")
+        print("  Accept terms: https://huggingface.co/pyannote/segmentation-3.0")
+        print("\nSet HF_TOKEN in .env and re-run.")
+        sys.exit(1)
+
     if not AUDIO_DIR.exists():
         print(f"Audio directory not found: {AUDIO_DIR}")
         sys.exit(1)
@@ -181,10 +239,33 @@ def main():
         print("All done!")
         sys.exit(0)
 
-    print(f"\nLoading faster-whisper {MODEL_SIZE} on {DEVICE} ({COMPUTE_TYPE})...")
+    # ── Load all models once ───────────────────────────────────────────────────
+    print(f"\nLoading WhisperX {MODEL_SIZE} on {DEVICE} ({COMPUTE_TYPE}, beam_size={BEAM_SIZE})...")
     t0 = time.time()
-    model = WhisperModel(MODEL_SIZE, device=DEVICE, compute_type=COMPUTE_TYPE)
-    print(f"Model loaded in {time.time() - t0:.1f}s\n")
+    asr_model = whisperx.load_model(
+        MODEL_SIZE,
+        DEVICE,
+        compute_type=COMPUTE_TYPE,
+        language=LANGUAGE,
+        asr_options={"beam_size": BEAM_SIZE},
+    )
+    print(f"ASR model loaded in {time.time() - t0:.1f}s")
+
+    print("Loading alignment model (wav2vec2 es)...")
+    t0 = time.time()
+    align_model, align_metadata = whisperx.load_align_model(
+        language_code=LANGUAGE,
+        device=DEVICE,
+    )
+    print(f"Alignment model loaded in {time.time() - t0:.1f}s")
+
+    print("Loading diarization model (pyannote speaker-diarization-3.1)...")
+    t0 = time.time()
+    diarize_model = whisperx.DiarizationPipeline(
+        use_auth_token=HF_TOKEN,
+        device=DEVICE,
+    )
+    print(f"Diarization model loaded in {time.time() - t0:.1f}s\n")
 
     failures = []
     total_audio_seconds = 0.0
@@ -199,14 +280,33 @@ def main():
 
         t_start = time.time()
         try:
-            segments_gen, _ = model.transcribe(
-                str(audio_path),
-                language=LANGUAGE,
-                beam_size=BEAM_SIZE,
-                vad_filter=VAD_FILTER,
-                vad_parameters={"min_silence_duration_ms": VAD_MIN_SILENCE_MS},
+            # 1. Load audio
+            audio = whisperx.load_audio(str(audio_path))
+
+            # 2. Transcribe
+            result = asr_model.transcribe(audio, batch_size=BATCH_SIZE, language=LANGUAGE)
+
+            # 3. Align (word-level timestamps — required for accurate speaker assignment)
+            result = whisperx.align(
+                result["segments"],
+                align_model,
+                align_metadata,
+                audio,
+                DEVICE,
+                return_char_alignments=False,
             )
-            segments = list(segments_gen)   # materialise once for both outputs
+
+            # 4. Diarize
+            diarize_segments = diarize_model(
+                audio,
+                min_speakers=MIN_SPEAKERS,
+                max_speakers=MAX_SPEAKERS,
+            )
+
+            # 5. Assign speakers to transcript segments
+            result = whisperx.assign_word_speakers(diarize_segments, result)
+            segments = result["segments"]
+
         except Exception as e:
             tqdm.write(f"  [FAIL] {audio_path.name}: {e}")
             failures.append(f"{audio_path.name}: {e}")
@@ -218,8 +318,8 @@ def main():
         total_audio_seconds += audio_duration
         total_wall_seconds  += elapsed
 
-        # Real-time factor: 1.0 means as fast as real-time
         rtf = elapsed / audio_duration if audio_duration > 0 else 0.0
+        speaker_ids = sorted({translate_speaker(seg.get("speaker", "UNKNOWN")) for seg in segments if seg.get("text", "").strip()})
 
         write_srt(segments, audio_path.with_suffix(".srt"))
         write_md(segments, info, audio_path)
@@ -229,7 +329,7 @@ def main():
             f"audio={human_duration(audio_duration)}  "
             f"wall={human_duration(elapsed)}  "
             f"RTF={rtf:.2f}x  "
-            f"segments={len(segments)}"
+            f"speakers={len(speaker_ids)} ({', '.join(speaker_ids)})"
         )
 
     # ── Summary ───────────────────────────────────────────────────────────────
