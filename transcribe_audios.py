@@ -43,6 +43,7 @@ if _env_path.exists():
                 os.environ.setdefault(_k.strip(), _v.strip())
 
 try:
+    import torch
     import whisperx
     from whisperx.diarize import DiarizationPipeline, assign_word_speakers
 except ImportError:
@@ -317,6 +318,15 @@ def main():
             with open(FAILURES_FILE, "a") as f:
                 f.write(f"{audio_path.name}: {e}\n")
             continue
+        finally:
+            # Explicitly release per-file objects so CUDA cache can be fully cleared
+            try: del audio
+            except NameError: pass
+            try: del result
+            except NameError: pass
+            try: del diarize_segments
+            except NameError: pass
+            torch.cuda.empty_cache()
 
         elapsed = time.time() - t_start
         total_audio_seconds += audio_duration
