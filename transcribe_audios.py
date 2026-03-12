@@ -44,6 +44,7 @@ if _env_path.exists():
 
 try:
     import whisperx
+    from whisperx.diarize import DiarizationPipeline, assign_word_speakers
 except ImportError:
     print("whisperx not installed. Run: pip install whisperx")
     sys.exit(1)
@@ -261,8 +262,8 @@ def main():
 
     print("Loading diarization model (pyannote speaker-diarization-3.1)...")
     t0 = time.time()
-    diarize_model = whisperx.DiarizationPipeline(
-        use_auth_token=HF_TOKEN,
+    diarize_model = DiarizationPipeline(
+        token=HF_TOKEN,
         device=DEVICE,
     )
     print(f"Diarization model loaded in {time.time() - t0:.1f}s\n")
@@ -304,7 +305,7 @@ def main():
             )
 
             # 5. Assign speakers to transcript segments
-            result = whisperx.assign_word_speakers(diarize_segments, result)
+            result = assign_word_speakers(diarize_segments, result)
             segments = result["segments"]
 
         except Exception as e:
