@@ -67,7 +67,9 @@ LANGUAGE     = "es"        # Force Spanish — skip language detection
 BEAM_SIZE    = 10          # Max practical quality (default is 5)
 COMPUTE_TYPE = "float16"   # FP16: ~4 GB VRAM, native Whisper precision
 DEVICE       = "cuda"
-BATCH_SIZE   = 16          # WhisperX batches 30s chunks; 16 works well on 8 GB VRAM
+BATCH_SIZE   = 4           # Lower batch size to fit ASR + alignment + diarization in 8 GB VRAM
+
+DIARIZATION_MODEL = "pyannote/speaker-diarization-3.1"
 
 MIN_SPEAKERS = 1
 MAX_SPEAKERS = 10          # Upper bound; pyannote detects the actual number
@@ -260,9 +262,10 @@ def main():
     )
     print(f"Alignment model loaded in {time.time() - t0:.1f}s")
 
-    print("Loading diarization model (pyannote speaker-diarization-3.1)...")
+    print(f"Loading diarization model ({DIARIZATION_MODEL})...")
     t0 = time.time()
     diarize_model = DiarizationPipeline(
+        model_name=DIARIZATION_MODEL,
         token=HF_TOKEN,
         device=DEVICE,
     )
