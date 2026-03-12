@@ -25,12 +25,16 @@ Usage:
     python transcribe_audios.py  # HF_TOKEN is read from .env
 """
 
+import gc
 import json
 import os
 import sys
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+# Enable expandable CUDA memory segments to prevent fragmentation across files
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
 # Load .env from project root
 _env_path = Path(__file__).parent / ".env"
@@ -68,7 +72,7 @@ LANGUAGE     = "es"        # Force Spanish — skip language detection
 BEAM_SIZE    = 10          # Max practical quality (default is 5)
 COMPUTE_TYPE = "float16"   # FP16: ~4 GB VRAM, native Whisper precision
 DEVICE       = "cuda"
-BATCH_SIZE   = 4           # Lower batch size to fit ASR + alignment + diarization in 8 GB VRAM
+BATCH_SIZE   = 1           # Minimum batch size: lowest VRAM, no quality impact
 
 DIARIZATION_MODEL = "pyannote/speaker-diarization-3.1"
 
@@ -326,6 +330,7 @@ def main():
             except NameError: pass
             try: del diarize_segments
             except NameError: pass
+            gc.collect()
             torch.cuda.empty_cache()
 
         elapsed = time.time() - t_start
