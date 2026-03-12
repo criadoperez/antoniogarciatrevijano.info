@@ -9,11 +9,9 @@ const blogDir = join(process.cwd(), "..", "ficheros", "publicos", "blog_2006-201
 function parseHeader(content: string) {
   const titleMatch = content.match(/^# (.+)/m);
   const dateMatch = content.match(/\*\*Fecha:\*\*\s*(\d{4}-\d{2}-\d{2})/);
-  const urlMatch = content.match(/\*\*URL original:\*\*\s*(https?:\/\/\S+)/);
   return {
     title: titleMatch ? titleMatch[1].trim() : "Sin título",
     date: dateMatch ? dateMatch[1] : null,
-    originalUrl: urlMatch ? urlMatch[1] : null,
   };
 }
 
@@ -43,7 +41,7 @@ export function getStaticPaths() {
 
 const { filename, prevSlug, prevTitle, nextSlug, nextTitle } = Astro.props;
 const content = readFileSync(join(blogDir, filename), "utf-8");
-const { title, date, originalUrl } = parseHeader(content);
+const { title, date } = parseHeader(content);
 
 // Split header from body at the first horizontal rule
 const bodyStart = content.indexOf("\n---\n");
@@ -66,16 +64,6 @@ const html = marked.parse(body) as string;
       <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
         {date && <span>{date}</span>}
         <span>Antonio García-Trevijano</span>
-        {originalUrl && (
-          <a
-            href={originalUrl}
-            target="_blank"
-            rel="noopener"
-            class="text-brand-700 hover:text-brand-900 underline"
-          >
-            Entrada original
-          </a>
-        )}
       </div>
     </header>
 

@@ -10,8 +10,8 @@ Guide to building a Retrieval-Augmented Generation (RAG) system from a folder of
 |------|--------|--------|-------|
 | 1 -- Document Conversion | `convert_documents.py` | Needs re-run | Dedup logic added; re-run with clean `output/` |
 | 1b -- Blog Conversion | `convert_blog.py` | Not yet run | Converts 168 blog posts (strips comments); run once |
-| 1c -- Audio Download | `download_audios.py` | Not started | Downloads 1,967 iVoox audio files (run on GPU laptop, resumable) |
-| 1d -- Audio Transcription | `transcribe_audios.py` | Not started | Transcribes with faster-whisper large-v3/es (run on GPU laptop, resumable) |
+| 1c -- Audio Download | `download_audios.py` | Done | Downloaded 1,959 files (8 unsupported/404 URLs skipped) |
+| 1d -- Audio Transcription | `transcribe_audios.py` | In progress | Running on GPU laptop; 1,959 files, ~10 days estimated (float16, beam_size=10) |
 | 2 -- Chunking | `chunk_documents.py` | Needs re-run | Re-run with clean `chunks/` to pick up `date`/`publication` fields |
 | 3 -- IPFS Sync | `sync_to_ipfs.py` | Not started | KUBO node running at localhost:5001 |
 | 4+5 -- Embedding + Indexing | `embed_and_index.py` | Needs re-run | Re-run after step 2 with clean `qdrant_db/` to store `date`/`publication` |
@@ -287,17 +287,24 @@ Docling offers two conversion pipelines:
 
 ## Audio Pipeline (Steps 1c-1d)
 
-Audio files and their transcripts are processed on a separate GPU machine (not the production server) due to the compute requirements of faster-whisper. The outputs -- `.mp3` audio and `.md` / `.srt` transcript files -- are then rsynced into `ficheros/publicos/audios/` on the server and fed into the normal pipeline (steps 2-5).
+Audio files and their transcripts are processed on a separate GPU machine (not the production server) due to the compute requirements of WhisperX. The outputs -- `.mp3` audio and `.md` / `.srt` transcript files -- are then rsynced into `ficheros/publicos/audios/` on the server and fed into the normal pipeline (steps 2-5).
 
 ### Requirements (GPU machine)
 
 ```bash
-pip install yt-dlp faster-whisper tqdm
+pip install yt-dlp whisperx tqdm
 ```
 
-No CUDA toolkit install needed -- faster-whisper bundles its own CTranslate2 CUDA runtime.
+No CUDA toolkit install needed -- WhisperX bundles its own CTranslate2 CUDA runtime.
 
-Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, faster-whisper large-v3 FP16 (~3.5 GB VRAM).
+Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, WhisperX large-v3 FP16 (~4 GB VRAM).
+
+**HuggingFace token required** for pyannote diarization models. Before running:
+1. Get a token at: https://huggingface.co/settings/tokens
+2. Add it to `.env`: `HF_TOKEN=hf_...`
+3. Accept model terms (one-time, in browser):
+   - https://huggingface.co/pyannote/speaker-diarization-3.1
+   - https://huggingface.co/pyannote/segmentation-3.0
 
 ### Step 1c: Audio Download
 
@@ -331,15 +338,21 @@ Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, faster-whisper large-v3 FP
 
 1. Scans `ficheros/publicos/audios/` for audio files (`.mp3`, `.m4a`, `.ogg`, etc.)
 2. Skips files where `{stem}.md` already exists (resumable)
-3. Loads `faster-whisper large-v3` on GPU with FP16
-4. Transcribes each file with:
-   - Language forced to Spanish (`language="es"`) -- no detection overhead
-   - Beam size 5 -- best quality
-   - VAD filter enabled -- removes silence/music, improves accuracy and speed
+3. Loads three models once at startup:
+   - **ASR**: WhisperX large-v3, float16, beam_size=10
+   - **Alignment**: wav2vec2 (Spanish) -- word-level timestamps
+   - **Diarization**: pyannote speaker-diarization-3.1
+4. Per file pipeline:
+   - Transcribe (forced Spanish, beam_size=10)
+   - Align (word-level timestamps -- required for accurate speaker assignment)
+   - Diarize (detect speaker turns)
+   - Assign speakers to transcript segments
 5. Writes two output files per audio:
-   - `{id}.md` -- clean transcript with YAML frontmatter (title, date, uploader, ivoox_url, duration)
-   - `{id}.srt` -- timestamped subtitles (for future site player sync)
+   - `{id}.md` -- transcript with YAML frontmatter and speaker-labelled turns
+   - `{id}.srt` -- timestamped subtitles with speaker labels
 6. Logs failures to `.transcribe-failures.txt`; continues on error
+
+**Speaker labels:** pyannote assigns anonymous labels (`SPEAKER_00`, `SPEAKER_01`, etc.) which the script translates to Spanish (`LOCUTOR_00`, `LOCUTOR_01`) in all output files. Speaker identity (i.e. which locutor is Antonio García-Trevijano) is resolved in a later post-processing step.
 
 **`.md` frontmatter fields:**
 
@@ -353,8 +366,9 @@ Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, faster-whisper large-v3 FP
 | `duration_seconds` | yt-dlp `duration` | Integer seconds |
 | `audio_filename` | filename | e.g. `1463648.mp3` |
 | `audio_cid` | (empty) | Filled in by `sync_to_ipfs.py` |
+| `speakers` | diarization | List of LOCUTOR_XX labels found in the file |
 
-**Estimated time:** ~3 days continuous on RTX 3070 Ti (large-v3 FP16, ~15-25x real-time factor). Fully resumable across sessions.
+**Estimated time:** ~20-30 days continuous on RTX 3070 Ti (diarization adds ~2-3x over transcription alone). Fully resumable across sessions.
 
 ### Syncing results to the server
 

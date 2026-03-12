@@ -29145,6 +29145,21 @@
     "slug": "2017-0300-el-rincon-de-yanka-ideologia-ideal-idealismo-y-utopia"
   },
   {
+    "category": "cronología",
+    "subcategory": null,
+    "title": "0.CRONOLOGÍA AGT. 2026.0124",
+    "date": null,
+    "date_raw": null,
+    "publication": null,
+    "series_number": null,
+    "has_text": true,
+    "markdown_path": "cronología/0.CRONOLOGÍA AGT. 2026.md",
+    "ipfs_cid": "QmYhcGjCYyM6gAD2vyPvWRhGfLGGUYw5MbQrCrwKSnRT6z",
+    "ipfs_url": "https://ipfs.antoniogarciatrevijano.info/ipfs/QmYhcGjCYyM6gAD2vyPvWRhGfLGGUYw5MbQrCrwKSnRT6z",
+    "source_filename": "0.CRONOLOGÍA AGT. 2026.0124.docx",
+    "slug": "0-cronologia-agt-2026-0124"
+  },
+  {
     "category": "fotos",
     "subcategory": null,
     "title": "1070086_398515276924259_11569444_n",
@@ -31858,20 +31873,5 @@
     "ipfs_url": "https://ipfs.antoniogarciatrevijano.info/ipfs/QmP3LnoSye2QgHmQVWm443NpHmbW6ysAemifs66E8mgq4q",
     "source_filename": "2017.0127.GUADIX.5.JPG",
     "slug": "2017-0127-guadix-5"
-  },
-  {
-    "category": "general",
-    "subcategory": null,
-    "title": "0.CRONOLOGÍA AGT. 2026.0124",
-    "date": null,
-    "date_raw": null,
-    "publication": null,
-    "series_number": null,
-    "has_text": true,
-    "markdown_path": "0.CRONOLOGÍA AGT. 2026.md",
-    "ipfs_cid": "QmYhcGjCYyM6gAD2vyPvWRhGfLGGUYw5MbQrCrwKSnRT6z",
-    "ipfs_url": "https://ipfs.antoniogarciatrevijano.info/ipfs/QmYhcGjCYyM6gAD2vyPvWRhGfLGGUYw5MbQrCrwKSnRT6z",
-    "source_filename": "0.CRONOLOGÍA AGT. 2026.0124.docx",
-    "slug": "0-cronologia-agt-2026-0124"
   }
 ]

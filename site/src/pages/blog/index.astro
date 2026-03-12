@@ -22,16 +22,16 @@ const posts = readdirSync(blogDir)
     const slug = filename.replace(".md", "").replace("_", "-");
     return { title, date, slug };
   })
-  .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  .sort((a, b) => (a.date ?? "").localeCompare(b.date ?? ""));
 
-// Group by year, newest first
+// Group by year, oldest first
 const byYear = new Map<string, typeof posts>();
 for (const post of posts) {
   const year = post.date?.slice(0, 4) ?? "sin-fecha";
   if (!byYear.has(year)) byYear.set(year, []);
   byYear.get(year)!.push(post);
 }
-const years = [...byYear.keys()].sort().reverse();
+const years = [...byYear.keys()].sort();
 ---
 
 <Base title="Blog" description="Blog de Antonio García-Trevijano, 2006–2011">
