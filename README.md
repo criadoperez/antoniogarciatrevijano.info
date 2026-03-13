@@ -1,731 +1,238 @@
-# RAG Pipeline with Docling
+# Site — www.antoniogarciatrevijano.info
 
-Guide to building a Retrieval-Augmented Generation (RAG) system from a folder of documents (PDFs, images, DOCX) using Docling for document conversion.
+Static website serving as a memorial archive for Antonio García-Trevijano (1928-2018). Built with Astro 5, styled with Tailwind CSS 4, full-text search via Pagefind, and an AI chat backed by a RAG API.
 
----
-
-## Current Status
-
-| Step | Script | Status | Notes |
-|------|--------|--------|-------|
-| 1 -- Document Conversion | `convert_documents.py` | Needs re-run | Dedup logic added; re-run with clean `output/` |
-| 1b -- Blog Conversion | `convert_blog.py` | Not yet run | Converts 168 blog posts (strips comments); run once |
-| 1c -- Audio Download | `download_audios.py` | Done | Downloaded 1,959 files (8 unsupported/404 URLs skipped) |
-| 1d -- Audio Transcription | `transcribe_audios.py` | In progress | Running on GPU laptop; 1,959 files, ~10 days estimated (float16, beam_size=10) |
-| 2 -- Chunking | `chunk_documents.py` | Needs re-run | Re-run with clean `chunks/` to pick up `date`/`publication` fields |
-| 3 -- IPFS Sync | `sync_to_ipfs.py` | Done | Audio CID pre-pass added; MFS timeouts increased to 120s |
-| 4+5 -- Embedding + Indexing | `embed_and_index.py` | Needs re-run | Re-run after step 2 with clean `qdrant_db/` to store `date`/`publication` |
-| 6 -- Query Interface | `rag_api.py` | Running | Single FastAPI service: RAG + LLM + streaming + OpenAI-compatible API |
-
-### Content deduplication
-
-Three dedup mechanisms prevent duplicate content from entering the pipeline:
-
-1. **`.doc` → `.docx` pre-step** (`convert_documents.py`): all `.doc` files are converted to `.docx` in-place using LibreOffice before anything else. The `.docx` becomes the canonical source file; `.doc` is ignored by all subsequent steps.
-
-2. **`.docx` preferred over `.pdf`** (`convert_documents.py`, `sync_to_ipfs.py`): when the same filename stem exists as both `.docx` and `.pdf` in the same folder, the `.docx` is used for RAG (cleaner text from handmade transcription) and the `.pdf` is pinned on the KUBO node (original source). `embed_and_index.py` links chunks from the `.docx` to the `.pdf`'s download URL.
-
-3. **Content hash dedup** (`convert_documents.py`): files are hashed (SHA-256) before Docling conversion. If two files anywhere in `ficheros/` have identical content (different names, paths, or extensions), only the first is converted. Duplicates are logged and listed in `conversion_report.json`.
-
-### PDF/A-2b conversion
-
-Before Docling processes a PDF, `convert_documents.py` converts it to PDF/A-2b in-place using Ghostscript (if not already PDF/A). This modernizes the container format for long-term archival without affecting content or OCR accuracy — Docling still runs its own EasyOCR on scanned pages. Ghostscript (`gs`) is required — the script checks for it at startup and exits with an install instruction if missing.
-
----
-
-### ~~qdrant-client `.search()` removed in 1.16.x~~ -- FIXED
-
-`qdrant-client` 1.16.2 removed the `.search()` method. Use `.query_points()` instead:
-
-```python
-result = client.query_points(
-    collection_name=COLLECTION,
-    query=vector,          # was query_vector=
-    limit=top_k,
-    with_payload=True,
-    score_threshold=MIN_SCORE,
-)
-for hit in result.points:  # was: for hit in hits:
-```
-
-Also, newer OpenAI models (gpt-5.4+) require `max_completion_tokens` instead of `max_tokens`.
-
----
-
-### ~~Blocker: qdrant-client import error~~ -- FIXED
-
-`qdrant-client==1.17.0` introduced a bug in `grpc_uploader.py` line 24: `grpc.UpdateMode | None` as a runtime annotation. `grpc.UpdateMode` is a protobuf `EnumTypeWrapper` (not a real Python type), so it doesn't support the `|` operator -- crashing at import time.
-
-The bug exists **only in 1.17.0**. All versions 1.13.x-1.16.2 are clean.
-
-**Fix applied:** downgraded to `qdrant-client==1.16.2`.
-
----
-
-## Architecture
-
-Single machine running everything: document processing (steps 1-5), vector database, RAG API, and LLM calls.
-
-```
-www.antoniogarciatrevijano.info       Server (agt.criadoperez.com)
-(IPFS via Kubo + IPNS)
-+----------------+            +------------------------------+
-|  HTML/JS       |--POST /chat-->  RAG API (rag_api.py)      |
-|  chat widget   |<--stream---|    |- bge-m3 (embedding)     |
-+----------------+            |    |- Qdrant (vector DB)     |
-www2: nginx static fallback   |    '- OpenAI API (LLM)       |
-OpenWebUI (LAN)               |                              |
-+----------------+            |                              |
-|  Chat UI       |--/v1/chat/completions-->                  |
-|                |<--stream---|                              |
-+----------------+            +------------------------------+
-```
-
-The frontend is a static HTML/JS page hosted on IPFS. It sends the user's question to the RAG API via `POST /chat`. The server does retrieval, calls the OpenAI API with its own key (never exposed to the browser), and streams the answer back via SSE.
-
-OpenWebUI (or any OpenAI-compatible client) can connect via the `/v1/chat/completions` endpoint.
-
----
-
-## Project File Structure
-
-```
-agt/
-|-- ficheros/                        # Source documents (input)
-|   |-- publicos/                    # Public files -- indexed + hosted on local KUBO node
-|   |   |-- articulos/               # Press articles (~2,500 files)
-|   |   '-- AGT.LIBROS/              # Books (~40 files)
-|   |   '-- audios/                  # Audio files + transcripts (step 1c/1d output)
-|   |       |-- <id>.mp3             # Original iVoox audio (original quality)
-|   |       |-- <id>.md              # Transcript with YAML frontmatter (feeds RAG + site)
-|   |       '-- <id>.srt             # Timestamped subtitles (for site player)
-|   '-- privados/                    # Private files -- indexed for RAG only, never served
-|
-|-- output/                          # Step 1 output -- pipeline intermediate (not served)
-|   |-- publicos/
-|   |   |-- articulos/
-|   |   |   |-- <doc>.json           # DoclingDocument (used for chunking)
-|   |   |   '-- <doc>.md             # Markdown (human inspection only)
-|   |   '-- AGT.LIBROS/
-|   |-- privados/
-|   '-- conversion_report.json
-|
-|-- chunks/                          # Step 2 output -- pipeline intermediate (not served)
-|   |-- chunks.jsonl                 # All chunks -- one JSON object per line
-|   |-- chunking_progress.json       # Resume tracker
-|   '-- chunking_report.json
-|
-|-- ipfs/                            # Step 3 output
-|   |-- cids.json                    # Maps relative path -> IPFS CID for every public file
-|   |                                # DO NOT DELETE -- this is the sync state
-|   '-- root_cid.txt                 # Root directory CID (for pinning on other IPFS nodes)
-|
-|-- qdrant_db/                       # Step 4+5 output -- Qdrant embedded DB
-|
-|-- venv/                            # Python virtual environment
-|-- requirements.txt                 # Python dependencies
-|-- .env                             # OPENAI_API_KEY, LLM_MODEL, RAG_API_KEY
-|-- convert_documents.py             # Step 1 (PDF, DOCX, images)
-|-- convert_blog.py                  # Step 1b — blog posts only (strips comments, preserves title/date/author)
-|-- download_audios.py               # Step 1c — download iVoox audio files (run on GPU laptop)
-|-- transcribe_audios.py             # Step 1d — transcribe audio with faster-whisper large-v3 (run on GPU laptop)
-|-- ivoox_links.txt                  # 1,967 iVoox URLs extracted from cronología
-|-- chunk_documents.py               # Step 2
-|-- sync_to_ipfs.py              # Step 3 -- IPFS sync
-|-- embed_and_index.py               # Step 4+5
-|-- rag_api.py                       # Step 6 -- FastAPI service (RAG + LLM + streaming)
-'-- README.md                        # This file
-```
-
----
-
-## Environment
-
-- **Docling version:** 2.76.0
-- **Python:** 3.13 (venv at `venv/`)
-- **OS:** Linux
-
-All commands must run inside the virtual environment. Either activate it first or use the venv Python directly:
+## Quick start
 
 ```bash
-source venv/bin/activate   # then use python / pip as normal
-# or
-venv/bin/python <script>   # without activating
+# Install dependencies
+npm install
+
+# Development (requires a prior build for Pagefind search to work)
+npm run dev
+
+# Production build (Astro + Pagefind indexing)
+npm run build
+
+# Preview the production build locally
+npm run preview
 ```
 
-The server needs enough RAM to load bge-m3 (~2.3 GB) plus Qdrant. A GPU is beneficial for steps 1 and 4+5 (document conversion and embedding) but not required -- the RAG API runs on CPU.
-
-## Dependencies
-
-### Python packages
+The full project build (catalog generation + site build) can be run from the parent directory:
 
 ```bash
-python -m venv venv
-venv/bin/python -m ensurepip          # needed on some distros (Debian/Ubuntu)
-venv/bin/pip install -r requirements.txt
+cd .. && ./build.sh          # rebuild catalog + site
+cd .. && ./build.sh --site   # site only (skip catalog)
 ```
 
-For GPU support, install PyTorch with the correct CUDA version **before** the requirements file:
-
-```bash
-venv/bin/pip install torch --index-url https://download.pytorch.org/whl/cu121  # adjust cu121 to your CUDA version
-venv/bin/pip install -r requirements.txt
-```
-
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `docling` | 2.76.0 | Document conversion engine (PDF, DOCX, images -> DoclingDocument JSON) |
-| `easyocr` | 1.7.2 | OCR engine for scanned PDFs and images. Supports 80+ languages and GPU acceleration. |
-| `FlagEmbedding` | 1.3.5 | Official BAAI library for bge-m3. Provides `BGEM3FlagModel` with native batched GPU inference. |
-| `qdrant-client` | 1.16.2 | Python client for Qdrant vector database. Used in embedded mode (no server required). |
-| `fastapi` + `uvicorn` | latest | HTTP server for the RAG API. |
-| `openai` | latest | OpenAI Python SDK for calling GPT models. |
-| `python-dotenv` | latest | Loads environment variables from `.env` file. |
-
-### System tools
-
-| Tool | Purpose |
-|------|---------|
-| `libreoffice` | Converts `.doc` (legacy Word format) to `.docx`. Install: `sudo apt install libreoffice` |
-| `gs` (Ghostscript) | Converts PDFs to PDF/A-2b for long-term archival. Install: `sudo apt install ghostscript` |
-
-### OCR engine choice: EasyOCR vs RapidOCR
-
-Both are available in Docling. We chose **EasyOCR** because:
-
-- **Language support:** EasyOCR supports 80+ languages with per-call configuration (`lang=["es", "en"]`). RapidOCR's language parameter is documented as "reserved for future compatibility" -- it currently only uses default Chinese+English models.
-- **GPU acceleration:** EasyOCR supports `use_gpu=True` for CUDA acceleration. RapidOCR uses ONNX runtime (CPU only).
-- **Accuracy:** EasyOCR uses deep learning models trained per-language, producing better results on Spanish text.
-
-## Overview
-
-The RAG pipeline has 6 steps:
-
-1. **Document Conversion** -- Pre-convert `.doc` → `.docx`, dedup, then extract text into DoclingDocument JSON (Docling)
-1b. **Blog Conversion** -- Convert 168 blog post Markdown files (strips comments, preserves metadata)
-1c. **Audio Download** -- Download 1,967 iVoox audio files in original format (`download_audios.py`, GPU laptop)
-1d. **Audio Transcription** -- Transcribe with faster-whisper large-v3, forced Spanish; outputs `.md` + `.srt` per file (`transcribe_audios.py`, GPU laptop)
-2. **Chunking** -- Split the text into smaller passages (Docling HybridChunker)
-3. **IPFS Sync** -- Pin public files on the local KUBO node (skips `.docx` when `.pdf` exists), record CIDs in `ipfs/cids.json`
-4. **Embedding** -- Convert each chunk into a vector (BAAI/bge-m3), store CID in payload
-5. **Vector Store** -- Store vectors + metadata (incl. IPFS CID) in Qdrant
-6. **Query Interface** -- FastAPI RAG API with `/chat` (streaming), `/search`, and OpenAI-compatible `/v1/chat/completions` endpoints
-
-Steps 4 and 5 are combined in `embed_and_index.py`. Steps 3 and 4+5 are independent -- if IPFS sync hasn't been run yet, indexing proceeds without download URLs (they can be added later by re-running step 3 then 4+5).
-
----
-
-## Step 1: Document Conversion
-
-### Input files
-
-Source folder: `ficheros/` (recursively scans all subfolders)
-
-| Subfolder | Description |
-|-----------|-------------|
-| `ficheros/publicos/articulos/` | Press articles and reports |
-| `ficheros/publicos/AGT.LIBROS/` | Books and longer documents |
-| `ficheros/publicos/blog_2006-2011/` | Blog posts 2006–2011 (168 `.md` files). **Not processed by `convert_documents.py`** — use `convert_blog.py` instead (strips comments, preserves title/date/author) |
-| `ficheros/privados/` | Private documents -- RAG only |
-| `ficheros/publicos/fotos/` | **Excluded** — photographs, no text to extract |
-
-**`SKIP_FOLDERS`** — folders excluded from the entire RAG pipeline. Defined in `convert_documents.py`:
-```python
-SKIP_FOLDERS = {"fotos"}  # folders to exclude from RAG pipeline entirely
-```
-Files in a `SKIP_FOLDERS` folder are not converted, not chunked, not indexed. They are still synced to IPFS by `sync_to_ipfs.py` and catalogued for the website by `build_catalog.py`. Add folder names here for any non-text content that should not enter the RAG pipeline.
-
-**Note:** `blog_2006-2011` is not in `SKIP_FOLDERS` but is also not in `SUPPORTED_EXTENSIONS` (`.md` files are ignored by `convert_documents.py`). Use the dedicated `convert_blog.py` script for blog posts.
-
-| Format | Count | Notes |
-|--------|------:|-------|
-| `.docx` | 2,568 | Parsed directly by Docling |
-| `.pdf` | 880 | Layout analysis + text extraction (OCR if scanned) |
-| `.JPG/.jpeg` | 334 | OCR required -- text extracted from images |
-| `.doc` | 20 | Pre-step converts to `.docx` in-place with LibreOffice; `.doc` ignored after that |
-| `.lnk` / `.URL` | 7 | Shortcuts -- skipped |
-| **Total** | **3,809** | |
-
-### Pipeline choice: Standard Pipeline
-
-Docling offers two conversion pipelines:
-
-- **Standard Pipeline** (`StandardPdfPipeline`): Multi-stage, multi-threaded. Uses separate specialized models for OCR, layout detection, table extraction, and assembly. Mature and optimized.
-- **VLM Pipeline** (`VlmPipeline`): A single Vision-Language Model processes each page image end-to-end. Newer, better at complex visual layouts, but slower and needs a GPU for good results.
-
-**We chose the Standard Pipeline (GPU-accelerated)** for the following reasons:
-
-1. **Throughput.** With ~3,800 files to process, the Standard pipeline's multi-threaded architecture is significantly faster than VLM's sequential per-page processing.
-2. **OCR reliability.** Dedicated OCR engines (EasyOCR, RapidOCR, Tesseract) are more accurate and mature for clean scanned documents than small VLMs. With a CUDA GPU, EasyOCR runs on GPU for faster OCR.
-3. **Document type.** The files are press articles and reports -- standard layouts that the traditional pipeline handles well. VLM would be more appropriate for complex infographics or handwritten documents.
-4. **GPU usage.** The Standard pipeline uses the GPU to accelerate OCR and layout/table models while keeping VRAM usage low (~500MB-1GB). The VLM pipeline with a model large enough to be accurate (2B+) would consume 4-8GB VRAM and still be slower overall.
-
-**CPU vs GPU:** Converting on CPU produces identical output -- same models, same quality. OCR-heavy files (JPGs, scanned PDFs) are 5-10x slower on CPU. Acceptable for incremental additions; the initial 3,214-file batch would take ~6-10 hours on CPU vs 89.6 min on GPU.
-
-### Conversion script
-
-**Script:** `convert_documents.py`
-
-**Run:** `venv/bin/python convert_documents.py`
-
-**What it does:**
-
-1. **Pre-step:** converts all `.doc` files in `ficheros/` to `.docx` in-place using LibreOffice. The `.docx` becomes the canonical source file; the `.doc` is left untouched but ignored by all subsequent steps. Skips if `.docx` already exists.
-2. Recursively scans `ficheros/` for supported files (`.pdf`, `.docx`, `.jpg`, `.jpeg`, `.png`). When the same stem exists as both `.docx` and `.pdf` in the same folder, the `.pdf` is skipped (`.docx` preferred for RAG text quality).
-3. **Content dedup:** hashes each file (SHA-256) and skips files with identical content to an earlier file.
-4. Initializes a Docling `DocumentConverter` with the Standard Pipeline:
-   - **OCR engine:** EasyOCR with GPU acceleration, languages: Spanish + English
-   - **Table extraction:** TableFormer in ACCURATE mode
-5. Converts each file and saves two output files per document:
-   - **`<name>.json`** -- full `DoclingDocument` in JSON format (primary format)
-   - **`<name>.md`** -- Markdown export for human inspection only
-6. Saves output to `output/`, preserving the subfolder structure
-7. **Resumable:** skips files that already have an output `.json` file
-8. Saves `output/conversion_report.json` (includes lists of content dupes and docx-preferred skips)
-
----
-
-## Audio Pipeline (Steps 1c-1d)
-
-Audio files and their transcripts are processed on a separate GPU machine (not the production server) due to the compute requirements of WhisperX. The outputs -- `.mp3` audio and `.md` / `.srt` transcript files -- are then rsynced into `ficheros/publicos/audios/` on the server and fed into the normal pipeline (steps 2-5).
-
-### Requirements (GPU machine)
-
-```bash
-pip install yt-dlp whisperx tqdm
-```
-
-No CUDA toolkit install needed -- WhisperX bundles its own CTranslate2 CUDA runtime.
-
-Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, WhisperX large-v3 FP16 (~4 GB VRAM).
-
-**HuggingFace token required** for pyannote diarization models. Before running:
-1. Get a token at: https://huggingface.co/settings/tokens
-2. Add it to `.env`: `HF_TOKEN=hf_...`
-3. Accept model terms (one-time, in browser):
-   - https://huggingface.co/pyannote/speaker-diarization-3.1
-   - https://huggingface.co/pyannote/segmentation-3.0
-
-### Step 1c: Audio Download
-
-**Script:** `download_audios.py`
-
-**Run:** `python download_audios.py`  (from project root, on GPU laptop)
-
-**Input:** `ivoox_links.txt` -- 1,967 iVoox page URLs extracted from the cronologia document.
-
-**What it does:**
-
-1. Reads all URLs from `ivoox_links.txt`
-2. Downloads each audio in original format (iVoox serves MP3 128 kbps)
-3. Saves `{id}.mp3` + `{id}.info.json` (full yt-dlp metadata) to `ficheros/publicos/audios/`
-4. Waits 3-8 s between requests to avoid iVoox rate-limiting
-5. Tracks completed downloads in `.yt-dlp-archive.txt` -- safe to Ctrl+C and re-run
-
-**Output filename:** iVoox numeric ID as stem (e.g. `1463648.mp3`). Human-readable title lives in the `.info.json` and `.md` frontmatter.
-
-**Errors:** unavailable or deleted files are skipped and logged to `.download-errors.txt`.
-
-**Estimated time:** ~3-4 hours for 1,967 files (dominated by the polite delays, not bandwidth).
-
-### Step 1d: Audio Transcription
-
-**Script:** `transcribe_audios.py`
-
-**Run:** `python transcribe_audios.py`  (from project root, on GPU laptop, after step 1c)
-
-**What it does:**
-
-1. Scans `ficheros/publicos/audios/` for audio files (`.mp3`, `.m4a`, `.ogg`, etc.)
-2. Skips files where `{stem}.md` already exists (resumable)
-3. Loads three models once at startup:
-   - **ASR**: WhisperX large-v3, float16, beam_size=10
-   - **Alignment**: wav2vec2 (Spanish) -- word-level timestamps
-   - **Diarization**: pyannote speaker-diarization-3.1
-4. Per file pipeline:
-   - Transcribe (forced Spanish, beam_size=10)
-   - Align (word-level timestamps -- required for accurate speaker assignment)
-   - Diarize (detect speaker turns)
-   - Assign speakers to transcript segments
-5. Writes two output files per audio:
-   - `{id}.md` -- transcript with YAML frontmatter and speaker-labelled turns
-   - `{id}.srt` -- timestamped subtitles with speaker labels
-6. Logs failures to `.transcribe-failures.txt`; continues on error
-
-**Speaker labels:** pyannote assigns anonymous labels (`SPEAKER_00`, `SPEAKER_01`, etc.) which the script translates to Spanish (`LOCUTOR_00`, `LOCUTOR_01`) in all output files. Speaker identity (i.e. which locutor is Antonio García-Trevijano) is resolved in a later post-processing step.
-
-**`.md` frontmatter fields:**
-
-| Field | Source | Notes |
-|-------|--------|-------|
-| `title` | yt-dlp `title` | Episode title from iVoox |
-| `date` | yt-dlp `upload_date` | ISO YYYY-MM-DD |
-| `uploader` | yt-dlp `uploader` | Channel/show name |
-| `ivoox_url` | yt-dlp `webpage_url` | Original iVoox page |
-| `ivoox_id` | yt-dlp `id` | Numeric iVoox ID |
-| `duration_seconds` | yt-dlp `duration` | Integer seconds |
-| `audio_filename` | filename | e.g. `1463648.mp3` |
-| `audio_cid` | (empty) | Filled in by `sync_to_ipfs.py` pre-pass (`patch_audio_cids()`) using KUBO `only-hash` API before uploading |
-| `speakers` | diarization | List of LOCUTOR_XX labels found in the file |
-
-**Estimated time:** ~20-30 days continuous on RTX 3070 Ti (diarization adds ~2-3x over transcription alone). Fully resumable across sessions.
-
-### Syncing results to the server
-
-After both scripts finish, rsync the outputs to the production server:
-
-```bash
-rsync -avz --progress ficheros/publicos/audios/ root@antoniogarciatrevijano.info:/root/antoniogarciatrevijano.info/ficheros/publicos/audios/
-```
-
-Then run the normal pipeline on the server (steps 2-5) to index the new transcripts.
-
-### Workflow for adding new audio files
-
-```
-1. Add new iVoox URLs to ivoox_links.txt
-2. python download_audios.py          # skips already-downloaded files
-3. python transcribe_audios.py        # skips already-transcribed files
-4. rsync ficheros/publicos/audios/ to server
-5. On server: run steps 2-5 (chunk -> IPFS sync -> re-index)
-```
-
-## Step 2: Chunking
-
-### What chunking does
-
-Splits each `DoclingDocument` JSON into smaller passages suitable for embedding and retrieval. Chunks carry metadata (source file, page number, section headings) for citations.
-
-### Chunker choice: HybridChunker
-
-- **`HierarchicalChunker`**: Splits strictly by document structure. Ignores token limits.
-- **`HybridChunker`**: Combines structure-awareness with a token budget. Merges small adjacent chunks and splits oversized ones while respecting document boundaries.
-
-**We chose `HybridChunker`** because consistent chunk sizes are important for embedding quality.
-
-### Chunking script
-
-**Script:** `chunk_documents.py`
-
-**Run:** `venv/bin/python chunk_documents.py`
-
-**Output format** -- each line in `chunks/chunks.jsonl`:
+## Pages and routes
+
+| Route | Source file | Description |
+|---|---|---|
+| `/` | `pages/index.astro` | Landing page with stats and navigation cards |
+| `/cronologia/` | `pages/cronologia.astro` | Full chronology (1927–2018), timeline layout with sticky year nav |
+| `/articulos/` | `pages/articulos/index.astro` | Article list with year/publication filters |
+| `/articulos/[slug]/` | `pages/articulos/[slug].astro` | Article detail with full text, IPFS link, prev/next nav |
+| `/hechos/` | `pages/hechos/index.astro` | Historical events list |
+| `/hechos/[event]/` | `pages/hechos/[event].astro` | Event detail with collapsible document texts |
+| `/blog/` | `pages/blog/index.astro` | Blog post list grouped by year (2006–2011, 168 posts) |
+| `/blog/[slug]/` | `pages/blog/[slug].astro` | Blog post with full text, original URL, prev/next nav |
+| `/fotos/` | `pages/fotos.astro` | Photo gallery — masonry grid grouped by year, lightbox |
+| `/libros/` | `pages/libros.astro` | Book listing (no downloads — private) with link to shop |
+| `/audios/` | `pages/audios/index.astro` | Audio list grouped by year with duration; links to detail pages |
+| `/audios/[id]/` | `pages/audios/[id].astro` | Audio detail: sticky player + interactive transcript (click to seek) |
+| `/videos/` | `pages/videos.astro` | Link to YouTube channel |
+| `/chat/` | `pages/chat.astro` | AI chat widget (calls RAG API) |
+
+**Current output:** ~2,300 static pages (1,870 articles + ~241 audio detail pages + 168 blog posts + 10 events + 1 cronología + other pages).
+
+## Data sources
+
+### Audio `.md` files (external, at build time)
+
+Audio transcript pages read `.md` files directly from `../ficheros/publicos/audios/` at build time via `src/lib/audio.ts`. Each file has YAML frontmatter (`title`, `date`, `ivoox_id`, `duration_seconds`, `audio_cid`, etc.) and a body with the speaker-labelled transcript. The corresponding `.srt` file (same stem) provides sentence-level timestamps for the interactive transcript player. These files are produced by the audio pipeline (`transcribe_audios.py`) and are **not part of the site directory**.
+
+### `src/data/catalog.json` (generated)
+
+Main content database. Generated by `../build_catalog.py` from Docling-converted documents. The blog section reads markdown files directly from `../ficheros/publicos/blog_2006-2011/` at build time — it does not go through `build_catalog.py`. Each entry has:
 
 ```json
 {
-    "text": "El movimiento obrero espanol...",
-    "source_file": "publicos/articulos/1967.0418.YA.LA UNIDAD Y LA INDEPENDENCIA SINDICAL_AGT",
-    "headings": ["La unidad sindical", "Introduccion"],
-    "page": 2,
-    "content_labels": ["paragraph", "paragraph"],
-    "origin_filename": "1967.0418.YA.LA UNIDAD Y LA INDEPENDENCIA SINDICAL_AGT.pdf",
-    "date": "1967-04-18",
-    "publication": "YA"
+  "category": "articulos" | "AGT.HECHOS",
+  "subcategory": "1967-GUINEA.AGT" | null,
+  "title": "Article Title",
+  "date": "2003-08-15" | null,
+  "publication": "LA RAZON" | null,
+  "series_number": 1 | null,
+  "has_text": true,
+  "markdown_path": "articulos/filename.md",
+  "ipfs_cid": "bafk...",
+  "ipfs_url": "https://w3s.link/ipfs/bafk...",
+  "source_filename": "original.docx",
+  "slug": "2003-0815-la-razon-article-title"
 }
 ```
 
-`source_file` is relative to `output/` with no extension. The `publicos/` or `privados/` prefix is preserved -- this is what downstream scripts use to determine file visibility.
+**1,944 items total:** 1,870 articles + 73 historical documents + 1 general item.
 
-`date` and `publication` are parsed from the filename when it follows the convention `YYYY.MMDD.PUBLICATION.TITLE.ext` (or `YYYY.MM.DD.PUBLICATION.TITLE.ext`). Files that don't match the convention (e.g. book titles) simply omit these fields. Minor typos in filenames (comma or dash instead of dot) are handled. The date uses ISO format: `YYYY-MM-DD`, `YYYY-MM` (day unknown), or `YYYY` (month unknown).
+### `src/data/libros.json` (manual)
 
----
+Static list of 11 books with `title`, `year`, and `description`. Maintained by hand.
 
-## Step 3: IPFS Sync
+### Markdown files (external, at build time)
 
-### Why host on KUBO
+Article and event pages read `.md` files from `../output/publicos/` at build time using `readFileSync()`. The path for each entry is stored in `catalog.json` as `markdown_path`. These files are produced by the Docling conversion pipeline and are **not part of the site directory** — they must exist in the parent project.
 
-Public documents are served directly from the self-hosted KUBO node at `ipfs.antoniogarciatrevijano.info`. Key properties:
+## Layout and styling
 
-- **Content-addressed** -- files are identified by CID (SHA-256 hash). Same content always produces the same CID.
-- **No third-party dependency** -- files are pinned and served locally; no Storacha/Filecoin account required.
-- **Integrity** -- the CID is a cryptographic proof that content hasn't changed.
-- **Private files stay off IPFS** -- only `ficheros/publicos/` is pinned. `ficheros/privados/` never leaves the local machine.
+### `layouts/Base.astro`
 
-### Sync script
+Global HTML shell used by all pages. Provides:
 
-**Script:** `sync_to_ipfs.py`
+- **Header** — Site name, navigation bar (Inicio · Cronología · Artículos · Hechos · Blog · Fotos · Libros · Audios · Vídeos · Chat IA), active link highlighting
+- **Search** — Pagefind widget in the header. A fallback `<input>` renders when Pagefind JS isn't available (dev mode before first build). When Pagefind loads, it replaces the fallback with its own widget.
+- **Content slot** — `<slot />` for page-specific content
+- **Footer** — Memorial text and IPFS attribution
 
-**Run:** `venv/bin/python sync_to_ipfs.py`
+Props: `title` (required), `description` (optional, defaults to site tagline).
 
-**Prerequisites:** KUBO node running (`docker compose up -d` in `/var/www/ipfs`). No account or CLI setup needed.
+### `styles/global.css`
 
-**What it does:**
+- Tailwind 4 import (`@import "tailwindcss"`)
+- Brand colors: `brand-900` (#6e0000, dark red) · `brand-800` (#8b0000) · `brand-700` (#a20000, primary red) · `brand-100` (#f5e0e0) · `brand-50` (#fdf4f4, light red tint)
+- Font: Myriad Pro (self-hosted OTF, weights 300/400/600/700) via `@font-face` in `global.css`; served from `public/fonts/`. Falls back to Segoe UI / Georgia.
+- Pagefind widget overrides for dark header background (white-on-dark input, white dropdown)
+- Article body typography: serif, 1.05rem, line-height 1.8, justified text
+- Interactive transcript styles: `.seg` (clickable sentence span with hover underline), `.seg-active` (currently-spoken sentence, light red background highlight)
 
-0. **Audio CID pre-pass** (`patch_audio_cids()`): scans `ficheros/publicos/audios/*.md` for entries with an empty `audio_cid` field. For each one, reads the paired `.mp3` filename from the frontmatter, calls KUBO `/api/v0/add?only-hash=true` (timeout 300s) to compute the CID without uploading, then patches `audio_cid: ""` → `audio_cid: "{cid}"` in the `.md` file. This must run before the sync proper so the `.md` file contains its CID before being uploaded (changing the `.md` after upload would change its own CID).
-1. Scans `ficheros/publicos/` for all files. Skips `.docx` files when a `.pdf` with the same stem exists in the same folder (the `.pdf` is the original source document).
-2. Loads `ipfs/cids.json` (the sync state — stores CID + SHA-256 hash per file)
-3. Detects **new** files (not in mapping), **modified** files (hash changed), and **deleted** files (in mapping but not on disk)
-4. Re-uploads modified files (removes old CID, uploads new version)
-5. Uploads new files (`w3 up --no-wrap`) -- saves after each upload, safe to interrupt
-6. Unpins CIDs from KUBO for deleted files (`/api/v0/pin/rm`). This also cleans up `.docx` files that were previously pinned but now have a `.pdf` sibling.
-7. Saves updated `ipfs/cids.json`
-8. Rebuilds the MFS directory tree on KUBO and stats it to generate a **root directory CID** that wraps all files into a single browsable IPFS directory. Saves to `ipfs/root_cid.txt`.
+## Client-side JavaScript
 
-**Root directory CID:** The final step rebuilds the MFS directory tree on KUBO and produces a single CID that contains the full folder tree (paths + filenames). This CID can be pinned on another IPFS node (`ipfs pin add <root-cid>`) to recursively pin every file in one operation. The root CID is regenerated on every run that has changes.
+The site is almost entirely static HTML. Only four pages have client-side JS:
 
-**On deletion:** unpinning removes the file from the local KUBO node. It will no longer be served via the gateway once garbage collection runs (`ipfs repo gc`).
+1. **Base.astro** — Pagefind initialization (search widget)
+2. **articulos/index.astro** — Year/publication filter dropdowns (show/hide rows by `data-*` attributes)
+3. **audios/[id].astro** — Interactive transcript player:
+   - Pre-parses `data-start`/`data-end` timestamp attributes on `.seg` spans at load time
+   - Click on any sentence → seeks the audio player to that timestamp and starts playing
+   - `timeupdate` event loop highlights the currently-spoken sentence (`.seg-active` class) using an early-break binary search (segments are sorted by time)
+4. **chat.astro** — Chat interface:
+   - POSTs to `https://agt.criadoperez.com/chat` with message history
+   - Parses SSE stream (`data: {type: "text", text: "..."}`)
+   - Renders streaming response with minimal markdown formatting
+   - Maintains conversation history in memory
 
-**`ipfs/cids.json`** -- do not delete. If lost, re-running the script is safe (same content = same CID on IPFS) and will re-pin all files from scratch.
+## Search (Pagefind)
 
-**After running:** re-run `embed_and_index.py` (after deleting `qdrant_db/`) so the new CIDs are stored in the Qdrant payload.
+Pagefind runs as a post-build step: `astro build && npx pagefind --site dist`.
 
----
+- Article detail pages have `data-pagefind-body` on the text div — only these are indexed
+- Article list rows have `data-pagefind-ignore` to avoid duplicate entries
+- Search index: ~97,000 words across ~2,266 pages (audio transcripts add the bulk of new indexed content)
+- Assets generated into `dist/pagefind/`, copied to `public/pagefind/` by `build.sh` for dev mode
 
-## Step 4+5: Embedding + Indexing
+## IPFS integration
 
-### Embedding model choice: BAAI/bge-m3
+Original source documents (PDF, DOCX, JPG) are stored on IPFS. Each catalog entry has:
 
-| Model | Max tokens | Multilingual | Quality | Notes |
-|-------|-----------|-------------|---------|-------|
-| `sentence-transformers/all-MiniLM-L6-v2` | 256 | No | Good | English-only |
-| `intfloat/multilingual-e5-large` | 512 | Yes | Very good | Lighter than bge-m3 |
-| `BAAI/bge-m3` | 8192 | Yes (100+) | **Best** | Top multilingual benchmarks, local GPU. **Chosen.** |
-| OpenAI `text-embedding-3-small` | 8191 | Yes | Excellent | API-based, costs money. Not chosen. |
+- `ipfs_cid` — Content identifier
+- `ipfs_url` — Gateway URL (`https://w3s.link/ipfs/{cid}`)
 
-### Embedding + indexing script
+Article and event detail pages show a "Descargar documento original (IPFS)" download link when available. The URL includes `?filename=<original-filename>` so the browser saves the file with its human-readable name instead of the raw CID.
 
-**Script:** `embed_and_index.py`
+### Collaborative Cluster
 
-**Run:** `venv/bin/python embed_and_index.py`  (after `sync_to_ipfs.py`)
+`public/cluster/service.json` is a follower config template served at `https://antoniogarciatrevijano.info/cluster/service.json`. Volunteers use it to initialise `ipfs-cluster-follow` and automatically mirror the full archive. `build.sh` pins the new site CID to the cluster after each publish and unpins the old one. See `VOLUNTARIOS.md` (project root) for the volunteer guide.
 
-**What it does:**
-
-1. Loads `ipfs/cids.json` -- maps public filenames to IPFS CIDs
-2. Counts total chunks in `chunks/chunks.jsonl`
-3. Creates (or opens) a local Qdrant collection at `qdrant_db/`
-4. **Resumable:** skips already-indexed chunks
-5. Loads `BAAI/bge-m3` with FP16 on GPU (`devices=["cuda:0"]`)
-6. Processes chunks in batches of 256, embeds with `max_length=512`
-7. Upserts each batch into Qdrant with full metadata + IPFS info as payload
-
-**PDF fallback for download URLs:** when a chunk comes from a `.docx` (used for better RAG text), `embed_and_index.py` looks up the `.pdf` CID on the KUBO node first. This way the download URL points to the original PDF source, not the `.docx` transcription.
-
-**Payload stored per point:**
-
-```json
-{
-    "text":            "El movimiento obrero espanol...",
-    "source_file":     "publicos/articulos/1967.0418.YA..._AGT",
-    "origin_filename": "1967.0418.YA..._AGT.docx",
-    "headings":        ["La unidad sindical"],
-    "page":            2,
-    "content_labels":  ["paragraph", "paragraph"],
-    "date":            "1967-04-18",
-    "publication":     "YA",
-    "cid":             "bafybei...",
-    "download_url":    "https://ipfs.antoniogarciatrevijano.info/ipfs/bafybei..."
-}
-```
-
-`date` and `publication` are parsed from the filename convention (see Step 2). Empty strings when the filename doesn't match.
-
-`cid` and `download_url` are `""` / `null` for `privados/` files and for public files not yet pinned on KUBO.
-
-### Vector DB choice: Qdrant
-
-**We chose Qdrant** because:
-1. **Metadata filtering** -- combine vector search with filters (e.g. only search `articulos/`).
-2. **No infrastructure required** -- embedded mode is as simple as ChromaDB.
-3. **Upgrade path** -- one line change to switch to a full Qdrant server.
-
-### Important: Qdrant and concurrent access
-
-Qdrant embedded mode uses RocksDB -- one writer at a time. Do **not** run `embed_and_index.py` while `rag_api.py` is open against the same `qdrant_db/`. Stop the API, re-index, restart.
-
----
-
-## Step 6: Query Interface
-
-### How it works
-
-`rag_api.py` is a single FastAPI service that handles everything:
-
-1. Loads bge-m3 once at startup (CPU, fp32)
-2. Opens Qdrant in embedded mode
-3. Initializes an OpenAI client for LLM calls
-
-**Endpoints:**
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /health` | Liveness check -- returns model info, collection name, whether `/chat` is available |
-| `POST /search` | Raw chunk retrieval -- returns ranked chunks with metadata and IPFS URLs |
-| `POST /chat` | Full RAG pipeline: retrieves chunks, builds prompt, calls LLM, streams the answer back via custom SSE protocol |
-| `GET /v1/models` | OpenAI-compatible model list (returns `agt-rag`) |
-| `POST /v1/chat/completions` | OpenAI-compatible chat endpoint (for OpenWebUI and other clients) |
-
-### /chat streaming protocol
-
-The `/chat` endpoint accepts conversation history and returns a Server-Sent Events stream:
-
-**Request:**
-```json
-{
-    "messages": [
-        {"role": "user", "content": "What did AGT write about democracy?"}
-    ],
-    "top_k": 5
-}
-```
-
-**SSE stream:**
-```
-data: {"type": "sources", "chunks": [...]}     # retrieved chunks (sent first)
-data: {"type": "text", "text": "According "}   # LLM output deltas
-data: {"type": "text", "text": "to AGT..."}
-data: {"type": "error", "message": "..."}      # only on LLM error
-data: {"type": "done"}                         # end of stream
-```
-
-The `sources` event is sent before any LLM output so the frontend can display source documents while the answer streams in.
-
-### /v1/chat/completions (OpenAI-compatible)
-
-Standard OpenAI chat completions format. RAG retrieval happens transparently -- the last user message is used to search Qdrant, and retrieved chunks are injected into the system prompt before forwarding to the LLM.
-
-Supports both streaming (`"stream": true`) and non-streaming modes. Accepts auth via `x-api-key` header or `Authorization: Bearer <key>`.
-
-### /search endpoint
-
-Lower-level access to the RAG retrieval without the LLM call. Useful for debugging or building custom integrations.
-
-**Request:**
-```json
-{"question": "democracia representativa", "top_k": 5}
-```
-
-**Response:**
-```json
-{
-    "question": "democracia representativa",
-    "chunks": [
-        {
-            "text": "...",
-            "source_file": "publicos/articulos/...",
-            "origin_filename": "...",
-            "page": 3,
-            "headings": ["..."],
-            "score": 0.82,
-            "date": "1996-01-29",
-            "publication": "EL MUNDO",
-            "cid": "bafybei...",
-            "download_url": "https://ipfs.antoniogarciatrevijano.info/ipfs/bafybei..."
-        }
-    ]
-}
-```
-
-### Configuration
-
-**Environment variables (`.env`):**
-
-| Variable | Required | Default | Purpose |
-|----------|----------|---------|---------|
-| `OPENAI_API_KEY` | For `/chat` | -- | OpenAI API key. If unset, `/chat` and `/v1/chat/completions` return 503; `/search` still works. |
-| `RAG_API_KEY` | No | (none) | If set, all endpoints (except `/health`) require auth. `/v1/chat/completions` accepts `x-api-key` header or `Authorization: Bearer`; all other endpoints accept `x-api-key` only. |
-| `CORS_ORIGINS` | No | `*` | Comma-separated allowed origins for CORS. |
-| `LLM_MODEL` | No | `gpt-4o` | OpenAI model ID (currently set to `gpt-5.4`). |
-
-### File visibility
-
-The `source_file` field in Qdrant reflects the subfolder prefix:
-- `publicos/...` -- has `cid` + `download_url` (permanent IPFS link)
-- `privados/...` -- `cid=""`, `download_url=null` (citation only, no download)
-
-`download_url` and `cid` are pre-computed at index time by `embed_and_index.py`. No URL logic lives in the API.
-
-### After cloning: restore source documents from IPFS
-
-`ficheros/publicos/` is not tracked in git. After cloning, restore it using the root directory CID stored in `ipfs/root_cid.txt`:
-
-```bash
-ipfs get $(cat ipfs/root_cid.txt) -o ficheros/publicos/
-```
-
-This requires the [IPFS CLI (Kubo)](https://docs.ipfs.tech/install/command-line/) to be installed. It downloads the full directory tree in one command and is resumable — safe to interrupt and re-run.
-
----
-
-### Server setup
-
-```bash
-# 1. Install dependencies
-python -m venv venv && venv/bin/python -m ensurepip
-venv/bin/pip install -r requirements.txt
-
-# 2. Run the processing pipeline (steps 1-5)
-venv/bin/python convert_documents.py
-venv/bin/python chunk_documents.py
-venv/bin/python sync_to_ipfs.py
-venv/bin/python embed_and_index.py
-
-# 3. Start the API (bge-m3 downloads automatically on first run, ~2.3 GB)
-venv/bin/uvicorn rag_api:app --host 0.0.0.0 --port 8000   # reads .env
-
-# 4. Verify
-curl http://localhost:8000/health
-```
-
-Systemd service (`/etc/systemd/system/rag-api.service`):
-
-```ini
-[Unit]
-Description=AGT RAG API
-After=network.target
-
-[Service]
-Type=simple
-User=root
-WorkingDirectory=/root/agt
-EnvironmentFile=/root/agt/.env
-ExecStart=/root/agt/venv/bin/uvicorn rag_api:app --host 0.0.0.0 --port 8000
-Restart=on-failure
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### OpenWebUI integration
-
-The API exposes OpenAI-compatible endpoints at `/v1/models` and `/v1/chat/completions`. This allows any OpenAI-compatible client (such as OpenWebUI) to use the RAG pipeline as if it were a regular LLM.
-
-**Setup in OpenWebUI:**
-
-1. Go to **Admin Panel → Settings → Connections**
-2. Under **OpenAI API**, add a new connection:
-   - **URL:** `http://<server-ip>:8000/v1`
-   - **API Key:** the value of `RAG_API_KEY` (or any non-empty string if `RAG_API_KEY` is not set)
-3. Save. The model **`agt-rag`** will appear in the model selector.
-
-Every message sent through OpenWebUI is automatically augmented with relevant document chunks before being forwarded to the LLM. The RAG retrieval is transparent to the user.
-
----
-
-### Workflow for adding new files
+## File structure
 
 ```
-1. Add files to ficheros/publicos/ or ficheros/privados/
-2. venv/bin/python convert_documents.py     # skips already-converted files
-   venv/bin/python convert_blog.py           # blog posts only (run after adding new posts)
-   # For audio: run download_audios.py + transcribe_audios.py on GPU laptop, then rsync audios/
-3. venv/bin/python chunk_documents.py       # skips already-chunked files
-4. venv/bin/python sync_to_ipfs.py      # uploads new public files, removes deleted ones
-5. systemctl stop rag-api
-   rm -rf qdrant_db/
-   venv/bin/python embed_and_index.py       # re-indexes with updated CIDs
-   systemctl start rag-api
+site/
+├── astro.config.mjs          # Astro config (static output, Tailwind vite plugin)
+├── package.json               # Dependencies: astro, marked, tailwindcss, pagefind
+├── tsconfig.json              # Extends astro/tsconfigs/strict
+├── public/
+│   ├── favicon.svg            # AGT initials favicon
+│   ├── fonts/                 # Self-hosted Myriad Pro (OTF, weights 300/400/600/700/700i)
+│   ├── cluster/
+│   │   └── service.json       # IPFS Collaborative Cluster follower config (served at /cluster/service.json)
+│   └── pagefind/              # Copied from dist/ by build.sh (gitignored)
+├── src/
+│   ├── layouts/
+│   │   └── Base.astro         # Global layout (header, nav, search, footer)
+│   ├── lib/
+│   │   └── audio.ts           # Audio parsing library (AudioEntry, SrtSegment, loadAllAudios, parseSrt, etc.)
+│   ├── styles/
+│   │   └── global.css         # Tailwind + brand theme (red palette) + Myriad Pro @font-face
+│   ├── data/
+│   │   ├── catalog.json       # Generated content database (articles, hechos, fotos)
+│   │   └── libros.json        # Manual book list (11 books)
+│   └── pages/
+│       ├── index.astro
+│       ├── cronologia.astro   # Full chronology — reads output/publicos/cronología/*.md
+│       ├── articulos/
+│       │   ├── index.astro    # List + filters
+│       │   └── [slug].astro   # Detail + prev/next + IPFS link with ?filename=
+│       ├── hechos/
+│       │   ├── index.astro    # Event list
+│       │   └── [event].astro  # Event docs (collapsible) + IPFS link with ?filename=
+│       ├── blog/
+│       │   ├── index.astro    # Post list grouped by year — reads ficheros/publicos/blog_2006-2011/
+│       │   └── [slug].astro   # Post detail + prev/next — strips comments at render time
+│       ├── fotos.astro        # Photo gallery (masonry + lightbox)
+│       ├── libros.astro
+│       ├── audios/
+│       │   ├── index.astro    # Audio list grouped by year — reads ficheros/publicos/audios/
+│       │   └── [id].astro     # Audio detail: sticky player + interactive SRT transcript
+│       ├── videos.astro
+│       └── chat.astro         # AI chat (SSE streaming)
+└── dist/                      # Build output (gitignored)
 ```
 
-### Full pipeline refresh (after code changes)
+## Key conventions
 
-```bash
-rm -rf output/ chunks/ qdrant_db/
-venv/bin/python convert_documents.py        # ~90 min on GPU
-venv/bin/python convert_blog.py             # blog posts (fast, markdown only)
-venv/bin/python chunk_documents.py          # ~2 min
-venv/bin/python sync_to_ipfs.py         # cleans up old .docx uploads
-systemctl stop rag-api                      # or kill uvicorn
-venv/bin/python embed_and_index.py          # ~few min
-systemctl start rag-api                     # or: venv/bin/uvicorn rag_api:app --host 0.0.0.0 --port 8000
+### Slug generation (must stay in sync)
+
+Hechos slugs are computed identically in both `hechos/index.astro` and `hechos/[event].astro`:
+
+```typescript
+key.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")
 ```
+
+If this logic changes in one file, it must change in both or links will break.
+
+### Article sorting
+
+Both the article list and the prev/next navigation sort descending (newest first):
+
+```typescript
+.sort((a, b) => (b.date || "0000").localeCompare(a.date || "0000"))
+```
+
+### Build-time file reads
+
+`[slug].astro` and `[event].astro` read markdown files at build time:
+
+```typescript
+const outputDir = join(process.cwd(), "..", "output", "publicos");
+const md = readFileSync(join(outputDir, article.markdown_path), "utf-8");
+const html = marked.parse(md) as string;
+```
+
+This means `../output/publicos/` must exist with the converted `.md` files when `npm run build` runs.
+
+## External dependencies
+
+| Service | URL | Used by |
+|---|---|---|
+| RAG API | `https://agt.criadoperez.com/chat` | `chat.astro` |
+| IPFS gateway | `https://w3s.link/ipfs/{cid}` | Article/event detail pages |
+| iVoox | `https://www.ivoox.com/en/podcast-radio-libertad-constituyente_sq_f125183_93.html` | `audios/index.astro` (channel link) |
+| IPFS audio gateway | `https://ipfs.antoniogarciatrevijano.info/ipfs/{cid}` | `audios/[id].astro` (audio player `src`) |
+| YouTube | `https://www.youtube.com/@MCRC./videos` | `videos.astro` |
+
+## Tech stack
+
+- **Astro 5** — Static site generator
+- **Tailwind CSS 4** — Utility-first CSS (via `@tailwindcss/vite`)
+- **Pagefind** — Client-side full-text search (build-time index)
+- **marked** — Markdown to HTML rendering

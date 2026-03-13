@@ -139,6 +139,10 @@ Original source documents (PDF, DOCX, JPG) are stored on IPFS. Each catalog entr
 
 Article and event detail pages show a "Descargar documento original (IPFS)" download link when available. The URL includes `?filename=<original-filename>` so the browser saves the file with its human-readable name instead of the raw CID.
 
+### Collaborative Cluster
+
+`public/cluster/service.json` is a follower config template served at `https://antoniogarciatrevijano.info/cluster/service.json`. Volunteers use it to initialise `ipfs-cluster-follow` and automatically mirror the full archive. `build.sh` pins the new site CID to the cluster after each publish and unpins the old one. See `VOLUNTARIOS.md` (project root) for the volunteer guide.
+
 ## File structure
 
 ```
@@ -149,6 +153,8 @@ site/
 ├── public/
 │   ├── favicon.svg            # AGT initials favicon
 │   ├── fonts/                 # Self-hosted Myriad Pro (OTF, weights 300/400/600/700/700i)
+│   ├── cluster/
+│   │   └── service.json       # IPFS Collaborative Cluster follower config (served at /cluster/service.json)
 │   └── pagefind/              # Copied from dist/ by build.sh (gitignored)
 ├── src/
 │   ├── layouts/
