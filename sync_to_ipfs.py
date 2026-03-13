@@ -26,6 +26,7 @@ payloads include the updated IPFS CIDs.
 
 import hashlib
 import json
+import re
 import sys
 import threading
 import time
@@ -37,6 +38,7 @@ import requests
 # ── Configuration ──────────────────────────────────────────────────────
 
 PUBLIC_DIR    = Path("ficheros/publicos")
+AUDIO_DIR     = PUBLIC_DIR / "audios"
 CIDS_FILE     = Path("ipfs/cids.json")
 ROOT_CID_FILE = Path("ipfs/root_cid.txt")
 KUBO_API      = "http://127.0.0.1:5001/api/v0"
@@ -135,12 +137,12 @@ def build_root_cid(cids: dict[str, dict]) -> str | None:
     requests.post(
         f"{KUBO_API}/files/rm",
         params={"arg": MFS_ROOT, "recursive": "true", "force": "true"},
-        timeout=30,
+        timeout=120,
     )
 
     # Recreate root dir
     r = requests.post(f"{KUBO_API}/files/mkdir",
-                      params={"arg": MFS_ROOT, "parents": "true"}, timeout=30)
+                      params={"arg": MFS_ROOT, "parents": "true"}, timeout=120)
     if r.status_code != 200:
         print(f"  WARNING: files/mkdir {MFS_ROOT} failed: {r.text.strip()}")
         return None
@@ -155,11 +157,11 @@ def build_root_cid(cids: dict[str, dict]) -> str | None:
         parent = str(Path(mfs_path).parent)
         # Ensure parent directory exists
         requests.post(f"{KUBO_API}/files/mkdir",
-                      params={"arg": parent, "parents": "true"}, timeout=30)
+                      params={"arg": parent, "parents": "true"}, timeout=120)
         r = requests.post(
             f"{KUBO_API}/files/cp",
             params={"arg": [f"/ipfs/{cid}", mfs_path]},
-            timeout=30,
+            timeout=120,
         )
         if r.status_code != 200:
             failed_mfs += 1
@@ -169,7 +171,7 @@ def build_root_cid(cids: dict[str, dict]) -> str | None:
 
     # Stat the MFS root to get the directory CID
     r = requests.post(f"{KUBO_API}/files/stat",
-                      params={"arg": MFS_ROOT}, timeout=30)
+                      params={"arg": MFS_ROOT}, timeout=120)
     if r.status_code != 200:
         print(f"  WARNING: files/stat failed: {r.text.strip()}")
         return None
@@ -233,6 +235,69 @@ def collect_local_files() -> dict[str, Path]:
     return result
 
 
+# ── Audio CID pre-pass ─────────────────────────────────────────────────
+
+def patch_audio_cids() -> int:
+    """
+    For every .md in the audios folder whose audio_cid field is empty,
+    compute the CID of the paired audio file via KUBO only-hash (no upload)
+    and write it into the .md file.
+
+    Must run before collect_local_files() so the patched .md files are
+    hashed and uploaded with the correct content.
+
+    Returns the number of .md files patched.
+    """
+    if not AUDIO_DIR.exists():
+        return 0
+
+    patched = 0
+    needs_patch = []
+
+    for md_path in sorted(AUDIO_DIR.glob("*.md")):
+        content = md_path.read_text(encoding="utf-8")
+        if 'audio_cid: ""' not in content:
+            continue
+        m = re.search(r'^audio_filename:\s*"([^"]+)"', content, re.MULTILINE)
+        if not m:
+            continue
+        audio_path = AUDIO_DIR / m.group(1)
+        if not audio_path.exists():
+            print(f"  WARNING: audio file not found for {md_path.name}, skipping")
+            continue
+        needs_patch.append((md_path, audio_path, content))
+
+    if not needs_patch:
+        return 0
+
+    print(f"  Computing CIDs for {len(needs_patch)} audio file(s) …")
+    for md_path, audio_path, content in needs_patch:
+        try:
+            with open(audio_path, "rb") as f:
+                r = requests.post(
+                    f"{KUBO_API}/add",
+                    params={"only-hash": "true", "wrap-with-directory": "false"},
+                    files={"file": (audio_path.name, f)},
+                    timeout=300,
+                )
+            r.raise_for_status()
+            lines = [ln for ln in r.text.strip().splitlines() if ln]
+            cid = json.loads(lines[-1]).get("Hash", "")
+            if not cid:
+                print(f"  WARNING: no CID returned for {audio_path.name}, skipping")
+                continue
+        except Exception as exc:
+            print(f"  WARNING: only-hash failed for {audio_path.name}: {exc}")
+            continue
+
+        new_content = content.replace('audio_cid: ""', f'audio_cid: "{cid}"', 1)
+        md_path.write_text(new_content, encoding="utf-8")
+        print(f"  Patched {md_path.name}  →  {cid}")
+        patched += 1
+
+    return patched
+
+
 # ── Main ───────────────────────────────────────────────────────────────
 
 def main():
@@ -243,6 +308,13 @@ def main():
     print("Checking KUBO API …")
     check_prerequisites()
     print()
+
+    print("Patching audio_cid fields in .md files …")
+    patched = patch_audio_cids()
+    if patched:
+        print(f"  Patched {patched} .md file(s).\n")
+    else:
+        print("  Nothing to patch.\n")
 
     local_files = collect_local_files()
     cids        = load_cids()
