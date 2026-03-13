@@ -39,13 +39,18 @@ cd .. && ./build.sh --site   # site only (skip catalog)
 | `/blog/[slug]/` | `pages/blog/[slug].astro` | Blog post with full text, original URL, prev/next nav |
 | `/fotos/` | `pages/fotos.astro` | Photo gallery — masonry grid grouped by year, lightbox |
 | `/libros/` | `pages/libros.astro` | Book listing (no downloads — private) with link to shop |
-| `/audios/` | `pages/audios.astro` | Link to iVoox channel |
+| `/audios/` | `pages/audios/index.astro` | Audio list grouped by year with duration; links to detail pages |
+| `/audios/[id]/` | `pages/audios/[id].astro` | Audio detail: sticky player + interactive transcript (click to seek) |
 | `/videos/` | `pages/videos.astro` | Link to YouTube channel |
 | `/chat/` | `pages/chat.astro` | AI chat widget (calls RAG API) |
 
-**Current output:** ~2,060 static pages (1,870 articles + 10 events + 1 cronología + 168 blog posts + other pages).
+**Current output:** ~2,300 static pages (1,870 articles + ~241 audio detail pages + 168 blog posts + 10 events + 1 cronología + other pages).
 
 ## Data sources
+
+### Audio `.md` files (external, at build time)
+
+Audio transcript pages read `.md` files directly from `../ficheros/publicos/audios/` at build time via `src/lib/audio.ts`. Each file has YAML frontmatter (`title`, `date`, `ivoox_id`, `duration_seconds`, `audio_cid`, etc.) and a body with the speaker-labelled transcript. The corresponding `.srt` file (same stem) provides sentence-level timestamps for the interactive transcript player. These files are produced by the audio pipeline (`transcribe_audios.py`) and are **not part of the site directory**.
 
 ### `src/data/catalog.json` (generated)
 
@@ -98,14 +103,19 @@ Props: `title` (required), `description` (optional, defaults to site tagline).
 - Font: Myriad Pro (self-hosted OTF, weights 300/400/600/700) via `@font-face` in `global.css`; served from `public/fonts/`. Falls back to Segoe UI / Georgia.
 - Pagefind widget overrides for dark header background (white-on-dark input, white dropdown)
 - Article body typography: serif, 1.05rem, line-height 1.8, justified text
+- Interactive transcript styles: `.seg` (clickable sentence span with hover underline), `.seg-active` (currently-spoken sentence, light red background highlight)
 
 ## Client-side JavaScript
 
-The site is almost entirely static HTML. Only three pages have client-side JS:
+The site is almost entirely static HTML. Only four pages have client-side JS:
 
 1. **Base.astro** — Pagefind initialization (search widget)
 2. **articulos/index.astro** — Year/publication filter dropdowns (show/hide rows by `data-*` attributes)
-3. **chat.astro** — Chat interface:
+3. **audios/[id].astro** — Interactive transcript player:
+   - Pre-parses `data-start`/`data-end` timestamp attributes on `.seg` spans at load time
+   - Click on any sentence → seeks the audio player to that timestamp and starts playing
+   - `timeupdate` event loop highlights the currently-spoken sentence (`.seg-active` class) using an early-break binary search (segments are sorted by time)
+4. **chat.astro** — Chat interface:
    - POSTs to `https://agt.criadoperez.com/chat` with message history
    - Parses SSE stream (`data: {type: "text", text: "..."}`)
    - Renders streaming response with minimal markdown formatting
@@ -117,7 +127,7 @@ Pagefind runs as a post-build step: `astro build && npx pagefind --site dist`.
 
 - Article detail pages have `data-pagefind-body` on the text div — only these are indexed
 - Article list rows have `data-pagefind-ignore` to avoid duplicate entries
-- Search index: ~51,000 words across ~1,856 pages
+- Search index: ~97,000 words across ~2,266 pages (audio transcripts add the bulk of new indexed content)
 - Assets generated into `dist/pagefind/`, copied to `public/pagefind/` by `build.sh` for dev mode
 
 ## IPFS integration
@@ -143,6 +153,8 @@ site/
 ├── src/
 │   ├── layouts/
 │   │   └── Base.astro         # Global layout (header, nav, search, footer)
+│   ├── lib/
+│   │   └── audio.ts           # Audio parsing library (AudioEntry, SrtSegment, loadAllAudios, parseSrt, etc.)
 │   ├── styles/
 │   │   └── global.css         # Tailwind + brand theme (red palette) + Myriad Pro @font-face
 │   ├── data/
@@ -162,7 +174,9 @@ site/
 │       │   └── [slug].astro   # Post detail + prev/next — strips comments at render time
 │       ├── fotos.astro        # Photo gallery (masonry + lightbox)
 │       ├── libros.astro
-│       ├── audios.astro
+│       ├── audios/
+│       │   ├── index.astro    # Audio list grouped by year — reads ficheros/publicos/audios/
+│       │   └── [id].astro     # Audio detail: sticky player + interactive SRT transcript
 │       ├── videos.astro
 │       └── chat.astro         # AI chat (SSE streaming)
 └── dist/                      # Build output (gitignored)
@@ -206,7 +220,8 @@ This means `../output/publicos/` must exist with the converted `.md` files when 
 |---|---|---|
 | RAG API | `https://agt.criadoperez.com/chat` | `chat.astro` |
 | IPFS gateway | `https://w3s.link/ipfs/{cid}` | Article/event detail pages |
-| iVoox | `https://www.ivoox.com/en/podcast-radio-libertad-constituyente_sq_f125183_93.html` | `audios.astro` |
+| iVoox | `https://www.ivoox.com/en/podcast-radio-libertad-constituyente_sq_f125183_93.html` | `audios/index.astro` (channel link) |
+| IPFS audio gateway | `https://ipfs.antoniogarciatrevijano.info/ipfs/{cid}` | `audios/[id].astro` (audio player `src`) |
 | YouTube | `https://www.youtube.com/@MCRC./videos` | `videos.astro` |
 
 ## Tech stack
