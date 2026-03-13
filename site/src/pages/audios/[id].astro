@@ -2,7 +2,13 @@
 import { join } from "node:path";
 import { marked } from "marked";
 import Base from "../../layouts/Base.astro";
-import { loadAllAudios, formatDuration } from "../../lib/audio";
+import {
+  loadAllAudios,
+  loadSrt,
+  groupIntoTurns,
+  formatDuration,
+  formatSpeaker,
+} from "../../lib/audio";
 
 export function getStaticPaths() {
   const audiosDir = join(process.cwd(), "..", "ficheros", "publicos", "audios");
@@ -13,7 +19,18 @@ export function getStaticPaths() {
 }
 
 const { audio } = Astro.props;
-const html = marked.parse(audio.body) as string;
+const audiosDir = join(process.cwd(), "..", "ficheros", "publicos", "audios");
+
+// Description: the optional blockquote block at the top of the .md body,
+// before the first horizontal rule. Used for the programme summary.
+const descEnd = audio.body.indexOf("\n---\n");
+const descMd = descEnd !== -1 ? audio.body.slice(0, descEnd).trim() : "";
+const descHtml = descMd ? (marked.parse(descMd) as string) : "";
+
+// Interactive transcript from the .srt file (sentence-level timestamps)
+const segments = loadSrt(audiosDir, audio.ivoox_id);
+const turns = groupIntoTurns(segments);
+
 const audioUrl = audio.audio_cid
   ? `https://ipfs.antoniogarciatrevijano.info/ipfs/${audio.audio_cid}`
   : null;
@@ -49,12 +66,80 @@ const audioUrl = audio.audio_cid
     <!-- Audio player -->
     {audioUrl && (
       <div class="mb-8">
-        <audio controls src={audioUrl} class="w-full" preload="none" />
+        <audio id="player" controls src={audioUrl} class="w-full" preload="none" />
       </div>
     )}
 
-    <!-- Transcript -->
-    <div class="article-body" set:html={html} data-pagefind-body />
+    <!-- Programme description (from iVoox metadata, rendered from .md blockquote) -->
+    {descHtml && (
+      <div class="article-body mb-8" set:html={descHtml} />
+    )}
+
+    <!-- Interactive transcript -->
+    {turns.length > 0 ? (
+      <div class="transcript" data-pagefind-body>
+        {turns.map((turn) => (
+          <div class="mb-5">
+            <p class="text-xs font-semibold text-brand-700 uppercase tracking-wide mb-1">
+              {formatSpeaker(turn.speaker)}
+            </p>
+            <p class="font-serif text-base leading-relaxed">
+              {turn.segments.map((seg) => (
+                <span
+                  class="seg"
+                  data-start={seg.start}
+                  data-end={seg.end}
+                >
+                  {seg.text}{" "}
+                </span>
+              ))}
+            </p>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="text-gray-400 text-sm italic">Transcripción no disponible.</p>
+    )}
 
   </div>
 </Base>
+
+<script is:inline>
+  (function () {
+    const audio = document.getElementById("player");
+    if (!audio) return;
+
+    // Pre-parse timestamps once at load time to avoid repeated parseFloat on every timeupdate
+    const segs = [...document.querySelectorAll(".seg")].map((el) => ({
+      el,
+      start: parseFloat(el.dataset.start),
+      end: parseFloat(el.dataset.end),
+    }));
+    if (segs.length === 0) return;
+
+    // Click any sentence to seek to that position and start playing
+    segs.forEach(({ el, start }) => {
+      el.addEventListener("click", () => {
+        audio.currentTime = start;
+        audio.play();
+      });
+    });
+
+    // Highlight the sentence currently being spoken
+    // Segments are sorted by time, so we can break early once we pass current time
+    let currentActive = null;
+    audio.addEventListener("timeupdate", () => {
+      const t = audio.currentTime;
+      let active = null;
+      for (const { el, start, end } of segs) {
+        if (start > t) break;       // all remaining segments start later
+        if (t < end) { active = el; break; } // t falls within this segment
+      }
+      if (active !== currentActive) {
+        currentActive?.classList.remove("seg-active");
+        active?.classList.add("seg-active");
+        currentActive = active;
+      }
+    });
+  })();
+</script>
