@@ -50,10 +50,16 @@ echo "MFS: /www-site -> $CID"
 echo "=== Publishing to IPNS ==="
 docker exec kubo ipfs name publish --key=antoniogarciatrevijano "$CID"
 
-# Unpin old build and run GC
+echo "=== Pinning to cluster ==="
+curl -sf -X POST "http://127.0.0.1:9094/pins/$CID" \
+    && echo "Cluster pinned: $CID" || echo "WARNING: cluster pin failed (continuing)"
+
+# Unpin old build from KUBO and cluster, then run GC
 if [[ -n "$OLD_CID" && "$OLD_CID" != "$CID" ]]; then
     echo "=== Removing old build ==="
-    docker exec kubo ipfs pin rm "$OLD_CID" 2>/dev/null && echo "Unpinned: $OLD_CID" || echo "Could not unpin $OLD_CID (may already be unpinned)"
+    docker exec kubo ipfs pin rm "$OLD_CID" 2>/dev/null && echo "Unpinned from KUBO: $OLD_CID" || echo "Could not unpin $OLD_CID (may already be unpinned)"
+    curl -sf -X DELETE "http://127.0.0.1:9094/pins/$OLD_CID" \
+        && echo "Cluster unpinned: $OLD_CID" || echo "WARNING: cluster unpin failed (continuing)"
     docker exec kubo ipfs repo gc --quiet
     echo "GC done"
 fi

@@ -42,6 +42,7 @@ AUDIO_DIR     = PUBLIC_DIR / "audios"
 CIDS_FILE     = Path("ipfs/cids.json")
 ROOT_CID_FILE = Path("ipfs/root_cid.txt")
 KUBO_API      = "http://127.0.0.1:5001/api/v0"
+CLUSTER_API   = "http://127.0.0.1:9094"   # ipfs-cluster REST API (localhost only)
 GATEWAY       = "https://ipfs.antoniogarciatrevijano.info/ipfs"
 MAX_WORKERS   = 4    # concurrent uploads to KUBO
 MAX_RETRIES   = 3    # retries per file on transient errors
@@ -123,6 +124,42 @@ def remove_pin(cid: str) -> None:
             print(f"  WARNING: pin/rm {cid} failed (continuing): {r.text.strip()}")
     except Exception as exc:
         print(f"  WARNING: pin/rm {cid} exception (continuing): {exc}")
+
+
+# ── Cluster API wrappers ───────────────────────────────────────────────
+
+def cluster_pin(cid: str) -> bool:
+    """
+    Add a CID to the IPFS cluster pinset so all volunteer nodes replicate it.
+    Non-fatal: logs a warning if the cluster is unreachable or returns an error.
+    Returns True if the pin was accepted.
+    """
+    try:
+        r = requests.post(f"{CLUSTER_API}/pins/{cid}", timeout=30)
+        if r.status_code in (200, 202):
+            return True
+        print(f"  WARNING: cluster pin {cid[:16]}… returned {r.status_code}")
+        return False
+    except Exception as exc:
+        print(f"  WARNING: cluster pin failed (cluster down?): {exc}")
+        return False
+
+
+def cluster_unpin(cid: str) -> bool:
+    """
+    Remove a CID from the IPFS cluster pinset.
+    Non-fatal: logs a warning if the cluster is unreachable or returns an error.
+    Returns True if the unpin was accepted.
+    """
+    try:
+        r = requests.delete(f"{CLUSTER_API}/pins/{cid}", timeout=30)
+        if r.status_code in (200, 204):
+            return True
+        print(f"  WARNING: cluster unpin {cid[:16]}… returned {r.status_code}")
+        return False
+    except Exception as exc:
+        print(f"  WARNING: cluster unpin failed (cluster down?): {exc}")
+        return False
 
 
 def build_root_cid(cids: dict[str, dict]) -> str | None:
@@ -309,6 +346,9 @@ def main():
     check_prerequisites()
     print()
 
+    # Read old root CID before any changes so we can unpin it from the cluster after
+    old_root_cid = ROOT_CID_FILE.read_text(encoding="utf-8").strip() if ROOT_CID_FILE.exists() else ""
+
     print("Patching audio_cid fields in .md files …")
     patched = patch_audio_cids()
     if patched:
@@ -460,6 +500,11 @@ def main():
         print(f"Browse:    {GATEWAY}/{root_cid}")
         print(f"Saved to:  {ROOT_CID_FILE}")
         print(f"Pin elsewhere: ipfs pin add {root_cid}")
+        # Update cluster pinset: pin new root, unpin old one
+        print("Updating cluster pin …")
+        cluster_pin(root_cid)
+        if old_root_cid and old_root_cid != root_cid:
+            cluster_unpin(old_root_cid)
     print()
 
     # ── Summary ────────────────────────────────────────────────────────
