@@ -13,7 +13,7 @@ Guide to building a Retrieval-Augmented Generation (RAG) system from a folder of
 | 1c -- Audio Download | `download_audios.py` | Done | Downloaded 1,959 files (8 unsupported/404 URLs skipped) |
 | 1d -- Audio Transcription | `transcribe_audios.py` | In progress | Running on GPU laptop; 1,959 files, ~10 days estimated (float16, beam_size=10) |
 | 2 -- Chunking | `chunk_documents.py` | Needs re-run | Re-run with clean `chunks/` to pick up `date`/`publication` fields |
-| 3 -- IPFS Sync | `sync_to_ipfs.py` | Not started | KUBO node running at localhost:5001 |
+| 3 -- IPFS Sync | `sync_to_ipfs.py` | Done | Audio CID pre-pass added; MFS timeouts increased to 120s |
 | 4+5 -- Embedding + Indexing | `embed_and_index.py` | Needs re-run | Re-run after step 2 with clean `qdrant_db/` to store `date`/`publication` |
 | 6 -- Query Interface | `rag_api.py` | Running | Single FastAPI service: RAG + LLM + streaming + OpenAI-compatible API |
 
@@ -365,7 +365,7 @@ Tested on: RTX 3070 Ti Laptop (8 GB VRAM), CUDA 13.0, WhisperX large-v3 FP16 (~4
 | `ivoox_id` | yt-dlp `id` | Numeric iVoox ID |
 | `duration_seconds` | yt-dlp `duration` | Integer seconds |
 | `audio_filename` | filename | e.g. `1463648.mp3` |
-| `audio_cid` | (empty) | Filled in by `sync_to_ipfs.py` |
+| `audio_cid` | (empty) | Filled in by `sync_to_ipfs.py` pre-pass (`patch_audio_cids()`) using KUBO `only-hash` API before uploading |
 | `speakers` | diarization | List of LOCUTOR_XX labels found in the file |
 
 **Estimated time:** ~20-30 days continuous on RTX 3070 Ti (diarization adds ~2-3x over transcription alone). Fully resumable across sessions.
@@ -451,6 +451,7 @@ Public documents are served directly from the self-hosted KUBO node at `ipfs.ant
 
 **What it does:**
 
+0. **Audio CID pre-pass** (`patch_audio_cids()`): scans `ficheros/publicos/audios/*.md` for entries with an empty `audio_cid` field. For each one, reads the paired `.mp3` filename from the frontmatter, calls KUBO `/api/v0/add?only-hash=true` (timeout 300s) to compute the CID without uploading, then patches `audio_cid: ""` → `audio_cid: "{cid}"` in the `.md` file. This must run before the sync proper so the `.md` file contains its CID before being uploaded (changing the `.md` after upload would change its own CID).
 1. Scans `ficheros/publicos/` for all files. Skips `.docx` files when a `.pdf` with the same stem exists in the same folder (the `.pdf` is the original source document).
 2. Loads `ipfs/cids.json` (the sync state — stores CID + SHA-256 hash per file)
 3. Detects **new** files (not in mapping), **modified** files (hash changed), and **deleted** files (in mapping but not on disk)

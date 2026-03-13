@@ -1,6 +1,8 @@
 ---
+import { join } from "node:path";
 import Base from "../layouts/Base.astro";
 import catalog from "../data/catalog.json";
+import { loadAllAudios } from "../lib/audio";
 
 const totalArticles = catalog.filter((i) => i.category === "articulos").length;
 const totalHechos = new Set(
@@ -12,6 +14,11 @@ const years = catalog
   .map((i) => i.date!.slice(0, 4));
 const minYear = Math.min(...years.map(Number));
 const maxYear = Math.max(...years.map(Number));
+
+const audiosDir = join(process.cwd(), "..", "ficheros", "publicos", "audios");
+const totalAudioHours = Math.round(
+  loadAllAudios(audiosDir).reduce((sum, a) => sum + a.duration_seconds, 0) / 3600
+);
 ---
 
 <Base title="Inicio">
@@ -30,7 +37,7 @@ const maxYear = Math.max(...years.map(Number));
     </section>
 
     <!-- Stats -->
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-8 border-y border-gray-200">
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 py-8 border-y border-gray-200">
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{totalArticles}</p>
         <p class="text-sm text-gray-500">Artículos</p>
@@ -42,6 +49,10 @@ const maxYear = Math.max(...years.map(Number));
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{totalFotos}</p>
         <p class="text-sm text-gray-500">Fotografías</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{totalAudioHours}</p>
+        <p class="text-sm text-gray-500">Horas de audio</p>
       </div>
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{minYear}–{maxYear}</p>
