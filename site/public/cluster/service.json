@@ -4,8 +4,8 @@
     "secret": "514743518d1d860214ac3f00908d3f783268ef8ca9073a91c342e9395f351dc2",
     "leave_on_shutdown": false,
     "listen_multiaddress": [
-      "/ip4/0.0.0.0/tcp/9096",
-      "/ip4/0.0.0.0/udp/9096/quic"
+      "/ip4/0.0.0.0/tcp/0",
+      "/ip4/0.0.0.0/udp/0/quic"
     ],
     "announce_multiaddress": [],
     "no_announce_multiaddress": [],
@@ -30,6 +30,7 @@
     "mdns_interval": "10s",
     "disable_repinning": true,
     "peer_addresses": [
+      "/ip4/127.0.0.1/tcp/19096/p2p/12D3KooWJzSmawZK3Kuq46u1oq28BpoUEdjKMhanax6dZM9ht6GS",
       "/dns4/antoniogarciatrevijano.info/tcp/9096/p2p/12D3KooWJzSmawZK3Kuq46u1oq28BpoUEdjKMhanax6dZM9ht6GS"
     ]
   },
@@ -111,6 +112,17 @@
       "metric_ttl": "30s",
       "tags": {
         "group": "default"
+      }
+    }
+  },
+  "datastore": {
+    "pebble": {
+      "pebble_options": {
+        "cache_size_bytes": 1048576,
+        "bytes_per_sync": 524288,
+        "disable_wal": false,
+        "wal_bytes_per_sync": 0,
+        "max_open_files": 1000
       }
     }
   }
