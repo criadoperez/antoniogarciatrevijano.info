@@ -47,7 +47,26 @@ inicia el daemon con `ipfs daemon`.
 
 ## Instalación
 
-### 1. Descarga ipfs-cluster-follow
+### 1. Instala y arranca el daemon IPFS (Kubo)
+
+Si aún no tienes Kubo instalado, descárgalo desde:
+
+```
+https://dist.ipfs.tech/#kubo
+```
+
+Extrae el archivo, coloca el binario en tu `$PATH`, inicializa el repositorio
+y arranca el daemon:
+
+```bash
+ipfs init
+ipfs daemon
+```
+
+Deja el daemon corriendo en segundo plano (o abre otra terminal para el
+siguiente paso). No continúes hasta ver la línea `Daemon is ready` en la salida.
+
+### 2. Descarga ipfs-cluster-follow
 
 Descarga el binario para tu sistema desde:
 
@@ -58,29 +77,25 @@ https://dist.ipfs.tech/#ipfs-cluster-follow
 Extrae el archivo y coloca el binario en algún directorio de tu `$PATH`
 (por ejemplo `/usr/local/bin/` en Linux o macOS).
 
-### 2. Únete al clúster (primera vez)
+### 3. Únete al clúster (primera vez)
 
 ```bash
 ipfs-cluster-follow antoniogarciatrevijano \
-    --init https://antoniogarciatrevijano.info/cluster/service.json \
-    run
+    init https://antoniogarciatrevijano.info/cluster/service.json
 ```
 
 Este comando:
 1. Descarga la configuración del clúster desde el servidor.
 2. Genera una identidad local única para tu nodo.
-3. Se conecta al servidor y comienza a sincronizar el contenido.
 
-El proceso de descarga inicial puede tardar varias horas dependiendo de tu
-conexión y del espacio disponible. Es normal.
+### 4. Ejecuciones posteriores
 
-### 3. Ejecuciones posteriores
-
-Una vez inicializado, basta con ejecutar:
+Una vez inicializado, basta con ejecutar para conectarse al servicdor y comenzar la sincrozacion del contenido
 
 ```bash
 ipfs-cluster-follow antoniogarciatrevijano run
 ```
+La descarga inicial podría durar varias horas, es normal.
 
 ---
 
