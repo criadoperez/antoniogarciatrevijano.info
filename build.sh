@@ -35,6 +35,7 @@ echo "=== Publishing to IPFS ==="
 
 # Resolve current IPNS to get the old CID (so we can unpin it after)
 OLD_CID=$(docker exec kubo ipfs name resolve /ipns/k51qzi5uqu5dm9uonrvozk33zarhrb5mql3mzyfy3rzecedoucnhkx4gh8lbf1 2>/dev/null | sed 's|/ipfs/||' || echo "")
+ARCHIVE_ROOT_CID=$(tr -d '\n' < ipfs/root_cid.txt)
 
 # Add new build
 cp -r site/dist /var/www/ipfs/staging/dist
@@ -46,6 +47,18 @@ echo "=== Updating MFS ==="
 docker exec kubo ipfs files rm -r /www-site 2>/dev/null || true
 docker exec kubo ipfs files cp /ipfs/$CID /www-site
 echo "MFS: /www-site -> $CID"
+
+echo "=== Updating www2 cluster helpers ==="
+install -d /var/www/www-site/cluster
+install -m 0644 site/public/cluster/service.json /var/www/www-site/cluster/service.json
+install -m 0755 site/public/cluster/sync-roots.sh /var/www/www-site/cluster/sync-roots.sh
+cat > /var/www/www-site/cluster/pins.txt <<EOF
+# Root CIDs managed by build.sh and served from www2.
+# One recursive pin per line: <cid> <label>
+${ARCHIVE_ROOT_CID} archive-root
+${CID} site-root
+EOF
+cp /var/www/www-site/cluster/pins.txt site/public/cluster/pins.txt
 
 echo "=== Publishing to IPNS ==="
 docker exec kubo ipfs name publish --key=antoniogarciatrevijano "$CID"
