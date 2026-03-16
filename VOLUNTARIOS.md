@@ -1,4 +1,4 @@
-# Voluntarios de preservación del archivo — IPFS Cluster
+# Voluntarios de preservación del archivo — IPFS
 
 Este archivo contiene los escritos, audios y documentos de Antonio García-Trevijano
 (1928–2018) y está alojado en la red IPFS. Cualquier persona puede contribuir a su
@@ -13,10 +13,10 @@ Actualmente el archivo completo (artículos de prensa, libros, fotografías,
 grabaciones de audio con sus transcripciones) está alojado en un único servidor
 IPFS. Si ese servidor fallara, el contenido desaparecería de la red.
 
-Cada nodo voluntario que se une al clúster descarga y sirve una copia completa e
-independiente. Cuantos más nodos participen, más resistente e indestructible es
-el archivo: ningún fallo técnico, ni ninguna decisión unilateral, puede hacerlo
-desaparecer.
+Cada nodo voluntario que fija los CIDs raíz del archivo descarga y sirve una
+copia completa e independiente. Cuantos más nodos participen, más resistente e
+indestructible es el archivo: ningún fallo técnico, ni ninguna decisión
+unilateral, puede hacerlo desaparecer.
 
 ---
 
@@ -27,7 +27,7 @@ desaparecer.
 - Se mantiene sincronizado: cuando se añaden nuevos documentos o audios,
   tu nodo los descarga sin que tengas que hacer nada.
 - No puede modificar el contenido ni añadir nada al archivo: solo el servidor
-  principal puede gestionar el conjunto de archivos.
+  principal publica los CIDs raíz que deben replicarse.
 
 ---
 
@@ -66,150 +66,110 @@ ipfs daemon
 Deja el daemon corriendo en segundo plano (o abre otra terminal para el
 siguiente paso). No continúes hasta ver la línea `Daemon is ready` en la salida.
 
-### 2. Habilita el túnel de conexión al clúster
+### 2. Ejecuta el sincronizador de raíces
 
-La comunicación entre tu nodo y el servidor del clúster se realiza a través
-de la propia red IPFS, lo que evita problemas con cortafuegos y NAT.
+El archivo completo se replica fijando dos CIDs raíz:
 
-Primero, habilita la función de reenvío P2P en Kubo (solo es necesario la
-primera vez):
+- `archive-root`: contiene los documentos y audios del archivo.
+- `site-root`: contiene la web estática publicada en IPFS.
 
-```bash
-ipfs config --bool Experimental.Libp2pStreamMounting true
-```
+El método recomendado para voluntarios ya no depende de `ipfs-cluster-follow`
+ni de túneles P2P: basta con leer el manifiesto público de `www2` y fijar esas
+raíces en tu nodo local.
 
-Reinicia el daemon IPFS para aplicar el cambio. A continuación, crea el
-túnel:
+Ejecuta:
 
 ```bash
-ipfs p2p forward /x/cluster /ip4/127.0.0.1/tcp/19096 \
-    /p2p/12D3KooWJEhcyZ5jtpmVsPGqrQFn2BfYdMkCCigWSfM6x555yd3F
+curl -fsSL https://www2.antoniogarciatrevijano.info/cluster/sync-roots.sh | bash
 ```
 
-Este comando crea un puerto local (19096) que conecta con el servidor del
-clúster a través de la red IPFS. El túnel permanece activo mientras el
-daemon IPFS esté en ejecución; hay que volver a crearlo cada vez que se
-reinicie el daemon (ver la sección de servicios más abajo para automatizarlo).
+Ese script:
 
-### 3. Descarga ipfs-cluster-follow
+1. Descarga `https://www2.antoniogarciatrevijano.info/cluster/pins.txt`.
+2. Fija en tu Kubo los CIDs raíz publicados allí.
+3. Desfija las raíces antiguas que ya no formen parte del manifiesto.
 
-Descarga el binario para tu sistema desde:
+La primera descarga puede tardar varias horas. Es normal.
 
-```
-https://dist.ipfs.tech/#ipfs-cluster-follow
-```
+### 3. Actualizar tu copia más adelante
 
-Extrae el archivo y coloca el binario en algún directorio de tu `$PATH`
-(por ejemplo `/usr/local/bin/` en Linux o macOS).
-
-### 4. Únete al clúster (primera vez)
+Cuando quieras refrescar tu nodo, vuelve a ejecutar exactamente el mismo
+comando:
 
 ```bash
-ipfs-cluster-follow antoniogarciatrevijano \
-    init https://www.antoniogarciatrevijano.info/cluster/service.json
+curl -fsSL https://www2.antoniogarciatrevijano.info/cluster/sync-roots.sh | bash
 ```
 
-Este comando:
-1. Descarga la configuración del clúster desde el servidor.
-2. Genera una identidad local única para tu nodo.
-
-### 5. Ejecuciones posteriores
-
-Una vez inicializado, basta con ejecutar para conectarse al servidor y comenzar la sincronización del contenido
-
-```bash
-ipfs-cluster-follow antoniogarciatrevijano run
-```
-La descarga inicial podría durar varias horas, es normal.
+Usa siempre `www2`: es la copia estática servida directamente por nginx. La URL
+equivalente en `www` puede agotarse al arrancar porque se sirve a través de
+IPFS/IPNS.
 
 ---
 
-## Ejecutar como servicio en segundo plano
+## Ejecutar como tarea periódica
 
-Para que el nodo se inicie automáticamente y funcione en segundo plano, puedes
-crear un servicio del sistema.
+Si quieres que tu nodo se refresque automáticamente, programa el mismo script
+de sincronización.
 
 ### Linux (systemd)
 
-Crea dos archivos de servicio. El primero establece el túnel P2P después de
-que IPFS arranque. Crea `/etc/systemd/system/ipfs-cluster-tunnel.service`:
+Guarda primero el script:
+
+```bash
+sudo curl -fsSL https://www2.antoniogarciatrevijano.info/cluster/sync-roots.sh \
+  -o /usr/local/bin/antoniogarciatrevijano-sync-roots
+sudo chmod +x /usr/local/bin/antoniogarciatrevijano-sync-roots
+```
+
+Crea `/etc/systemd/system/antoniogarciatrevijano-sync.service`:
 
 ```ini
 [Unit]
-Description=Túnel P2P al clúster García-Trevijano
-After=network.target ipfs.service
-Requires=ipfs.service
+Description=Sincroniza las raíces IPFS del archivo García-Trevijano
+After=network-online.target ipfs.service
+Wants=network-online.target ipfs.service
 
 [Service]
 Type=oneshot
 User=TU_USUARIO
-ExecStart=/usr/local/bin/ipfs p2p forward /x/cluster /ip4/127.0.0.1/tcp/19096 /p2p/12D3KooWJEhcyZ5jtpmVsPGqrQFn2BfYdMkCCigWSfM6x555yd3F
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
+ExecStart=/usr/local/bin/antoniogarciatrevijano-sync-roots
 ```
 
-El segundo ejecuta el seguidor del clúster. Crea
-`/etc/systemd/system/ipfs-cluster-follow.service`:
+Crea `/etc/systemd/system/antoniogarciatrevijano-sync.timer`:
 
 ```ini
 [Unit]
-Description=IPFS Cluster Follow — Archivo García-Trevijano
-After=network.target ipfs.service ipfs-cluster-tunnel.service
-Wants=ipfs.service
-Requires=ipfs-cluster-tunnel.service
+Description=Ejecuta periódicamente la sincronización IPFS del archivo García-Trevijano
 
-[Service]
-User=TU_USUARIO
-ExecStart=/usr/local/bin/ipfs-cluster-follow antoniogarciatrevijano run
-Restart=on-failure
-RestartSec=10
+[Timer]
+OnBootSec=5m
+OnUnitActiveSec=1h
+Persistent=true
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=timers.target
 ```
 
-Sustituye `TU_USUARIO` por tu nombre de usuario en ambos archivos. Luego
-activa los servicios:
+Activa la tarea:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now ipfs-cluster-tunnel
-sudo systemctl enable --now ipfs-cluster-follow
-sudo systemctl status ipfs-cluster-follow
+sudo systemctl enable --now antoniogarciatrevijano-sync.timer
+sudo systemctl start antoniogarciatrevijano-sync.service
+sudo systemctl status antoniogarciatrevijano-sync.service
 ```
 
 ### macOS (launchd)
 
-Crea el archivo `~/Library/LaunchAgents/info.antoniogarciatrevijano.tunnel.plist`
-para el túnel:
+Guarda primero el script:
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>Label</key>
-  <string>info.antoniogarciatrevijano.tunnel</string>
-  <key>ProgramArguments</key>
-  <array>
-    <string>/usr/local/bin/ipfs</string>
-    <string>p2p</string>
-    <string>forward</string>
-    <string>/x/cluster</string>
-    <string>/ip4/127.0.0.1/tcp/19096</string>
-    <string>/p2p/12D3KooWJEhcyZ5jtpmVsPGqrQFn2BfYdMkCCigWSfM6x555yd3F</string>
-  </array>
-  <key>RunAtLoad</key>
-  <true/>
-</dict>
-</plist>
+```bash
+curl -fsSL https://www2.antoniogarciatrevijano.info/cluster/sync-roots.sh \
+  -o /usr/local/bin/antoniogarciatrevijano-sync-roots
+chmod +x /usr/local/bin/antoniogarciatrevijano-sync-roots
 ```
 
-Y el archivo `~/Library/LaunchAgents/info.antoniogarciatrevijano.cluster.plist`
-para el seguidor:
+Crea `~/Library/LaunchAgents/info.antoniogarciatrevijano.sync.plist`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -218,24 +178,21 @@ para el seguidor:
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>info.antoniogarciatrevijano.cluster</string>
+  <string>info.antoniogarciatrevijano.sync</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/usr/local/bin/ipfs-cluster-follow</string>
-    <string>antoniogarciatrevijano</string>
-    <string>run</string>
+    <string>/usr/local/bin/antoniogarciatrevijano-sync-roots</string>
   </array>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
+  <key>StartInterval</key>
+  <integer>3600</integer>
 </dict>
 </plist>
 ```
 
 ```bash
-launchctl load ~/Library/LaunchAgents/info.antoniogarciatrevijano.tunnel.plist
-launchctl load ~/Library/LaunchAgents/info.antoniogarciatrevijano.cluster.plist
+launchctl load ~/Library/LaunchAgents/info.antoniogarciatrevijano.sync.plist
 ```
 
 ---
@@ -245,11 +202,12 @@ launchctl load ~/Library/LaunchAgents/info.antoniogarciatrevijano.cluster.plist
 Puedes comprobar el estado en cualquier momento:
 
 ```bash
-# Ver el estado del nodo
-ipfs-cluster-follow antoniogarciatrevijano info
+# Ver las raíces fijadas
+ipfs pin ls --type=recursive
 
-# Ver los archivos que está sincronizando
-ipfs-cluster-follow antoniogarciatrevijano list
+# Comprobar una raíz concreta
+ipfs pin ls --type=recursive QmfXv5Ai5ruR4qAgJzwfGxQ9rcpdEuxbtf7QnHnP7qCBi1
+ipfs pin ls --type=recursive bafybeibqxzwwf5cz2eve6fcm75ximgfhryiejh5n4xsscl3t3pbod6f25u
 ```
 
 ---
@@ -272,26 +230,33 @@ Sí. Detenerlo no borra nada, simplemente tu nodo deja de estar disponible
 en la red mientras está parado. Al reiniciarlo se resincroniza automáticamente.
 
 **¿Qué pasa si mi nodo se queda desactualizado?**
-Al reiniciarlo, descargará automáticamente los contenidos nuevos que se hayan
-añadido durante su ausencia.
+Vuelve a ejecutar `sync-roots.sh`. Si has configurado el timer o el agente del
+sistema, la actualización será automática.
 
 **¿Cómo sé que no estoy descargando nada malicioso?**
 IPFS es un sistema de contenido verificado: cada archivo se identifica por
-su huella criptográfica (CID). El clúster solo acepta instrucciones de pinado
-del servidor principal, cuya identidad está fijada en la configuración.
-Ningún tercero puede inyectar contenido en el clúster.
+su huella criptográfica (CID). El manifiesto público solo publica los CIDs raíz
+del archivo y de la web. Ningún tercero puede alterar el contenido sin cambiar
+esos CIDs.
+
+**¿Por qué ya no se recomienda `ipfs-cluster-follow`?**
+Porque en algunas redes la conexión libp2p al peer del clúster no resulta
+estable: el puerto público `9096` no siempre es alcanzable y el puente
+`ipfs p2p forward /x/cluster` puede dejar un listener local aparentemente
+abierto pero sin transportar tráfico útil. Publicar las dos raíces y fijarlas
+directamente en Kubo evita ese problema y replica exactamente el mismo
+contenido.
 
 ---
 
-## Datos del clúster
+## Datos de replicación
 
 | Campo | Valor |
 |---|---|
-| Nombre del clúster | `antoniogarciatrevijano` |
 | Servidor principal | `antoniogarciatrevijano.info` |
-| Peer ID del clúster | `12D3KooWJzSmawZK3Kuq46u1oq28BpoUEdjKMhanax6dZM9ht6GS` |
-| Peer ID IPFS del servidor | `12D3KooWJEhcyZ5jtpmVsPGqrQFn2BfYdMkCCigWSfM6x555yd3F` |
-| URL de configuración | `https://www.antoniogarciatrevijano.info/cluster/service.json` |
+| Manifiesto de raíces | `https://www2.antoniogarciatrevijano.info/cluster/pins.txt` |
+| Script de sincronización | `https://www2.antoniogarciatrevijano.info/cluster/sync-roots.sh` |
+| Configuración legacy del clúster | `https://www2.antoniogarciatrevijano.info/cluster/service.json` |
 
 ---
 

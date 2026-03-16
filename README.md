@@ -141,7 +141,7 @@ Article and event detail pages show a "Descargar documento original (IPFS)" down
 
 ### Collaborative Cluster
 
-`public/cluster/service.json` is a follower config template served at `https://antoniogarciatrevijano.info/cluster/service.json`. Volunteers use it to initialise `ipfs-cluster-follow` and automatically mirror the full archive. `build.sh` pins the new site CID to the cluster after each publish and unpins the old one. See `VOLUNTARIOS.md` (project root) for the volunteer guide.
+`public/cluster/service.json` is the legacy `ipfs-cluster-follow` config served at `https://www2.antoniogarciatrevijano.info/cluster/service.json`. The supported volunteer path is now the static root manifest at `https://www2.antoniogarciatrevijano.info/cluster/pins.txt` plus `https://www2.antoniogarciatrevijano.info/cluster/sync-roots.sh`, which let peers mirror the same content through plain Kubo pinning. Use the `www2` hostname for bootstrap and manifests: it is the direct nginx-served copy and avoids IPFS/IPNS gateway timeouts on `www`. `build.sh` updates the live `www2` cluster helpers after each publish. See `VOLUNTARIOS.md` (project root) for the volunteer guide.
 
 ## File structure
 
@@ -154,7 +154,9 @@ site/
 │   ├── favicon.svg            # AGT initials favicon
 │   ├── fonts/                 # Self-hosted Myriad Pro (OTF, weights 300/400/600/700/700i)
 │   ├── cluster/
-│   │   └── service.json       # IPFS Collaborative Cluster follower config (served at /cluster/service.json)
+│   │   ├── pins.txt           # Root CID manifest for volunteer replicas (served at /cluster/pins.txt)
+│   │   ├── service.json       # Legacy ipfs-cluster-follow config (served at /cluster/service.json)
+│   │   └── sync-roots.sh      # Helper script to pin/unpin the published roots
 │   └── pagefind/              # Copied from dist/ by build.sh (gitignored)
 ├── src/
 │   ├── layouts/
