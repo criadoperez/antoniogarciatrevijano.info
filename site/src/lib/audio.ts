@@ -72,7 +72,7 @@ export function parseAudioMd(content: string): AudioEntry | null {
 
 export function loadAllAudios(audiosDir: string): AudioEntry[] {
   return readdirSync(audiosDir)
-    .filter((f) => f.endsWith(".md"))
+    .filter((f) => f.endsWith(".md") && !f.includes(".sinidentificar."))
     .map((filename) =>
       parseAudioMd(readFileSync(join(audiosDir, filename), "utf-8"))
     )
