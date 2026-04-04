@@ -9,71 +9,175 @@ const articles = catalog
 // Extract unique years and publications for filters
 const years = [...new Set(articles.map((a) => a.date?.slice(0, 4)).filter(Boolean))].sort().reverse();
 const publications = [...new Set(articles.map((a) => a.publication).filter(Boolean))].sort();
+
+// Group by year
+const byYear = new Map<string, typeof articles>();
+for (const article of articles) {
+  const year = article.date?.slice(0, 4) || "sin-fecha";
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(article);
+}
+const allYears = [...byYear.keys()].sort();
+
+// Group years by decade for sidebar navigation
+const byDecade = new Map<string, string[]>();
+for (const y of allYears) {
+  if (y === "sin-fecha") continue;
+  const d = y.slice(0, 3) + "0s";
+  if (!byDecade.has(d)) byDecade.set(d, []);
+  byDecade.get(d)!.push(y);
+}
 ---
 
-<Base title="Prensa" description={`${articles.length} recortes de prensa sobre Antonio García-Trevijano`}>
+<Base title="Prensa" description={`${articles.length} recortes`}>
   <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Prensa</h1>
   <p class="text-gray-600 mb-2">Recortes de noticias de prensa donde aparece reflejada la repercusión de la acción política de Antonio García-Trevijano.</p>
-  <p class="text-gray-500 text-sm mb-6">{articles.length} recortes de prensa entre {years[years.length - 1]} y {years[0]}</p>
+  <p class="text-gray-500 text-sm mb-6">{articles.length} recortes{years.length > 0 && ` entre ${years[years.length - 1]} y ${years[0]}`}</p>
 
   <!-- Filters -->
   <div class="flex flex-wrap gap-3 mb-6">
-    <select id="filter-year" aria-label="Filtrar por año" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
-      <option value="">Todos los años</option>
-      {years.map((y) => <option value={y}>{y}</option>)}
-    </select>
-    <select id="filter-pub" aria-label="Filtrar por publicación" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
+    <select id="filter-pub" aria-label="Filtrar por publicaci\u00f3n" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
       <option value="">Todas las publicaciones</option>
       {publications.map((p) => <option value={p}>{p}</option>)}
     </select>
     <span id="filter-count" class="self-center text-sm text-gray-500"></span>
   </div>
 
-  <!-- Article list -->
-  <div id="article-list" class="space-y-1">
-    {articles.map((article) => (
-      <a
-        href={`/prensa/${article.slug}/`}
-        class="article-row block px-3 py-2.5 rounded hover:bg-brand-50 transition-colors border-b border-gray-100"
-        data-year={article.date?.slice(0, 4) || ""}
-        data-pub={article.publication || ""}
-        data-pagefind-ignore
+    <!-- Mobile: year jump -->
+    <div class="lg:hidden mb-6">
+      <select
+        id="year-jump"
+        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-brand-700 focus:outline-none"
       >
-        <div class="flex flex-col sm:flex-row sm:items-baseline gap-1">
-          <span class="text-sm text-gray-400 font-mono shrink-0 w-24">{article.date || "s/f"}</span>
-          {article.publication && (
-            <span class="text-xs text-brand-700 bg-brand-50 px-2 py-0.5 rounded shrink-0">
-              {article.publication}
-            </span>
-          )}
-          <span class="font-medium text-gray-900">{article.title}</span>
+        <option value="">Ir a un a\u00f1o...</option>
+        {allYears.filter((y) => y !== "sin-fecha").map((y) => <option value={y}>{y}</option>)}
+      </select>
+    </div>
+
+    <div class="flex gap-10 items-start">
+      <!-- Sidebar: sticky year navigator (desktop only) -->
+      <aside class="hidden lg:block w-16 shrink-0 sticky top-6">
+        <div class="max-h-[calc(100vh-6rem)] overflow-y-auto text-xs space-y-5 pr-1">
+          {[...byDecade.entries()].map(([decade, ys]) => (
+            <div>
+              <p class="text-gray-400 font-bold tracking-widest mb-1.5 text-[10px]">
+                {decade}
+              </p>
+              <ul class="space-y-0.5">
+                {ys.map((y) => (
+                  <li>
+                    <a
+                      href={`#year-${y}`}
+                      class="year-link block py-0.5 text-gray-400 hover:text-brand-700 transition-colors tabular-nums"
+                      data-year={y}
+                    >
+                      {y}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-      </a>
-    ))}
-  </div>
+      </aside>
 
-  <script>
-    const yearSelect = document.getElementById("filter-year") as HTMLSelectElement;
-    const pubSelect = document.getElementById("filter-pub") as HTMLSelectElement;
-    const countSpan = document.getElementById("filter-count")!;
-    const rows = document.querySelectorAll<HTMLElement>(".article-row");
+      <div class="flex-1 min-w-0">
+        {allYears.map((year) => (
+          <section id={`year-${year}`} class="mb-10 year-section">
+            <div class="flex items-center gap-4 mb-3">
+              <h3 class="text-base font-semibold text-brand-700 shrink-0 tabular-nums">{year === "sin-fecha" ? "Sin fecha" : year}</h3>
+              <div class="flex-1 h-px bg-gray-200" />
+              <span class="text-xs text-gray-400 shrink-0">
+                {byYear.get(year)!.length} {byYear.get(year)!.length !== 1 ? "recortes" : "recorte"}
+              </span>
+            </div>
+            <div class="space-y-1">
+              {byYear.get(year)!.map((article) => (
+                <a
+                  href={`/prensa/${article.slug}/`}
+                  class="article-row block px-3 py-2.5 rounded hover:bg-brand-50 transition-colors border-b border-gray-100"
+                  data-year={article.date?.slice(0, 4) || ""}
+                  data-pub={article.publication || ""}
+                  data-pagefind-ignore
+                >
+                  <div class="flex flex-col sm:flex-row sm:items-baseline gap-1">
+                    <span class="text-sm text-gray-400 font-mono shrink-0 w-24">{article.date || "s/f"}</span>
+                    {article.publication && (
+                      <span class="text-xs text-brand-700 bg-brand-50 px-2 py-0.5 rounded shrink-0">
+                        {article.publication}
+                      </span>
+                    )}
+                    <span class="font-medium text-gray-900">{article.title}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
 
-    function applyFilters() {
-      const year = yearSelect.value;
-      const pub = pubSelect.value;
-      let visible = 0;
-      rows.forEach((row) => {
-        const matchYear = !year || row.dataset.year === year;
-        const matchPub = !pub || row.dataset.pub === pub;
-        const show = matchYear && matchPub;
-        row.style.display = show ? "" : "none";
-        if (show) visible++;
-      });
-      countSpan.textContent = `${visible} recortes`;
-    }
+  <script is:inline>
+    (function () {
+      var sel = document.getElementById("year-jump");
+      if (sel) {
+        sel.addEventListener("change", function () {
+          if (!sel.value) return;
+          var el = document.getElementById("year-" + sel.value);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          sel.value = "";
+        });
+      }
+      var sections = Array.from(document.querySelectorAll(".year-section[id]"));
+      var links = Array.from(document.querySelectorAll(".year-link"));
+      if (!sections.length || !links.length) return;
+      function setActive(year) {
+        links.forEach(function (l) {
+          var on = l.dataset.year === year;
+          l.classList.toggle("text-brand-700", on);
+          l.classList.toggle("font-bold", on);
+          l.classList.toggle("text-gray-400", !on);
+        });
+      }
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActive(entry.target.id.replace("year-", ""));
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -75% 0px", threshold: 0 }
+      );
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
 
-    yearSelect.addEventListener("change", applyFilters);
-    pubSelect.addEventListener("change", applyFilters);
-    applyFilters();
+  <script is:inline>
+    (function () {
+const pubSelect = document.getElementById("filter-pub");
+      var yearSections = document.querySelectorAll(".year-section");
+      var countEl = document.getElementById("filter-count");
+
+      function applyFilters() {
+        var pub = pubSelect ? pubSelect.value : "";
+        var visible = 0;
+        yearSections.forEach(function (section) {
+          var rows = section.querySelectorAll(".article-row");
+          var sectionVisible = 0;
+          rows.forEach(function (row) {
+            var matchPub = !pub || row.dataset.pub === pub;
+            var show = matchPub;
+            row.style.display = show ? "" : "none";
+            if (show) { visible++; sectionVisible++; }
+          });
+          section.style.display = sectionVisible > 0 ? "" : "none";
+        });
+        if (pub) countEl.textContent = visible + " recortes";
+        else countEl.textContent = "";
+      }
+      if (pubSelect) pubSelect.addEventListener("change", applyFilters);
+      applyFilters();
+    })();
   </script>
 </Base>

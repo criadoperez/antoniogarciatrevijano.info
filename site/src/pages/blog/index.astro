@@ -9,7 +9,7 @@ function parseHeader(content: string) {
   const titleMatch = content.match(/^# (.+)/m);
   const dateMatch = content.match(/\*\*Fecha:\*\*\s*(\d{4}-\d{2}-\d{2})/);
   return {
-    title: titleMatch ? titleMatch[1].trim() : "Sin título",
+    title: titleMatch ? titleMatch[1].trim() : "Sin t\u00edtulo",
     date: dateMatch ? dateMatch[1] : null,
   };
 }
@@ -31,46 +31,132 @@ for (const post of posts) {
   if (!byYear.has(year)) byYear.set(year, []);
   byYear.get(year)!.push(post);
 }
-const years = [...byYear.keys()].sort();
+const allYears = [...byYear.keys()].sort();
+
+// Group years by decade for sidebar navigation
+const byDecade = new Map<string, string[]>();
+for (const y of allYears) {
+  if (y === "sin-fecha") continue;
+  const d = y.slice(0, 3) + "0s";
+  if (!byDecade.has(d)) byDecade.set(d, []);
+  byDecade.get(d)!.push(y);
+}
 ---
 
-<Base title="Blog" description="Blog de Antonio García-Trevijano, 2006–2011">
-  <div class="max-w-3xl mx-auto">
+<Base title="Blog" description="Blog de Antonio Garc\u00eda-Trevijano, 2006\u20132011">
+  <div>
     <h1 class="text-3xl font-bold font-serif text-brand-900 mb-3">Blog</h1>
-    <p class="text-gray-600 leading-relaxed mb-10">
-      Entre 2006 y 2011, Antonio García-Trevijano publicó {posts.length} entradas
-      en su blog personal, en el que reflexionó sobre política, democracia y la
-      situación de España. Dicho blog se eliminó y ya no está disponible, sin embargo
-      sí se conservaron los textos que aquí se recogen íntegros, junto con los
-      comentarios originales de los lectores, para garantizar su conservación y
+    <p class="text-gray-600 leading-relaxed mb-6">
+      Entre 2006 y 2011, Antonio Garc\u00eda-Trevijano public\u00f3 {posts.length} entradas
+      en su blog personal, en el que reflexion\u00f3 sobre pol\u00edtica, democracia y la
+      situaci\u00f3n de Espa\u00f1a. Dicho blog se elimin\u00f3 y ya no est\u00e1 disponible, sin embargo
+      s\u00ed se conservaron los textos que aqu\u00ed se recogen \u00edntegros, junto con los
+      comentarios originales de los lectores, para garantizar su conservaci\u00f3n y
       continuidad.
     </p>
 
-    {years.map((year) => (
-      <section class="mb-12">
-        <div class="flex items-center gap-4 mb-4">
-          <h2 class="text-lg font-semibold text-brand-700 shrink-0 tabular-nums">{year}</h2>
-          <div class="flex-1 h-px bg-gray-200" />
-          <span class="text-xs text-gray-400 shrink-0">
-            {byYear.get(year)!.length} entrada{byYear.get(year)!.length !== 1 ? "s" : ""}
-          </span>
-        </div>
-        <ul class="space-y-2">
-          {byYear.get(year)!.map((post) => (
-            <li class="flex items-baseline gap-4">
-              <span class="text-xs text-gray-400 tabular-nums shrink-0 w-20">
-                {post.date ?? ""}
-              </span>
-              <a
-                href={`/blog/${post.slug}/`}
-                class="text-brand-700 hover:text-brand-900 hover:underline leading-snug"
-              >
-                {post.title}
-              </a>
-            </li>
+    <!-- Mobile: year jump -->
+    <div class="lg:hidden mb-6">
+      <select
+        id="year-jump"
+        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-brand-700 focus:outline-none"
+      >
+        <option value="">Ir a un a\u00f1o...</option>
+        {allYears.filter((y) => y !== "sin-fecha").map((y) => <option value={y}>{y}</option>)}
+      </select>
+    </div>
+
+    <div class="flex gap-10 items-start">
+      <!-- Sidebar: sticky year navigator (desktop only) -->
+      <aside class="hidden lg:block w-16 shrink-0 sticky top-6">
+        <div class="max-h-[calc(100vh-6rem)] overflow-y-auto text-xs space-y-5 pr-1">
+          {[...byDecade.entries()].map(([decade, ys]) => (
+            <div>
+              <p class="text-gray-400 font-bold tracking-widest mb-1.5 text-[10px]">
+                {decade}
+              </p>
+              <ul class="space-y-0.5">
+                {ys.map((y) => (
+                  <li>
+                    <a
+                      href={`#year-${y}`}
+                      class="year-link block py-0.5 text-gray-400 hover:text-brand-700 transition-colors tabular-nums"
+                      data-year={y}
+                    >
+                      {y}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
-      </section>
-    ))}
+        </div>
+      </aside>
+
+      <div class="flex-1 min-w-0">
+        {allYears.map((year) => (
+          <section id={`year-${year}`} class="mb-12 year-section">
+            <div class="flex items-center gap-4 mb-4">
+              <h2 class="text-lg font-semibold text-brand-700 shrink-0 tabular-nums">{year}</h2>
+              <div class="flex-1 h-px bg-gray-200" />
+              <span class="text-xs text-gray-400 shrink-0">
+                {byYear.get(year)!.length} entrada{byYear.get(year)!.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <ul class="space-y-2">
+              {byYear.get(year)!.map((post) => (
+                <li class="flex items-baseline gap-4">
+                  <span class="text-xs text-gray-400 tabular-nums shrink-0 w-20">
+                    {post.date ?? ""}
+                  </span>
+                  <a
+                    href={`/blog/${post.slug}/`}
+                    class="text-brand-700 hover:text-brand-900 hover:underline leading-snug"
+                  >
+                    {post.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var sel = document.getElementById("year-jump");
+      if (sel) {
+        sel.addEventListener("change", function () {
+          if (!sel.value) return;
+          var el = document.getElementById("year-" + sel.value);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          sel.value = "";
+        });
+      }
+      var sections = Array.from(document.querySelectorAll(".year-section[id]"));
+      var links = Array.from(document.querySelectorAll(".year-link"));
+      if (!sections.length || !links.length) return;
+      function setActive(year) {
+        links.forEach(function (l) {
+          var on = l.dataset.year === year;
+          l.classList.toggle("text-brand-700", on);
+          l.classList.toggle("font-bold", on);
+          l.classList.toggle("text-gray-400", !on);
+        });
+      }
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActive(entry.target.id.replace("year-", ""));
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -75% 0px", threshold: 0 }
+      );
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
 </Base>

@@ -4,11 +4,29 @@ import videoData from "../../data/videos.json";
 
 const { channels, total, videos: rawVideos } = videoData;
 const videos = [...rawVideos].reverse();
+
+// Group by year
+const byYear = new Map<string, typeof videos>();
+for (const video of videos) {
+  const year = video.date?.slice(0, 4) || "sin-fecha";
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(video);
+}
+const allYears = [...byYear.keys()].sort();
+
+// Group years by decade for sidebar navigation
+const byDecade = new Map<string, string[]>();
+for (const y of allYears) {
+  if (y === "sin-fecha") continue;
+  const d = y.slice(0, 3) + "0s";
+  if (!byDecade.has(d)) byDecade.set(d, []);
+  byDecade.get(d)!.push(y);
+}
 ---
 
-<Base title="Vídeos" description={`${total} vídeos de Antonio García-Trevijano`}>
-  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Vídeos</h1>
-  <p class="text-gray-600 mb-6">{total} vídeos de conferencias, entrevistas y programas de Radio Libertad Constituyente.</p>
+<Base title="V\u00eddeos" description={`${total} v\u00eddeos de Antonio Garc\u00eda-Trevijano`}>
+  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">V\u00eddeos</h1>
+  <p class="text-gray-600 mb-6">{total} v\u00eddeos de conferencias, entrevistas y programas de Radio Libertad Constituyente.</p>
 
   <!-- Channel filter -->
   <div class="flex flex-wrap gap-3 mb-6">
@@ -19,46 +37,138 @@ const videos = [...rawVideos].reverse();
     <span id="filter-count" class="self-center text-sm text-gray-500"></span>
   </div>
 
-  <!-- Video list -->
-  <div id="video-list" class="space-y-1">
-    {videos.map((video) => (
-      <a
-        href={`/videos/${video.id}/`}
-        class="video-row block px-3 py-2.5 rounded hover:bg-brand-50 transition-colors border-b border-gray-100"
-        data-channel={video.channel_display}
-        data-pagefind-ignore
+    <!-- Mobile: year jump -->
+    <div class="lg:hidden mb-6">
+      <select
+        id="year-jump"
+        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-brand-700 focus:outline-none"
       >
-        <div class="flex flex-col sm:flex-row sm:items-baseline gap-1">
-          <span class="text-sm text-gray-400 font-mono shrink-0 w-24">{video.date || "s/f"}</span>
-          <span class="text-xs text-brand-700 bg-brand-50 px-2 py-0.5 rounded shrink-0">
-            {video.channel_display}
-          </span>
-          <span class="font-medium text-gray-900 flex-1">{video.title}</span>
-          <span class="text-xs text-gray-400 shrink-0">{video.duration_formatted}</span>
+        <option value="">Ir a un a\u00f1o...</option>
+        {allYears.filter((y) => y !== "sin-fecha").map((y) => <option value={y}>{y}</option>)}
+      </select>
+    </div>
+
+    <div class="flex gap-10 items-start">
+      <!-- Sidebar: sticky year navigator (desktop only) -->
+      <aside class="hidden lg:block w-16 shrink-0 sticky top-6">
+        <div class="max-h-[calc(100vh-6rem)] overflow-y-auto text-xs space-y-5 pr-1">
+          {[...byDecade.entries()].map(([decade, ys]) => (
+            <div>
+              <p class="text-gray-400 font-bold tracking-widest mb-1.5 text-[10px]">
+                {decade}
+              </p>
+              <ul class="space-y-0.5">
+                {ys.map((y) => (
+                  <li>
+                    <a
+                      href={`#year-${y}`}
+                      class="year-link block py-0.5 text-gray-400 hover:text-brand-700 transition-colors tabular-nums"
+                      data-year={y}
+                    >
+                      {y}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-      </a>
-    ))}
-  </div>
+      </aside>
+
+      <div class="flex-1 min-w-0">
+        {allYears.map((year) => (
+          <section id={`year-${year}`} class="mb-10 year-section">
+            <div class="flex items-center gap-4 mb-3">
+              <h3 class="text-base font-semibold text-brand-700 shrink-0 tabular-nums">{year}</h3>
+              <div class="flex-1 h-px bg-gray-200" />
+              <span class="text-xs text-gray-400 shrink-0">
+                {byYear.get(year)!.length} v\u00eddeo{byYear.get(year)!.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+            <div class="space-y-1">
+              {byYear.get(year)!.map((video) => (
+                <a
+                  href={`/videos/${video.id}/`}
+                  class="video-row block px-3 py-2.5 rounded hover:bg-brand-50 transition-colors border-b border-gray-100"
+                  data-channel={video.channel_display}
+                  data-pagefind-ignore
+                >
+                  <div class="flex flex-col sm:flex-row sm:items-baseline gap-1">
+                    <span class="text-sm text-gray-400 font-mono shrink-0 w-24">{video.date || "s/f"}</span>
+                    <span class="text-xs text-brand-700 bg-brand-50 px-2 py-0.5 rounded shrink-0">
+                      {video.channel_display}
+                    </span>
+                    <span class="font-medium text-gray-900 flex-1">{video.title}</span>
+                    <span class="text-xs text-gray-400 shrink-0">{video.duration_formatted}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+
+  <script is:inline>
+    (function () {
+      var sel = document.getElementById("year-jump");
+      if (sel) {
+        sel.addEventListener("change", function () {
+          if (!sel.value) return;
+          var el = document.getElementById("year-" + sel.value);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          sel.value = "";
+        });
+      }
+      var sections = Array.from(document.querySelectorAll(".year-section[id]"));
+      var links = Array.from(document.querySelectorAll(".year-link"));
+      if (!sections.length || !links.length) return;
+      function setActive(year) {
+        links.forEach(function (l) {
+          var on = l.dataset.year === year;
+          l.classList.toggle("text-brand-700", on);
+          l.classList.toggle("font-bold", on);
+          l.classList.toggle("text-gray-400", !on);
+        });
+      }
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActive(entry.target.id.replace("year-", ""));
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -75% 0px", threshold: 0 }
+      );
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
+
+  <script is:inline>
+    (function () {
+      var select = document.getElementById("filter-channel");
+      var yearSections = document.querySelectorAll(".year-section");
+      var countEl = document.getElementById("filter-count");
+      if (!select) return;
+
+      function applyFilter() {
+        var ch = select.value;
+        var visible = 0;
+        yearSections.forEach(function (section) {
+          var rows = section.querySelectorAll(".video-row");
+          var sectionVisible = 0;
+          rows.forEach(function (row) {
+            var match = !ch || row.dataset.channel === ch;
+            row.style.display = match ? "" : "none";
+            if (match) { visible++; sectionVisible++; }
+          });
+          section.style.display = sectionVisible > 0 ? "" : "none";
+        });
+        countEl.textContent = ch ? visible + " v\u00eddeos" : "";
+      }
+
+      select.addEventListener("change", applyFilter);
+    })();
+  </script>
 </Base>
-
-<script is:inline>
-  (function () {
-    const select = document.getElementById("filter-channel");
-    const rows = document.querySelectorAll(".video-row");
-    const countEl = document.getElementById("filter-count");
-    if (!select || !rows.length) return;
-
-    function applyFilter() {
-      const ch = select.value;
-      let visible = 0;
-      rows.forEach((row) => {
-        const match = !ch || row.dataset.channel === ch;
-        row.style.display = match ? "" : "none";
-        if (match) visible++;
-      });
-      countEl.textContent = ch ? `${visible} vídeos` : "";
-    }
-
-    select.addEventListener("change", applyFilter);
-  })();
-</script>
