@@ -28,21 +28,69 @@ for (const photo of allPhotos) {
 // Years newest-first; undated at end
 const years = [...byYear.keys()]
   .filter((y) => y !== "sin-fecha")
-  .sort()
-  .reverse();
+  .sort();
 if (byYear.has("sin-fecha")) years.push("sin-fecha");
 
 // Flat ordered list — used by the lightbox for prev/next navigation
 const flatPhotos = years.flatMap((y) => byYear.get(y)!);
+
+// Group years by decade for sidebar navigation
+const byDecade = new Map<string, string[]>();
+for (const y of years) {
+  if (y === "sin-fecha") continue;
+  const d = y.slice(0, 3) + "0s";
+  if (!byDecade.has(d)) byDecade.set(d, []);
+  byDecade.get(d)!.push(y);
+}
 ---
 
 <Base title="Fotos" description="Galería fotográfica de Antonio García-Trevijano, 1939–2017">
   <div data-pagefind-ignore>
     <h1 class="text-3xl font-bold font-serif text-brand-900 mb-1">Fotos</h1>
-    <p class="text-gray-500 mb-10">{allPhotos.length} fotografías · 1939–2017</p>
+    <p class="text-gray-500 mb-6">{allPhotos.length} fotografías · 1939–2017</p>
+
+    <!-- Mobile: year jump -->
+    <div class="lg:hidden mb-6">
+      <select
+        id="year-jump"
+        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-brand-700 focus:outline-none"
+      >
+        <option value="">Ir a un año...</option>
+        {years.map((y) => <option value={y === "sin-fecha" ? "sin-fecha" : y}>{y === "sin-fecha" ? "Sin fecha" : y}</option>)}
+      </select>
+    </div>
+
+    <div class="flex gap-10 items-start">
+      <!-- Sidebar: sticky year navigator (desktop only) -->
+      <aside class="hidden lg:block w-16 shrink-0 sticky top-6">
+        <div class="max-h-[calc(100vh-6rem)] overflow-y-auto text-xs space-y-5 pr-1">
+          {[...byDecade.entries()].map(([decade, ys]) => (
+            <div>
+              <p class="text-gray-400 font-bold tracking-widest mb-1.5 text-[10px]">
+                {decade}
+              </p>
+              <ul class="space-y-0.5">
+                {ys.map((y) => (
+                  <li>
+                    <a
+                      href={`#year-${y}`}
+                      class="year-link block py-0.5 text-gray-400 hover:text-brand-700 transition-colors tabular-nums"
+                      data-year={y}
+                    >
+                      {y}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      <div class="flex-1 min-w-0">
 
     {years.map((year) => (
-      <section class="mb-14">
+      <section id={`year-${year}`} class="mb-14 year-section">
 
         <!-- Year divider -->
         <div class="flex items-center gap-4 mb-4">
@@ -82,6 +130,9 @@ const flatPhotos = years.flatMap((y) => byYear.get(y)!);
 
       </section>
     ))}
+
+      </div>
+    </div>
 
     <!-- Lightbox overlay -->
     <div
@@ -127,6 +178,42 @@ const flatPhotos = years.flatMap((y) => byYear.get(y)!);
       >&#8250;</button>
     </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var sel = document.getElementById("year-jump");
+      if (sel) {
+        sel.addEventListener("change", function () {
+          if (!sel.value) return;
+          var el = document.getElementById("year-" + sel.value);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          sel.value = "";
+        });
+      }
+      var sections = Array.from(document.querySelectorAll(".year-section[id]"));
+      var links = Array.from(document.querySelectorAll(".year-link"));
+      if (!sections.length || !links.length) return;
+      function setActive(year) {
+        links.forEach(function (l) {
+          var on = l.dataset.year === year;
+          l.classList.toggle("text-brand-700", on);
+          l.classList.toggle("font-bold", on);
+          l.classList.toggle("text-gray-400", !on);
+        });
+      }
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActive(entry.target.id.replace("year-", ""));
+            }
+          });
+        },
+        { rootMargin: "-10% 0px -75% 0px", threshold: 0 }
+      );
+      sections.forEach(function (s) { observer.observe(s); });
+    })();
+  </script>
 
   <!-- Embed photo metadata for the lightbox -->
   <script

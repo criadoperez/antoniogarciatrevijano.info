@@ -10,24 +10,43 @@ const { title, description = "Archivo y obra de Antonio García-Trevijano" } = A
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { href: "/", label: "Inicio" },
   { href: "/presentacion/", label: "Presentación" },
   { href: "/cronologia/", label: "Cronología" },
-  { href: "/articulos/", label: "Artículos" },
-  { href: "/prensa/", label: "Prensa" },
-  { href: "/hechos/", label: "Hechos" },
-  { href: "/blog/", label: "Blog" },
   { href: "/fotos/", label: "Fotos" },
-  { href: "/libros/", label: "Libros" },
   { href: "/audios/", label: "Audios" },
   { href: "/videos/", label: "Vídeos" },
   { href: "/chat/", label: "Chat IA" },
+];
+
+const dropdowns = [
+  {
+    label: "Escritos de AGT",
+    insertBefore: "Fotos",
+    items: [
+      { href: "/articulos/", label: "Artículos" },
+      { href: "/blog/", label: "Blog" },
+      { href: "/libros/", label: "Libros" },
+    ],
+  },
+  {
+    label: "Escritos de otros",
+    insertBefore: "Fotos",
+    items: [
+      { href: "/articulos-de-otros/", label: "Artículos de otros" },
+      { href: "/prensa/", label: "Prensa" },
+      { href: "/hechos/", label: "Hechos" },
+    ],
+  },
 ];
 
 function isActive(href: string): boolean {
   if (href === "/") return currentPath === "/";
   return currentPath.startsWith(href);
 }
+
+const dropdownActiveMap = new Map(
+  dropdowns.map((d) => [d.label, d.items.some((item) => isActive(item.href))])
+);
 ---
 
 <!doctype html>
@@ -47,20 +66,56 @@ function isActive(href: string): boolean {
         <a href="/" class="text-xl font-bold tracking-tight hover:text-brand-100 transition-colors">
           Antonio García-Trevijano
         </a>
-        <nav class="flex flex-wrap gap-1 text-sm">
-          {navLinks.map(({ href, label }) => (
-            <a
-              href={href}
-              class:list={[
-                "px-3 py-1.5 rounded transition-colors",
-                isActive(href)
-                  ? "bg-white/20 text-white font-medium"
-                  : "text-brand-100 hover:bg-white/10 hover:text-white",
-              ]}
-            >
-              {label}
-            </a>
-          ))}
+        <nav class="flex flex-wrap gap-1 text-sm items-center">
+          {navLinks.map(({ href, label }) => {
+            const matchingDropdowns = dropdowns.filter((d) => d.insertBefore === label);
+            return (
+              <>
+                {matchingDropdowns.map((dd) => (
+                  <div class="escritos-dropdown relative">
+                    <button
+                      type="button"
+                      class:list={[
+                        "px-3 py-1.5 rounded transition-colors inline-flex items-center gap-1",
+                        dropdownActiveMap.get(dd.label)
+                          ? "bg-white/20 text-white font-medium"
+                          : "text-brand-100 hover:bg-white/10 hover:text-white",
+                      ]}
+                    >
+                      {dd.label}
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    <div class="escritos-menu absolute left-0 top-full mt-1 bg-brand-800 rounded-lg shadow-lg py-1 min-w-[180px] z-50 hidden">
+                      {dd.items.map((item) => (
+                        <a
+                          href={item.href}
+                          class:list={[
+                            "block px-4 py-2 text-sm transition-colors",
+                            isActive(item.href)
+                              ? "bg-white/20 text-white font-medium"
+                              : "text-brand-100 hover:bg-white/10 hover:text-white",
+                          ]}
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <a
+                  href={href}
+                  class:list={[
+                    "px-3 py-1.5 rounded transition-colors",
+                    isActive(href)
+                      ? "bg-white/20 text-white font-medium"
+                      : "text-brand-100 hover:bg-white/10 hover:text-white",
+                  ]}
+                >
+                  {label}
+                </a>
+              </>
+            );
+          })}
         </nav>
       </div>
       <!-- Search bar — always visible, Pagefind enhances it when available -->
@@ -74,6 +129,23 @@ function isActive(href: string): boolean {
           />
         </div>
       </div>
+
+    <script is:inline>
+      document.querySelectorAll('.escritos-dropdown').forEach(function(dropdown) {
+        var menu = dropdown.querySelector('.escritos-menu');
+        var timeout;
+        dropdown.addEventListener('mouseenter', function() {
+          clearTimeout(timeout);
+          menu.classList.remove('hidden');
+        });
+        dropdown.addEventListener('mouseleave', function() {
+          timeout = setTimeout(function() { menu.classList.add('hidden'); }, 150);
+        });
+        dropdown.querySelector('button').addEventListener('click', function() {
+          menu.classList.toggle('hidden');
+        });
+      });
+    </script>
     </header>
 
     <script is:inline src="/pagefind/pagefind-ui.js"></script>

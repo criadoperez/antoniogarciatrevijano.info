@@ -4,7 +4,7 @@ import catalog from "../../data/catalog.json";
 
 const articles = catalog
   .filter((i) => i.category === "articulos")
-  .sort((a, b) => (b.date || "0000").localeCompare(a.date || "0000"));
+  .sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999"));
 
 // Extract unique years and publications for filters
 const years = [...new Set(articles.map((a) => a.date?.slice(0, 4)).filter(Boolean))].sort().reverse();
@@ -13,7 +13,8 @@ const publications = [...new Set(articles.map((a) => a.publication).filter(Boole
 
 <Base title="Artículos" description={`${articles.length} artículos de Antonio García-Trevijano`}>
   <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Artículos</h1>
-  <p class="text-gray-600 mb-6">{articles.length} artículos publicados entre {years[years.length - 1]} y {years[0]}</p>
+  <p class="text-gray-600 mb-2">Artículos de prensa publicados de Antonio García-Trevijano.</p>
+  <p class="text-gray-500 text-sm mb-6">{articles.length} artículos publicados entre {years[years.length - 1]} y {years[0]}</p>
 
   <!-- Filters -->
   <div class="flex flex-wrap gap-3 mb-6">

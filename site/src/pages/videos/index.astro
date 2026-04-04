@@ -2,7 +2,8 @@
 import Base from "../../layouts/Base.astro";
 import videoData from "../../data/videos.json";
 
-const { channels, total, videos } = videoData;
+const { channels, total, videos: rawVideos } = videoData;
+const videos = [...rawVideos].reverse();
 ---
 
 <Base title="Vídeos" description={`${total} vídeos de Antonio García-Trevijano`}>

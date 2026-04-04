@@ -1,4 +1,4 @@
 # Root CIDs managed by build.sh and served from www2.
 # One recursive pin per line: <cid> <label>
 QmXaiFUZoL6dgUbJoAtdrKVEyidtSUxUMK8FgWE4vdS8AX archive-root
-bafybeifc7jbpgskebub2ejaizalpgrjk77wc3hud26ojn6gz6lf5aoclie site-root
+bafybeibm6n2z5maazxewjwker6g4kw2yj3adsiufi3smklaxwcd53lypgu site-root

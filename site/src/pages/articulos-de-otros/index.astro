@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import catalog from "../../data/catalog.json";
 
 const articles = catalog
-  .filter((i) => i.category === "prensa")
+  .filter((i) => i.category === "artículos-de-otros")
   .sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999"));
 
 // Extract unique years and publications for filters
@@ -11,10 +11,10 @@ const years = [...new Set(articles.map((a) => a.date?.slice(0, 4)).filter(Boolea
 const publications = [...new Set(articles.map((a) => a.publication).filter(Boolean))].sort();
 ---
 
-<Base title="Prensa" description={`${articles.length} recortes de prensa sobre Antonio García-Trevijano`}>
-  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Prensa</h1>
-  <p class="text-gray-600 mb-2">Recortes de noticias de prensa donde aparece reflejada la repercusión de la acción política de Antonio García-Trevijano.</p>
-  <p class="text-gray-500 text-sm mb-6">{articles.length} recortes de prensa entre {years[years.length - 1]} y {years[0]}</p>
+<Base title="Artículos de otros" description={`${articles.length} artículos de otros autores sobre Antonio García-Trevijano`}>
+  <h1 class="text-3xl font-bold font-serif text-brand-900 mb-2">Artículos de otros</h1>
+  <p class="text-gray-600 mb-2">Artículos de periodistas con referencias a Antonio García-Trevijano.</p>
+  <p class="text-gray-500 text-sm mb-6">{articles.length} artículos{years.length > 0 && ` entre ${years[years.length - 1]} y ${years[0]}`}</p>
 
   <!-- Filters -->
   <div class="flex flex-wrap gap-3 mb-6">
@@ -22,10 +22,12 @@ const publications = [...new Set(articles.map((a) => a.publication).filter(Boole
       <option value="">Todos los años</option>
       {years.map((y) => <option value={y}>{y}</option>)}
     </select>
-    <select id="filter-pub" aria-label="Filtrar por publicación" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
-      <option value="">Todas las publicaciones</option>
-      {publications.map((p) => <option value={p}>{p}</option>)}
-    </select>
+    {publications.length > 0 && (
+      <select id="filter-pub" aria-label="Filtrar por publicación" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
+        <option value="">Todas las publicaciones</option>
+        {publications.map((p) => <option value={p}>{p}</option>)}
+      </select>
+    )}
     <span id="filter-count" class="self-center text-sm text-gray-500"></span>
   </div>
 
@@ -33,7 +35,7 @@ const publications = [...new Set(articles.map((a) => a.publication).filter(Boole
   <div id="article-list" class="space-y-1">
     {articles.map((article) => (
       <a
-        href={`/prensa/${article.slug}/`}
+        href={`/articulos-de-otros/${article.slug}/`}
         class="article-row block px-3 py-2.5 rounded hover:bg-brand-50 transition-colors border-b border-gray-100"
         data-year={article.date?.slice(0, 4) || ""}
         data-pub={article.publication || ""}
@@ -54,13 +56,13 @@ const publications = [...new Set(articles.map((a) => a.publication).filter(Boole
 
   <script>
     const yearSelect = document.getElementById("filter-year") as HTMLSelectElement;
-    const pubSelect = document.getElementById("filter-pub") as HTMLSelectElement;
+    const pubSelect = document.getElementById("filter-pub") as HTMLSelectElement | null;
     const countSpan = document.getElementById("filter-count")!;
     const rows = document.querySelectorAll<HTMLElement>(".article-row");
 
     function applyFilters() {
       const year = yearSelect.value;
-      const pub = pubSelect.value;
+      const pub = pubSelect?.value || "";
       let visible = 0;
       rows.forEach((row) => {
         const matchYear = !year || row.dataset.year === year;
@@ -69,11 +71,11 @@ const publications = [...new Set(articles.map((a) => a.publication).filter(Boole
         row.style.display = show ? "" : "none";
         if (show) visible++;
       });
-      countSpan.textContent = `${visible} recortes`;
+      countSpan.textContent = `${visible} artículos`;
     }
 
     yearSelect.addEventListener("change", applyFilters);
-    pubSelect.addEventListener("change", applyFilters);
+    pubSelect?.addEventListener("change", applyFilters);
     applyFilters();
   </script>
 </Base>
