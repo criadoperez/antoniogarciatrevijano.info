@@ -24,3 +24,9 @@ site/dist/
 site/node_modules/
 site/.astro/
 site/public/pagefind/
+
+# LLM model files (too large for git)
+infra/llm/models/
+
+# Duplicate font files (canonical copy in site/public/fonts/)
+myriad-pro/
