@@ -37,7 +37,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from FlagEmbedding import BGEM3FlagModel
@@ -54,6 +54,30 @@ LLM_MODEL       = os.getenv("LLM_MODEL", "gpt-4o")
 MIN_SCORE       = 0.3    # cosine similarity floor; raise to tighten relevance
 API_KEY         = os.getenv("RAG_API_KEY", "")   # empty = no auth required
 CORS_ORIGINS    = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
+
+# ── Rate limiting ──────────────────────────────────────────────────────
+
+CHAT_RATE_LIMIT_SECONDS = int(os.getenv("CHAT_RATE_LIMIT", "240"))  # 4 minutes
+_rate_limit_map: dict[str, float] = {}  # IP -> last request timestamp
+
+
+def _check_rate_limit(client_ip: str):
+    """Raise 429 if this IP has made a request within the rate limit window."""
+    now = time.time()
+    if len(_rate_limit_map) > 10000:
+        cutoff = now - CHAT_RATE_LIMIT_SECONDS
+        for ip in list(_rate_limit_map):
+            if _rate_limit_map[ip] < cutoff:
+                del _rate_limit_map[ip]
+    last = _rate_limit_map.get(client_ip, 0)
+    if now - last < CHAT_RATE_LIMIT_SECONDS:
+        wait = int(CHAT_RATE_LIMIT_SECONDS - (now - last))
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limited. Try again in {wait} seconds.",
+        )
+    _rate_limit_map[client_ip] = now
+
 
 # ── Logging ────────────────────────────────────────────────────────────
 
@@ -301,10 +325,13 @@ def search(
 
 @app.post("/chat")
 async def chat(
+    request: Request,
     req: ChatRequest,
     x_api_key: str = Header(default=""),
 ):
     _check_auth(x_api_key)
+    client_ip = request.headers.get("x-real-ip", request.client.host)
+    _check_rate_limit(client_ip)
 
     if _openai is None:
         raise HTTPException(

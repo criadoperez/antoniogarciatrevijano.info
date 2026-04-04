@@ -1,0 +1,57 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { marked } from "marked";
+import Base from "../layouts/Base.astro";
+import catalog from "../data/catalog.json";
+
+const entry = catalog.find((i) => i.category === "presentación");
+
+const mdPath = join(
+  process.cwd(),
+  "..",
+  "output",
+  "publicos",
+  "presentación",
+  "0.PRESENTACIÓN antoniogarciatrevijano. 2026.md"
+);
+
+let htmlContent = "";
+try {
+  const md = readFileSync(mdPath, "utf-8");
+  htmlContent = marked.parse(md) as string;
+} catch {
+  htmlContent = "<p><em>Contenido no disponible.</em></p>";
+}
+
+const ipfsUrl = entry?.ipfs_url;
+const sourceFilename = entry?.source_filename;
+---
+
+<Base title="Presentación" description="Carta de presentación del archivo de Antonio García-Trevijano">
+  <article class="max-w-3xl mx-auto">
+    <header class="mb-10 text-center">
+      <h1 class="text-3xl font-bold font-serif text-brand-900 mb-3">Presentación</h1>
+      <p class="text-gray-500">Carta de presentación del archivo</p>
+    </header>
+
+    <div
+      class="article-body prose prose-lg prose-gray mx-auto leading-relaxed first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:text-brand-900 first-letter:float-left first-letter:mr-2 first-letter:mt-1"
+      set:html={htmlContent}
+      data-pagefind-body
+    />
+
+    {ipfsUrl && (
+      <div class="mt-10 pt-6 border-t border-gray-200 text-center">
+        <a
+          href={ipfsUrl + (sourceFilename ? "?filename=" + encodeURIComponent(sourceFilename) : "")}
+          target="_blank"
+          rel="noopener"
+          class="text-sm text-brand-700 hover:text-brand-900 underline"
+        >
+          Descargar documento original (IPFS)
+        </a>
+      </div>
+    )}
+  </article>
+</Base>

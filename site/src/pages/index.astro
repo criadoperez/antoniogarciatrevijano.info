@@ -3,8 +3,10 @@ import { join } from "node:path";
 import Base from "../layouts/Base.astro";
 import catalog from "../data/catalog.json";
 import { loadAllAudios } from "../lib/audio";
+import videoData from "../data/videos.json";
 
 const totalArticles = catalog.filter((i) => i.category === "articulos").length;
+const totalPrensa = catalog.filter((i) => i.category === "prensa").length;
 const totalHechos = new Set(
   catalog.filter((i) => i.category === "AGT.HECHOS").map((i) => i.subcategory)
 ).size;
@@ -19,6 +21,7 @@ const audiosDir = join(process.cwd(), "..", "ficheros", "publicos", "audios");
 const totalAudioHours = Math.round(
   loadAllAudios(audiosDir).reduce((sum, a) => sum + a.duration_seconds, 0) / 3600
 );
+const totalVideoHours = Math.round(videoData.videos.reduce((sum, v) => sum + v.duration, 0) / 3600);
 ---
 
 <Base title="Inicio">
@@ -37,10 +40,14 @@ const totalAudioHours = Math.round(
     </section>
 
     <!-- Stats -->
-    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 py-8 border-y border-gray-200">
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 py-8 border-y border-gray-200">
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{totalArticles}</p>
         <p class="text-sm text-gray-500">Artículos</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{totalPrensa}</p>
+        <p class="text-sm text-gray-500">Recortes de prensa</p>
       </div>
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{totalHechos}</p>
@@ -53,6 +60,10 @@ const totalAudioHours = Math.round(
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{totalAudioHours}</p>
         <p class="text-sm text-gray-500">Horas de audio</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-brand-900">{totalVideoHours}</p>
+        <p class="text-sm text-gray-500">Horas de vídeo</p>
       </div>
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{minYear}–{maxYear}</p>
@@ -70,6 +81,13 @@ const totalAudioHours = Math.round(
         </p>
       </a>
 
+
+      <a href="/presentacion/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Presentación</h2>
+        <p class="text-gray-600">
+          Carta de presentación del archivo por Fernando Gómez Gonçalves-Figueiras.
+        </p>
+      </a>
       <a href="/cronologia/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
         <h2 class="text-xl font-bold text-brand-900 mb-2">Cronología</h2>
         <p class="text-gray-600">
@@ -82,6 +100,14 @@ const totalAudioHours = Math.round(
         <p class="text-gray-600">
           {totalArticles} artículos publicados en prensa entre {minYear} y {maxYear}.
           Busca por año, publicación o texto.
+        </p>
+      </a>
+
+      <a href="/prensa/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
+        <h2 class="text-xl font-bold text-brand-900 mb-2">Prensa</h2>
+        <p class="text-gray-600">
+          {totalPrensa} recortes de prensa sobre García-Trevijano y su entorno,
+          desde 1924 hasta 2024.
         </p>
       </a>
 
