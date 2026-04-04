@@ -32,46 +32,321 @@ GATEWAY = "https://ipfs.antoniogarciatrevijano.info/ipfs"
 
 PHOTO_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".avif", ".tif", ".tiff"}
 
-# Known publications extracted from corpus analysis.
-# Used to distinguish publication from title in filenames.
-# Sorted longest-first at lookup time to avoid partial matches.
-KNOWN_PUBLICATIONS = {
-    "ABC",
-    "ACRATAS",
-    "AHORA",
-    "AJOBLANCO",
-    "ATENEO",
-    "AVUI",
-    "BLOG AGT",
-    "DERECHO Y OPINION",
-    "DIARIO 16",
-    "DIARIORC",
-    "EL CONFIDENCIAL",
-    "EL INDEPENDFIENTE",
-    "EL INDEPENDIENTE",
-    "EL MUNDO",
-    "EL PAIS",
-    "EL SIGLO",
-    "ELCORREO",
-    "ELDIARIODELAMARINA.COM",
-    "ELINDEPENDIENTE",
-    "ESPIA EN EL CONGRESO",
-    "EXTREMADURAPROGRESISTA",
-    "FILOSOFIA DIGITAL",
-    "IGLESIA VIVA",
-    "L'ESTEL DE MALLORCA",
-    "LA PROVINCIA",
-    "LA RAZON",
-    "LAOPINIONDTENERIFE",
-    "MADRID",
-    "REPORTER",
-    "TEINTERESA",
-    "YA",
-    "EL RINCON DE YANKA",
+# Known publications: maps every filename variant (UPPER) to its display name.
+# Variants without spaces, with typos, etc. all map to the canonical form.
+PUBLICATION_MAP = {
+    # --- A ---
+    "ABC": "ABC",
+    "ACRATAS": "Ácratas",
+    "AHORA": "Ahora",
+    "AJOBLANCO": "Ajoblanco",
+    "ALAI": "ALAI",
+    "ALERTA": "Alerta",
+    "ALERTA DIGITAL": "Alerta Digital",
+    "ANDALAN": "Andalán",
+    "API": "API",
+    "ARAGON EXPRESS": "Aragón Express",
+    "ARAGON PRESS": "Aragón Press",
+    "ARANDO LAS OLAS": "Arando las Olas",
+    "ARRIBA": "Arriba",
+    "ATENEO": "Ateneo",
+    "ATENEO DE MADRID": "Ateneo de Madrid",
+    "ATLANTICO": "Atlántico",
+    "AVUI": "Avui",
+    # --- B ---
+    "BITACORAS": "Bitácoras",
+    "BN": "BN",
+    "BOE": "BOE",
+    "BLOG AGT": "Blog AGT",
+    # --- C ---
+    "CAMBIO16": "Cambio 16",
+    "CANARIAS7": "Canarias 7",
+    "CANARIAS 7": "Canarias 7",
+    "CINCO DIAS": "Cinco Días",
+    "CINCODIAS": "Cinco Días",
+    "CIUDADANOS EN LA RED": "Ciudadanos en la Red",
+    "CLAM": "Clam",
+    "CLUB REPUBLICANO": "Club Republicano",
+    "CNT": "CNT",
+    "COMBATE": "Combate",
+    "COMBATE SINDICALISTA": "Combate Sindicalista",
+    "COMUNICACION ESTRATEGICA": "Comunicación Estratégica",
+    "CONFIDENCIAL": "El Confidencial",
+    "CONSTELACIÓN": "Constelación",
+    "CORREO DEL PUEBLO": "El Correo del Pueblo",
+    "CUADERNOS": "Cuadernos para el Diálogo",
+    "CUADERNOS PARA EL DIALOGO": "Cuadernos para el Diálogo",
+    "CUADERNOS 167": "Cuadernos para el Diálogo",
+    "CUADERNOS 180": "Cuadernos para el Diálogo",
+    # --- D ---
+    "DA": "DA",
+    "DEIA": "Deia",
+    "DEMOCRESIA": "Democresia",
+    "DERECHO Y OPINION": "Derecho y Opinión",
+    "DESPERTARES": "Despertares",
+    "DESTINO": "Destino",
+    "DIARI DE GIRONA": "Diari de Girona",
+    "DIARI D GIRONA": "Diari de Girona",
+    "DIARIO 16": "Diario 16",
+    "DIARIO16": "Diario 16",
+    "DIARIO CRITICO": "Diario Crítico",
+    "DIARIOCRITICO": "Diario Crítico",
+    "DIARIO DE ALMERIA": "Diario de Almería",
+    "DIARIO DE AVISOS": "Diario de Avisos",
+    "DIARIODAVISOS": "Diario de Avisos",
+    "DIARIO D AVISOS": "Diario de Avisos",
+    "DIARIO AVISOS": "Diario de Avisos",
+    "DIARIO DE BARCELONA": "Diario de Barcelona",
+    "DIARIOBARCELONA": "Diario de Barcelona",
+    "DIARIO DE BURGOS": "Diario de Burgos",
+    "DIARIODBURGOS": "Diario de Burgos",
+    "DIARIO DE CADIZ": "Diario de Cádiz",
+    "DIARIODCADIZ": "Diario de Cádiz",
+    "DIARIO DE CORDOBA": "Diario de Córdoba",
+    "DIARIODCORDOBA": "Diario de Córdoba",
+    "DIARIO DE LAS PALMAS": "Diario de Las Palmas",
+    "DIARIODLASPALMAS": "Diario de Las Palmas",
+    "DIARIO D LAS PALMAS": "Diario de Las Palmas",
+    "DIARIO DE LEON": "Diario de León",
+    "DIARIO DE LERIDA": "Diario de Lérida",
+    "DIARIODLERIDA": "Diario de Lérida",
+    "DIARIODLÉRIDA": "Diario de Lérida",
+    "DIARIO DE MALLORCA": "Diario de Mallorca",
+    "DIARIODE MALLORCA": "Diario de Mallorca",
+    "DIARIO DE PONTEVEDRA": "Diario de Pontevedra",
+    "DIARIODPONTEVEDRA": "Diario de Pontevedra",
+    "DIARIO D PONTEVEDRA": "Diario de Pontevedra",
+    "DIARIO DE SORIA": "Diario de Soria",
+    "DIARIODSORIA": "Diario de Soria",
+    "DIARIO DE VALENCIA": "Diario de Valencia",
+    "DIARIODVALENCIA": "Diario de Valencia",
+    "DIARIO MADRID": "Diario Madrid",
+    "DIARIOMONTAÑES": "Diario Montañés",
+    "DIARIORC": "DiarioRC",
+    "DIARIOSIGLOXXI": "Diario Siglo XXI",
+    "DIARIOVASCO": "Diario Vasco",
+    "DISIDENTIA": "Disidentia",
+    # --- E ---
+    "ECO CANARIAS": "Eco de Canarias",
+    "ECO DE CANARIAS": "Eco de Canarias",
+    "ECO REPUBLICANO": "Eco Republicano",
+    "ECOREPUBLICANO": "Eco Republicano",
+    "ECODECANARIAS": "Eco de Canarias",
+    "EL CATOBLEPAS": "El Catoblepas",
+    "EL COMERCIO": "El Comercio",
+    "ELCOMERCIO": "El Comercio",
+    "EL CONFIDENCIAL": "El Confidencial",
+    "ELCONFIDENCIAL": "El Confidencial",
+    "EL CORREO": "El Correo",
+    "ELCORREO": "El Correo",
+    "EL CORREO DEL PUEBLO": "El Correo del Pueblo",
+    "ELCORREO DEL PUEBLO": "El Correo del Pueblo",
+    "ELCORREODELPUEBLO": "El Correo del Pueblo",
+    "EL CORREO ESPAÑOL": "El Correo Español",
+    "ELCORREOGALLEGO": "El Correo Gallego",
+    "EL CRITICO": "El Crítico",
+    "ELCRITICO": "El Crítico",
+    "EL ECO D CANARIAS": "Eco de Canarias",
+    "EL ECO DE CANARIAS": "Eco de Canarias",
+    "ELECODCANARIAS": "Eco de Canarias",
+    "EL ESPAÑOL": "El Español",
+    "EL ESPIA DIGITAL": "Espía Digital",
+    "EL IMPARCIAL": "El Imparcial",
+    "ELIMPARCIAL": "El Imparcial",
+    "EL INDEPENDFIENTE": "El Independiente",
+    "EL INDEPENDIENTE": "El Independiente",
+    "ELINDEPENDIENTE": "El Independiente",
+    "EL MUNDO": "El Mundo",
+    "ELMUNDO": "El Mundo",
+    "EL MUNDO FINANCIERO": "El Mundo Financiero",
+    "EL NOTICIERO": "El Noticiero",
+    "ELNOTICIERO": "El Noticiero",
+    "EL PAIS": "El País",
+    "ELPAIS": "El País",
+    "EL PAÍS": "El País",
+    "EL PAIS SEMANAL": "El País Semanal",
+    "EL PERIODICO": "El Periódico",
+    "ELPERIODICO": "El Periódico",
+    "EL PROGRESO": "El Progreso",
+    "ELPROGRESO": "El Progreso",
+    "EL PUEBLODCEUTA": "El Pueblo de Ceuta",
+    "ELPUEBLODCEUTA": "El Pueblo de Ceuta",
+    "EL PUNT": "El Punt",
+    "ELPUNT": "El Punt",
+    "EL RINCON DE YANKA": "El Rincón de Yanka",
+    "EL SIGLO": "El Siglo",
+    "ELSIGLO": "El Siglo",
+    "EL SOL DIGITAL": "El Sol Digital",
+    "ELDIARIODELAMARINA.COM": "El Diario de la Marina",
+    "ELADELANTADODSEGOVIA": "El Adelantado de Segovia",
+    "ELPUEBLOGALLEGO": "El Pueblo Gallego",
+    "EPOCA": "Época",
+    "ESPACIOS EUROPEOS": "Espacios Europeos",
+    "ESPIA EN EL CONGRESO": "Espía en el Congreso",
+    "ESPIA DIGITAL": "Espía Digital",
+    "ESTRELLA DIGITAL": "Estrella Digital",
+    "ESTRELLADIGITAL": "Estrella Digital",
+    "EUROPA EXPRESS": "Europa Express",
+    "EUROPA PRESS": "Europa Press",
+    "EUROPAPRESS": "Europa Press",
+    "EUROPA SUR": "Europa Sur",
+    "EXPRES ESPAÑOL": "Exprés Español",
+    "EXTREMADURAPROGRESISTA": "Extremadura Progresista",
+    # --- F ---
+    "FARO DE VIGO": "Faro de Vigo",
+    "FARODVIGO": "Faro de Vigo",
+    "FILOSOFIA DIGITAL": "Filosofía Digital",
+    # --- G ---
+    "GACETA MADRID": "Gaceta de Madrid",
+    "GENERACION XXI": "Generación XXI",
+    "GENERACIONXXI": "Generación XXI",
+    "GENTES": "Gentes",
+    "GEOPOLITICA": "Geopolítica",
+    "GRANADAGRAFICA": "Granada Gráfica",
+    "GRANADAHOY": "Granada Hoy",
+    "GUADIANA": "Guadiana",
+    # --- H ---
+    "HOJA DEL LUNES": "Hoja del Lunes",
+    "HOJA DEL LUNES MADRID": "Hoja del Lunes de Madrid",
+    "HOJA DEL LUNES GRANADA": "Hoja del Lunes de Granada",
+    "HOY": "Hoy",
+    "HUMANITAS": "Humanitas",
+    # --- I ---
+    "ID": "ID",
+    "IDEAL": "Ideal",
+    "IGLESIA VIVA": "Iglesia Viva",
+    "IMPARCIAL": "El Imparcial",
+    "INFORMACIONES": "Informaciones",
+    "INFORMACION ESPAÑOLA": "Información Española",
+    "INTERNET": "Internet",
+    "INTERVIU": "Interviú",
+    # --- K ---
+    "KAOS EN LA RED": "Kaos en la Red",
+    # --- L ---
+    "L'ESTEL DE MALLORCA": "L'Estel de Mallorca",
+    "LA BITACORA": "La Bitácora",
+    "LA ESTRELLA": "La Estrella",
+    "LA ESTRELLA DIGITAL": "Estrella Digital",
+    "LA GACETA DE ALMERIA": "La Gaceta de Almería",
+    "LAGACETA": "La Gaceta",
+    "LAGACETADCANARIAS": "La Gaceta de Canarias",
+    "LAGACETA DE CANARIAS": "La Gaceta de Canarias",
+    "LA HORA DE LEON": "La Hora de León",
+    "LA HORA LEONESA": "La Hora Leonesa",
+    "LA NUEVA ESPAÑA": "La Nueva España",
+    "LANUEVAESPAÑA": "La Nueva España",
+    "NUEVA ESPAÑA": "La Nueva España",
+    "LA OPINION": "La Opinión",
+    "LA OPINION DE ZAMORA": "La Opinión de Zamora",
+    "LA OPINION EL CORREO ZAMORA": "La Opinión de Zamora",
+    "LA OPINION EL CORREO DE ZAMORA": "La Opinión de Zamora",
+    "LAOPINIONDTENERIFE": "La Opinión de Tenerife",
+    "LAOPINIONCORUÑA": "La Opinión de A Coruña",
+    "LA PLAZUELA": "La Plazuela",
+    "LA PRENSA ALCAREÑA": "La Prensa Alcareña",  
+    "LA PROVINCIA": "La Provincia",
+    "LAPROVINCIA": "La Provincia",
+    "LA RAZON": "La Razón",
+    "LARAZON": "La Razón",
+    "LA REGION": "La Región",
+    "LAREGION": "La Región",
+    "LA RIOJA": "La Rioja",
+    "LARIOJA": "La Rioja",
+    "LA VANGUARDIA": "La Vanguardia",
+    "LAVANGUARDIA": "La Vanguardia",
+    "LA VERDAD": "La Verdad",
+    "LAVERDAD": "La Verdad",
+    "LAVERDADOFENDE": "La Verdad Ofende",
+    "LA VOZ": "La Voz",
+    "LA VOZ DE ALMERIA": "La Voz de Almería",
+    "LAVOZDALMERIA": "La Voz de Almería",
+    "LA VOZ DE GALICIA": "La Voz de Galicia",
+    "LAVOZDGALICIA": "La Voz de Galicia",
+    "LAVOZDEGALICIA": "La Voz de Galicia",
+    "LAVOZDASTURIAS": "La Voz de Asturias",
+    "LAVOZPERIODISTICA": "La Voz Periodística",
+    "LASPROVINCIAS": "Las Provincias",
+    "LANZA": "Lanza",
+    "LE MONDE": "Le Monde",
+    "LEMONDE": "Le Monde",
+    "LE SOCIALISTE": "Le Socialiste",
+    "LEVANTE": "Levante",
+    "LINEA": "Línea",
+    "LOS DIAS ALCIONICOS": "Los Días Alciónicos",
+    "LOSSITIOS": "Los Sitios",
+    # --- M ---
+    "MADRID": "Madrid",
+    "MANUSCRITO": "Manuscrito",
+    "MEDITERRANEO": "Mediterráneo",
+    "MELILLAHOY": "Melilla Hoy",
+    "MUNDO": "El Mundo",
+    "MUNDO OBRERO": "Mundo Obrero",
+    "MUNDOOBRERO": "Mundo Obrero",
+    # --- N ---
+    "NODULO": "Nódulo",
+    "NOSOLOCINE": "No Solo Cine",
+    "NUEVAPOLITICA": "Nueva Política",
+    # --- O ---
+    "OLD": "OLD",
+    "OPE": "OPE",
+    # --- P ---
+    "PARAMISONENIGMAS": "Para Mí Son Enigmas",
+    "PERIODISTA DIGITAL": "Periodista Digital",
+    "PLAZA MOYUA": "Plaza Moyua",
+    "POR FAVOR": "Por Favor",
+    "POSMODERNIA": "Posmodernia",
+    "PRESENCIA": "Presencia",
+    "PROA": "Proa",
+    "PUEBLO": "Pueblo",
+    # --- Q ---
+    "QUIOSCO DE PERIODICOS": "Quiosco de Periódicos",
+    # --- R ---
+    "RAMBLA LIBRE": "Rambla Libre",
+    "REBELION": "Rebelión",
+    "REPORTER": "Reporter",
+    "REPUBLICA": "República",
+    "REPUBLICOS EN ACCION": "Republicos en Acción",
+    # --- S ---
+    "SABADOGRAFICO": "Sábado Gráfico",
+    "SAIDA 9": "Saida 9",
+    "SALMONETES": "Salmonetes",
+    "SERVICIO DE PRENSA": "Servicio de Prensa",
+    "SERVIR AL PUEBLO": "Servir al Pueblo",
+    "SIN MIEDO AL OPUS": "Sin Miedo al Opus",
+    "SIN MIEDO AL OPUS DEI": "Sin Miedo al Opus",
+    "SITIOS": "Los Sitios",
+    # --- T ---
+    "TEINTERESA": "Te Interesa",
+    "THE NEW YORK TIMES": "The New York Times",
+    "THEOBJECTIVE": "The Objective",
+    "TIEMPO": "Tiempo",
+    "TREBALL": "Treball",
+    "TRIBUNA": "Tribuna",
+    "LATRIBUNA": "La Tribuna",
+    "TRIUNFO": "Triunfo",
+    # --- U ---
+    "UN PLAN DIVINO": "Un Plan Divino",
+    # --- V ---
+    "VEINTIUNO": "Veintiuno",
+    "VOLUNTAD": "Voluntad",
+    "VOTO EN BLANCO": "Voto en Blanco",
+    "VOZPOPULI": "Voz Pópuli",
+    # --- Y ---
+    "YA": "Ya",
 }
+
+# Build the set of keys for matching (same interface as before)
+KNOWN_PUBLICATIONS = set(PUBLICATION_MAP.keys())
 
 # Sorted longest-first for greedy matching
 _PUBS_SORTED = sorted(KNOWN_PUBLICATIONS, key=len, reverse=True)
+
+
+def _normalize_publication(pub: str | None) -> str | None:
+    """Look up canonical display name from PUBLICATION_MAP."""
+    if not pub:
+        return None
+    return PUBLICATION_MAP.get(pub.upper(), pub.title())
 
 
 # ── Filename parser ───────────────────────────────────────────────────
@@ -93,9 +368,6 @@ def parse_filename(stem: str) -> dict:
     }
 
     # 1. Extract date prefix: YYYY followed by separator and digits.
-    # Handles typos: apostrophes (0'318), extra dots (06.21), commas, dashes.
-    # Strategy: match year + separator + a run of digits/separators, then
-    # strip non-digits to get the raw MMDD.
     date_match = re.match(r"^(\d{4})[.\-,]([\d\s'.\-]+)", stem)
     if not date_match:
         return result
@@ -104,7 +376,6 @@ def parse_filename(stem: str) -> dict:
     raw_digits = re.sub(r"[^0-9]", "", date_match.group(2))
 
     if len(raw_digits) < 4:
-        # Not enough digits for MMDD — treat as year-only
         result["date"] = year
         result["date_raw"] = f"{year}.0000"
     else:
@@ -149,7 +420,7 @@ def parse_filename(stem: str) -> dict:
 
     result["publication"] = _normalize_publication(matched_pub)
 
-    # 5. Check for series number (e.g. "01.REFORMA Y REPRESIÓN")
+    # 5. Check for series number (e.g. "01.REFORMA Y REPRESION")
     series_match = re.match(r"^(\d{1,3})[.\s]+(.+)", title_pub)
     if series_match:
         result["series_number"] = int(series_match.group(1))
@@ -158,47 +429,6 @@ def parse_filename(stem: str) -> dict:
     result["title"] = _title_case(title_pub.strip()) if title_pub.strip() else stem
 
     return result
-
-
-def _normalize_publication(pub: str | None) -> str | None:
-    """Clean up publication name for display."""
-    if not pub:
-        return None
-    display = {
-        "ABC": "ABC",
-        "ACRATAS": "Ácratas",
-        "AHORA": "Ahora",
-        "AJOBLANCO": "Ajoblanco",
-        "ATENEO": "Ateneo",
-        "AVUI": "Avui",
-        "BLOG AGT": "Blog AGT",
-        "DERECHO Y OPINION": "Derecho y Opinión",
-        "DIARIO 16": "Diario 16",
-        "DIARIORC": "DiarioRC",
-        "EL CONFIDENCIAL": "El Confidencial",
-        "EL INDEPENDFIENTE": "El Independiente",
-        "EL INDEPENDIENTE": "El Independiente",
-        "EL MUNDO": "El Mundo",
-        "EL PAIS": "El País",
-        "EL SIGLO": "El Siglo",
-        "ELCORREO": "El Correo",
-        "ELDIARIODELAMARINA.COM": "El Diario de la Marina",
-        "ELINDEPENDIENTE": "El Independiente",
-        "ESPIA EN EL CONGRESO": "Espía en el Congreso",
-        "EXTREMADURAPROGRESISTA": "Extremadura Progresista",
-        "FILOSOFIA DIGITAL": "Filosofía Digital",
-        "IGLESIA VIVA": "Iglesia Viva",
-        "L'ESTEL DE MALLORCA": "L'Estel de Mallorca",
-        "LA PROVINCIA": "La Provincia",
-        "LA RAZON": "La Razón",
-        "LAOPINIONDTENERIFE": "La Opinión de Tenerife",
-        "MADRID": "Madrid",
-        "REPORTER": "Reporter",
-        "TEINTERESA": "Te Interesa",
-        "YA": "Ya",
-        "EL RINCON DE YANKA": "El Rincón de Yanka",
-    }
-    return display.get(pub.upper(), pub.title())
 
 
 def _title_case(text: str) -> str:

@@ -36,7 +36,7 @@ for (const y of allYears) {
 
   <!-- Filters -->
   <div class="flex flex-wrap gap-3 mb-6">
-    <select id="filter-pub" aria-label="Filtrar por publicaci\u00f3n" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
+    <select id="filter-pub" aria-label="Filtrar por publicación" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
       <option value="">Todas las publicaciones</option>
       {publications.map((p) => <option value={p}>{p}</option>)}
     </select>
@@ -49,7 +49,7 @@ for (const y of allYears) {
         id="year-jump"
         class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-brand-700 focus:outline-none"
       >
-        <option value="">Ir a un a\u00f1o...</option>
+        <option value="">Ir a un año...</option>
         {allYears.filter((y) => y !== "sin-fecha").map((y) => <option value={y}>{y}</option>)}
       </select>
     </div>

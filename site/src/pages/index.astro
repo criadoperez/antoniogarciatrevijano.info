@@ -7,9 +7,7 @@ import videoData from "../data/videos.json";
 
 const totalArticles = catalog.filter((i) => i.category === "articulos").length;
 const totalPrensa = catalog.filter((i) => i.category === "prensa").length;
-const totalHechos = new Set(
-  catalog.filter((i) => i.category === "AGT.HECHOS").map((i) => i.subcategory)
-).size;
+const totalEntrevistas = catalog.filter((i) => i.category === "entrevistas").length;
 const totalFotos = catalog.filter((i) => i.category === "fotos" && i.ipfs_url).length;
 const years = catalog
   .filter((i) => i.date)
@@ -50,8 +48,8 @@ const totalVideoHours = Math.round(videoData.videos.reduce((sum, v) => sum + v.d
         <p class="text-sm text-gray-500">Recortes de prensa</p>
       </div>
       <div class="text-center">
-        <p class="text-3xl font-bold text-brand-900">{totalHechos}</p>
-        <p class="text-sm text-gray-500">Hechos históricos</p>
+        <p class="text-3xl font-bold text-brand-900">{totalEntrevistas}</p>
+        <p class="text-sm text-gray-500">Entrevistas</p>
       </div>
       <div class="text-center">
         <p class="text-3xl font-bold text-brand-900">{totalFotos}</p>
@@ -114,7 +112,7 @@ const totalVideoHours = Math.round(videoData.videos.reduce((sum, v) => sum + v.d
       <a href="/hechos/" class="block p-6 rounded-lg border border-gray-200 hover:border-brand-700 hover:shadow-md transition-all">
         <h2 class="text-xl font-bold text-brand-900 mb-2">Hechos Históricos</h2>
         <p class="text-gray-600">
-          Documentos sobre {totalHechos} eventos clave en la vida de García-Trevijano:
+          Documentos sobre eventos clave en la vida de García-Trevijano:
           Guinea, la Junta Democrática, Carabanchel y más.
         </p>
       </a>
