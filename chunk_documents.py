@@ -29,6 +29,7 @@ and omitted for files that don't match.
 
 import json
 import re
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -45,6 +46,14 @@ OUTPUT_FILE = OUTPUT_DIR / "chunks.jsonl"
 PROGRESS_FILE = OUTPUT_DIR / "chunking_progress.json"
 EMBEDDING_MODEL = "BAAI/bge-m3"
 MAX_TOKENS = 512
+
+# Only chunk documents under these subdirectories of output/ for RAG.
+# Paths are relative to INPUT_DIR (output/).
+RAG_FOLDERS = {
+    "privados/AGT.LIBROS",
+    "publicos/articulos",
+    "publicos/cronología",
+}
 
 # ── Helpers ────────────────────────────────────────────────────────────
 
@@ -142,11 +151,16 @@ def chunk_to_dict(chunk, source_file: str) -> dict:
 
 
 def collect_json_files(input_dir: Path) -> list[Path]:
-    """Collect all DoclingDocument JSON files, excluding reports."""
-    return sorted(
-        p for p in input_dir.rglob("*.json")
-        if p.name != "conversion_report.json"
-    )
+    """Collect DoclingDocument JSON files from RAG_FOLDERS only."""
+    results = []
+    for folder in sorted(RAG_FOLDERS):
+        folder_path = input_dir / folder
+        if folder_path.exists():
+            results.extend(
+                p for p in folder_path.rglob("*.json")
+                if p.name != "conversion_report.json"
+            )
+    return sorted(results)
 
 
 def load_progress() -> dict:
@@ -158,6 +172,57 @@ def load_progress() -> dict:
 
 def save_progress(progress: dict) -> None:
     PROGRESS_FILE.write_text(json.dumps(progress, indent=2), encoding="utf-8")
+
+
+QDRANT_PATH = Path("qdrant_db")
+
+
+def cleanup_removed_sources(progress: dict, json_files_set: set[str]) -> int:
+    """
+    Detect source JSONs tracked in progress that no longer exist in output/.
+    Rewrites chunks.jsonl to remove their chunks, updates progress, and
+    deletes qdrant_db/ to force re-embedding.
+    Returns number of removed sources.
+    """
+    stale_keys = [k for k in progress if k not in json_files_set]
+    if not stale_keys:
+        return 0
+
+    # Compute source_file values to filter out of chunks.jsonl
+    # Progress keys are like "output/publicos/articulos/foo.json"
+    # source_file in chunks.jsonl is like "publicos/articulos/foo"
+    removed_source_files = set()
+    for key in stale_keys:
+        relative = Path(key).relative_to(INPUT_DIR).with_suffix("")
+        removed_source_files.add(str(relative))
+        del progress[key]
+        print(f"  CLEANUP: {key}")
+
+    save_progress(progress)
+
+    # Rewrite chunks.jsonl without the removed sources
+    if OUTPUT_FILE.exists():
+        temp_file = OUTPUT_FILE.with_suffix(".jsonl.tmp")
+        kept = 0
+        dropped = 0
+        with open(OUTPUT_FILE, encoding="utf-8") as f_in, \
+             open(temp_file, "w", encoding="utf-8") as f_out:
+            for line in f_in:
+                chunk = json.loads(line)
+                if chunk.get("source_file", "") in removed_source_files:
+                    dropped += 1
+                else:
+                    f_out.write(line)
+                    kept += 1
+        temp_file.replace(OUTPUT_FILE)
+        print(f"  Rewrote {OUTPUT_FILE}: kept {kept} chunks, removed {dropped}")
+
+    # Delete qdrant_db to force full re-embedding on next embed_and_index.py run
+    if QDRANT_PATH.exists():
+        shutil.rmtree(QDRANT_PATH)
+        print(f"  Deleted {QDRANT_PATH}/ (will be rebuilt by embed_and_index.py)")
+
+    return len(stale_keys)
 
 
 # ── Main ───────────────────────────────────────────────────────────────
@@ -172,15 +237,22 @@ def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     json_files = collect_json_files(INPUT_DIR)
+    json_files_set = {str(p) for p in json_files}
     total_files = len(json_files)
     print(f"Found {total_files} DoclingDocument JSON files in {INPUT_DIR}/\n")
+
+    # Load progress — skip already-processed documents
+    progress = load_progress()
+
+    # Clean up chunks from source files that were deleted from output/
+    n_removed = cleanup_removed_sources(progress, json_files_set)
+    if n_removed:
+        print(f"Cleaned up {n_removed} removed source(s).\n")
 
     if total_files == 0:
         print("Nothing to do.")
         return
 
-    # Load progress — skip already-processed documents
-    progress = load_progress()
     already_done = set(progress.keys())
     pending = [p for p in json_files if str(p) not in already_done]
     if already_done:

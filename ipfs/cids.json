@@ -211,11 +211,11 @@
     "cid": "QmVbzJKuQ9jiuXE1zbQt5eDxVRqKTnWEGBcoeHxka1n4As",
     "hash": "d73ce75ef60db085c7be267ad44bb5f07b1670ef7dca4e78c2b6bff501d39abd"
   },
-  "AGT.HECHOS/1971-DIARIO MADRID/DIARIO MADRID/1971.0208. NI GOBIERNO NI OPOSICIÓN-DIARIO MADRID/1971.0208. NI GOBIERNO NI OPOSICIÓN-DIARIO MADRID.docx": {
+  "AGT.HECHOS/1971-DIARIO MADRID/DIARIO MADRID/1971.0208.NI GOBIERNO NI OPOSICIÓN-DIARIO MADRID/1971.0208.NI GOBIERNO NI OPOSICIÓN-DIARIO MADRID.docx": {
     "cid": "QmZvK8jqdwW8G75VhZCBGjik2sQtLMW6YCfzry8gzZdmEH",
     "hash": "e9ceffe5988c5befe144bc1e82b5a13a8c5962e6a423d1dcf291d3211fd443af"
   },
-  "AGT.HECHOS/1971-DIARIO MADRID/DIARIO MADRID/1971.0208. NI GOBIERNO NI OPOSICIÓN-DIARIO MADRID/NI GOBIERNO NI OPOSICION-DIARIO MADRID.pdf": {
+  "AGT.HECHOS/1971-DIARIO MADRID/DIARIO MADRID/1971.0208.NI GOBIERNO NI OPOSICIÓN-DIARIO MADRID/NI GOBIERNO NI OPOSICION-DIARIO MADRID.pdf": {
     "cid": "QmV5btxiUfBKyHTP2E5iVQs4ufkk6YrpuZXe7Z9TzqJM17",
     "hash": "14c6df08ae882f30010a94d33cfbd7d836b7acb5a93f56ec817e88db6e47e036"
   },
@@ -275,7 +275,7 @@
     "cid": "QmRQd3BYmyxUBLjkvkabePKVg9nmACiyiyemeBqAdE4UpT",
     "hash": "18e613888d124e8251e72f82c3ddf54d044d2ea03974b583659def73c3ed552d"
   },
-  "AGT.HECHOS/1971-DIARIO MADRID/DIARIO MADRID/1973.1117. CIERRE DEL DIARIO MADRID_LUIS VALLS-TABERNER - Acceso directo.lnk": {
+  "AGT.HECHOS/1971-DIARIO MADRID/DIARIO MADRID/1973.1117.CIERRE DEL DIARIO MADRID_LUIS VALLS-TABERNER - Acceso directo.lnk": {
     "cid": "QmT1dtAcubDpLAJdJB7oAibmgUK7Fu2EcVewUbfUD2Uyqb",
     "hash": "a830a4d35dfd6796ae1cb0ea76f5c1bec3ab740a1e8f40ac4cf8ab0b1fba09f3"
   },
@@ -590,6 +590,10 @@
   "articulos/1979.1013.LA PROVINCIA.ACLARACION DE AGT.docx": {
     "cid": "QmTscmoR8jM1gJqt5QXf4SDw6CTY6tm4YkLTbinxRNXtYh",
     "hash": "d37f689d558276df9a7ea96e0c9475f0590fd4819da68db1e90e3b56ce7dd4b8"
+  },
+  "articulos/1981.0701.ABC.CARTAS AL DIRECTOR.docx": {
+    "cid": "QmZQeePYbuMTyW9Fb1YVN5bse2ca3TPGbSiT9mG5cPmhsE",
+    "hash": "1985df7e601561c5b7f8d5df734983b66ac3c7e58a82453749814eaf0674df7e"
   },
   "articulos/1985.0625.EL PAIS.LA RUPTURA DEMOCRÁTICA.1_AGT.docx": {
     "cid": "QmPnLFidTH5qodnovHPVEMu9TVnPH54zkYEd9TCk7pJVqE",
@@ -2030,6 +2034,10 @@
   "articulos/1994.0530.EL MUNDO.LEGULEYOS ABOGADOS Y JURISTAS_AGT.docx": {
     "cid": "QmPagYzFTPAM7PZj4jgAonWwK5aC17pGuaCNEnfM94v2Ha",
     "hash": "d2f6c09ae7665a4905f585cba56bf45437c84bee9d4a39654f83995f54ab69ec"
+  },
+  "articulos/1994.0600.AJOBLANCO.MANIFIESTO ELECTORAL POR LA DEMOCRACIA_AGT.pdf": {
+    "cid": "QmaNKL9sxjQK4oRN32AFhmR6m1VaVsk3f1yX6N36H4K72k",
+    "hash": "7b08aa7327a5e16344a75e350ef99bd3fd4b56c64cd68fd59db49e47a113a050"
   },
   "articulos/1994.0606.EL MUNDO.SOBERANÍA DE LA GENERALITAT_AGT.pdf": {
     "cid": "QmV3vrYrtmuWsA8qaTqczqQwp5zvBiiwNRxBcKR5MXNSH3",
@@ -6215,7 +6223,7 @@
     "cid": "QmQeyTF8pAZAPgQykqSKbfznWjifiSttjxH3E3BL5NzaBs",
     "hash": "0b70648da42c6b59bb1ea6667c765db384bef484160c45ea97291705c1898fdf"
   },
-  "articulos/2015.0914. EL CONFIDENCIAL.EL DERECHO A DECIDIR NO EXISTE EN LA NACION ESPAÑOLA_ROBERTO CENTENO-AGT.docx": {
+  "articulos/2015.0914.EL CONFIDENCIAL.EL DERECHO A DECIDIR NO EXISTE EN LA NACION ESPAÑOLA_ROBERTO CENTENO-AGT.docx": {
     "cid": "QmNoxr9Re4y72PRwDFci7ikh9jeFHP3ANqs2nurXrCYBN5",
     "hash": "810591ae73f685d5d254424bd29c4d5356ea575780a5f7ccd9161f5dedda2ba4"
   },
@@ -6271,7 +6279,7 @@
     "cid": "QmRmd4wZT9mKuMiGKvvbBK4UPQ9ePB41GzxjZcBN8F5TTa",
     "hash": "f761c826f5ee9c9e26cac4c6f96cf12bb8a295379986734a2290ff74e528d90f"
   },
-  "artículos-de-otros/1968.0709. PUEBLO.DIGNA ACTITUD CORRESPONSAL_CARRASCAL.docx": {
+  "artículos-de-otros/1968.0709.PUEBLO.DIGNA ACTITUD CORRESPONSAL_CARRASCAL.docx": {
     "cid": "QmPUumSZfWzREPUEhu7hPAprQoLDMfzYmrVAARJWeyGTVp",
     "hash": "440fe7c8dc43057ed0854089e65c4bf56740930693de2f7a06b1120c55033d1c"
   },
@@ -6683,7 +6691,11 @@
     "cid": "QmS4fjfxrU6AXHq2CJyKe7TMTC1bRirtww3CrSgvZYrKau",
     "hash": "300a1822920e2e9d3a3773b5e9c8604e22f68319fc3d99c5f9b3ccc2298a94ed"
   },
-  "artículos-de-otros/1976.1203. LA JORNADA_EMILIO DE MIGUEL.pdf": {
+  "artículos-de-otros/1976.1202.POSIBLE.RUEDA PRENSA AGT_JOSE CATALAN.pdf": {
+    "cid": "Qmb82DoVFPpqAGNtRhHj4B8mJrkWLMY4AMSmA3j9Km8Rxe",
+    "hash": "349607db085facd3c6e2edd8c0584e4a33e560a787f0894f376a06e3b49e7112"
+  },
+  "artículos-de-otros/1976.1203.LA JORNADA_EMILIO DE MIGUEL.pdf": {
     "cid": "QmeEhh112f3TpsPxn26mo9EwNeFCej8CZ2YiW2dWyQ8gg2",
     "hash": "c09c8cef3600f56bd01934c90cc2009328c58a7cd6996185e8ae6bc44cbe026a"
   },
@@ -6979,7 +6991,7 @@
     "cid": "Qmc6btpoxGghyUneNEbQq3DeBw4Ccn7AWhq54L5BFHvZgz",
     "hash": "c5eec516ef3871548b256683ac81cd817b5b01fea0ec26c3b7b13bd6a146fc7d"
   },
-  "artículos-de-otros/1992.00.00. EPOCA-AGT_GARCIA RAMOS.docx": {
+  "artículos-de-otros/1992.00.00.EPOCA-AGT_GARCIA RAMOS.docx": {
     "cid": "QmaW8FMatwH9aKeH1JrVuKwTCTcL2b88hWAziiMoYqog9M",
     "hash": "87397ac1f55d88772e22a4141660b7f62c45d7c8b19f91464160d3f26a73cc24"
   },
@@ -8575,7 +8587,7 @@
     "cid": "QmX7zRsAakETJmDQipMFfUFMPKg57tSWqNJv6SRysyUSuk",
     "hash": "b800bfe396d94c4baa9c706d09185ecb9135bece07288fb5e964da40a5f83b1c"
   },
-  "artículos-de-otros/2000.0600. LA RAZÓN DE ESTADO CIERRA EGIN_JOAQUIN NAVARRO.docx": {
+  "artículos-de-otros/2000.0600.LA RAZÓN DE ESTADO CIERRA EGIN_JOAQUIN NAVARRO.docx": {
     "cid": "QmX35kPBL6X5oNgUFkjAVnD1b9eb9GEG6ZbpFDFM5Pd8Ty",
     "hash": "a7324dcd4b71ed7b4ada32d0975f3f46f5765cb8b7f7b5c086dee1fccc675ef1"
   },
@@ -9415,7 +9427,7 @@
     "cid": "QmXzXskcm1BBFehEm3wqJbDLK58puXuE9T2cThvbdBDgit",
     "hash": "c7d197579a6198bb09be7fe6502421d81a8c9c805d56a498d9803ed6bc42a98b"
   },
-  "artículos-de-otros/2007.0101. GOOD BYE MARXISMO.JOAN FLIZ.LA CIA EN ESPAÑA.GRIMALDOS.docx": {
+  "artículos-de-otros/2007.0101.GOOD BYE MARXISMO.JOAN FLIZ.LA CIA EN ESPAÑA.GRIMALDOS.docx": {
     "cid": "QmUyqNzEC9z7iLPMJNNS7jud3hpH97JEhgyiPwA8fYJX4S",
     "hash": "7a4ae089fbfacc867d855c5c718a7038f2aa71e90b78a11b282030a27872ac9c"
   },
@@ -9703,7 +9715,7 @@
     "cid": "QmUtqhh1BN7widZ8TFd3qhuWN8Psh2BS4hgxfUm3GcggDU",
     "hash": "3d04a5516ea9ddccba2191b334ff166b12c6554a2a112fac85e23d47029cfc0a"
   },
-  "artículos-de-otros/2010.0628. NUEVA ESPAÑA-ENTREVISTA JOSÉ MANUEL NEBOT.docx": {
+  "artículos-de-otros/2010.0628.NUEVA ESPAÑA-ENTREVISTA JOSÉ MANUEL NEBOT.docx": {
     "cid": "QmP85vU25wzGDjCXk24qxYQNwYUKeduqn56GAVASJuNFd9",
     "hash": "7197882d76252a9761fe6ba3a91fa216ebc531ce1a1b5d857952bd4a71c25841"
   },
@@ -10291,7 +10303,7 @@
     "cid": "QmPb4NDLvmGwMShVHsWHSnJii7T66koiUiuzG6yKSnDDkU",
     "hash": "2ae3be08b9a0ab256be731e02ecb28ae5d1f90cdea98dc25072cd1d889d96d50"
   },
-  "artículos-de-otros/2014.0718. YA.ENTREVISTA BARRAYCOA.docx": {
+  "artículos-de-otros/2014.0718.YA.ENTREVISTA BARRAYCOA.docx": {
     "cid": "QmTSQXubsYcmRixFc3dV6vaKmxoYsZyNRYrHuDLEQyQy4f",
     "hash": "9ab047ae88784f3d42994d48bb5b4d946dc7c6572868570bad5063f68514ef8b"
   },
@@ -10515,7 +10527,7 @@
     "cid": "QmXtB3YvVm3sobB7HqBphNxZHGbD1USyANLbw4Es3MwDxE",
     "hash": "64667106e3c58f27f58e54d9d3302a92951de3c857ec3b065fcda303c2000cef"
   },
-  "artículos-de-otros/2015.0805. DON JUAN, TREVIJANO, PEDRO SAINZ, PEMAN Y YO_ANSÓN.docx": {
+  "artículos-de-otros/2015.0805.DON JUAN, TREVIJANO, PEDRO SAINZ, PEMAN Y YO_ANSÓN.docx": {
     "cid": "QmV8btXBNRAA8Zcxkh6WNraR6XUbCm2kJRyVBA6i4EHE2D",
     "hash": "a87e981f4477ee82f6650cbca929f8e6220eb3c5752833e7781d1c65b9eb092a"
   },
@@ -10955,7 +10967,7 @@
     "cid": "QmbUbNgMiiwv8zbKX57m4489AVzHf589iWPSKPmkFgdx6f",
     "hash": "9a62ee868a40fe0d730457a31e143e01a5cf94e2b6483f32d062598ec9586ae3"
   },
-  "artículos-de-otros/2016.0909. EL IMPARCIAL.LAS VIEJAS CALUMNIAS VUELVEN_MIGUEL MARTIN RUBIO ESTEBAN.docx": {
+  "artículos-de-otros/2016.0909.EL IMPARCIAL.LAS VIEJAS CALUMNIAS VUELVEN_MIGUEL MARTIN RUBIO ESTEBAN.docx": {
     "cid": "QmdNBRmFBUgsAqsoJVpqp223R4rRvnAx2xrwyNvEtuoQ5q",
     "hash": "edd87c71c5092032e5caffff489f4404c37ddcfc222718cb088d8ea31db73393"
   },
@@ -57611,7 +57623,7 @@
     "cid": "QmTybbBi6mDTZiHAxBL6ZiDLT37RsFzNxfG9ovjv1z83Hj",
     "hash": "ff59912109049ed4770cfef3aaa1cd899af22a27f7439388d50596ffa380290f"
   },
-  "entrevistas/1976.0327. HERMANO LOBO.ENTREVISTA AGT.pdf": {
+  "entrevistas/1976.0327.HERMANO LOBO.ENTREVISTA AGT.pdf": {
     "cid": "QmQCKcjwHYm7BRTmacRxHa4RfrHs4LaVypkV2MsRUk4dG1",
     "hash": "ca20696949b612cc8f73f9483efd45c3f8cfe91a6abbdd8ad23f14a856676b00"
   },
@@ -57691,7 +57703,7 @@
     "cid": "QmP3F1NZvckp11mYYcrmsQEBGgvj8yjae6ib8YA7aFwQtx",
     "hash": "e31be1bcbed4f78cc4afb0229ff5d91218be83780d83ec57fa1f350cfb55851d"
   },
-  "entrevistas/1976.0708. EL PAÍS.DECLARACIONES AGT.pdf": {
+  "entrevistas/1976.0708.EL PAÍS.DECLARACIONES AGT.pdf": {
     "cid": "QmNgv6Z8hDXhGFJDmFaY77NAuLSmf9gnJ4vS8zDGz99doo",
     "hash": "62654f0a2f8ec52825a1232a800ddbe909e62441aa05eb3b418229d653b4aa9b"
   },
@@ -57887,6 +57899,10 @@
     "cid": "Qmf6RoarcSfZZ3ExokJnfdcQpJYPx1kgE5sdwAy8VytFnA",
     "hash": "b934ff4e1f60338dbafe48993f235b1a745a4f75cc0a20554dca07b7bedbac2d"
   },
+  "entrevistas/1977.0124.POR FAVOR.ENTREVISTA AGT EL INDEPENDIENTE CON LEYENDAS.pdf": {
+    "cid": "QmexCCsc97dAXsC6YusuawcLM7JtFCfdqjypdPbQDg3pR9",
+    "hash": "649c60375273f52d5fd249a9db971955c8b45e488f8c6fbd31478dd346ff6097"
+  },
   "entrevistas/1977.0227.LA NUEVA ESPAÑA.AGT CONTRA TODO.GUINEA.docx": {
     "cid": "QmTEN178QGEPQqZJaXquGrmF7noyZNr2GnhAiMAGNXWQgY",
     "hash": "e319907f891477fc5e9b4cfb05754cc7f16aa6a0e6e8878f305e6b24a9bde987"
@@ -57919,10 +57935,6 @@
     "cid": "QmXpEfaKZs4zHnNAkfwpv4HfoNCnFZuRXtDT6w1igZKkAU",
     "hash": "ecc9a6aa85524b061766321d72a4b0f3af02efed31388e174db463d0aeb74c13"
   },
-  "entrevistas/1979. 0900.LUI.ENTREVISTA AGT.pdf": {
-    "cid": "QmS6Q9S5ou1ZGV7FuTGJ8HsJ9hCUdtxGUUtEjUvZ7Hg61u",
-    "hash": "c864cd29daaa2c0716c31fe4b3dfffecfc9f2b292928a10e5e5befd73114c856"
-  },
   "entrevistas/1979.0825.ARAGON EXPRESS.ENTREVISTA AGT.pdf": {
     "cid": "QmVUt414u5rSofQNAdvrWQ5wBjJzRdZ1c7J7nZeuYKr1Ec",
     "hash": "819103b19fa83e6721bc0466ebb6f0f5fcbc67719c8981b5e01dbe50dcbc0fa1"
@@ -57930,6 +57942,14 @@
   "entrevistas/1979.0825.ARAGONEXPRESS.ENTREVISTA AGT.GUINEA.docx": {
     "cid": "QmVzULygjWnrMFuPXGLe7ZWx3fq49vRg35AEpVbJEKwjcV",
     "hash": "0017db0d82ad29352d52345b83d16b01c36a95d8fc0d1342dc685b6b44c47688"
+  },
+  "entrevistas/1979.0900.LUI.32.ENTREVISTA AGT.GUINEA.pdf": {
+    "cid": "QmPmTYXLWJinJw9iZ7c1suhVyYPMwKTNnShL3trSg6e7TZ",
+    "hash": "af880d3727af0c300329ea3caef26f802ba4ce185cba67902dded041c973c4c8"
+  },
+  "entrevistas/1979.0900.LUI.ENTREVISTA AGT.pdf": {
+    "cid": "QmS6Q9S5ou1ZGV7FuTGJ8HsJ9hCUdtxGUUtEjUvZ7Hg61u",
+    "hash": "c864cd29daaa2c0716c31fe4b3dfffecfc9f2b292928a10e5e5befd73114c856"
   },
   "entrevistas/1979.0906.INTERVIU 173.ENTREVISTA AGT.docx": {
     "cid": "QmebAzt5Ukna57PczJkaFZbMmthNaaJ1sj9uVbnqeSsbjs",
@@ -57990,6 +58010,10 @@
   "entrevistas/1994.0500.AJOBLANCO 63.ENTREVISTA AGT.docx": {
     "cid": "QmQtLvHubczbiRzB3T9WfuWXx5KHjtLbSuew7hDkj2hCbj",
     "hash": "37f3ca59d51f44390bb9562b6bffe9e0533b4095df4473a268833c380dc326f7"
+  },
+  "entrevistas/1994.0500.AJOBLANCO.POR QUÉ EN ESPAÑA NO ES UNA DEMOCRACIA.AGT.pdf": {
+    "cid": "QmeqfznRQccpMB11a5iUEkE1SUGUa92NdQisESxSHEocah",
+    "hash": "eadbb5398109c59acd941e1fcf74b6445a6936e1436cb9438b4bb7fbec7ff90b"
   },
   "entrevistas/1994.0817.EL MUNDO.AGT EN EL ESCORIAL_LYDIA S. YANEL.docx": {
     "cid": "QmU5mBL6rJA3wtNs4TkgRsSfby9aHEnvCDYzAVLfJkYjaa",
@@ -58307,6 +58331,10 @@
     "cid": "QmXrn9T4bFV27rzYCqYRw4Y1XT8UjJVgsGdjWZfMjQ5faf",
     "hash": "a1a18a1a0bcb37902f467110edaae42d0d94546211dce8763f65896d96ee62a9"
   },
+  "entrevistas/2011.0400.LEER.LA POSIBILIDAD DE LA REPUBLICA.AGT.pdf": {
+    "cid": "Qmb4wWLGjWgrU8BXmRuBBGwsGFuKj2u5qNsNEC5xYtDsJP",
+    "hash": "aa09cb6e86517f43380158279cfd9fac3d77419a0a340e2d313d42e007f44b63"
+  },
   "entrevistas/2011.0600.LA BULLA.ENTREVISTA A ANTONIO GARCÍA.docx": {
     "cid": "QmUPtAFTs2wBPnFK9oswtHUBYfMmFMVmmUYtQ3Uqs84fRc",
     "hash": "2a392c7edc7f55c43a0980081ba7a6f855f665dc92280a70fa4e30dc4f425761"
@@ -58431,6 +58459,10 @@
     "cid": "QmWanLqcgP44PZZ3HzwX96YKY4DAhTiytp51M6TUrh64fu",
     "hash": "c2529cfa1a5968d4b5749631b9277c3433b8c0a1066344ace4dbaa3726b72899"
   },
+  "fotos/1924.0120.GACETA MADRID. DE VIVER A ALHAMA.AGT PADRE.jpg": {
+    "cid": "Qme36398ZRXr1aZxhXnuUgmYDTNMzVBDj3JCLHe1YryDbT",
+    "hash": "21f9ffbe02003b0a933702350d2a4e3d6587ee3e5e65fe215ffc593f46c8e6f6"
+  },
   "fotos/1924.0120.GACETA MADRID. DE VIVER A ALHAMA.AGT PADRE_001.jpg": {
     "cid": "Qmc1dbGuuuiUoMKACTiRj33zugxT8aDMyRh3BnG2USdcTo",
     "hash": "2fa2b8339f8b21c4cd6aa9e46a08500a37320a79e4093f93a4c010a5901f7cbf"
@@ -58464,8 +58496,8 @@
     "hash": "dc568b6b03717bb10f1de367a57ed08cb5e2b82a6e57d3a48b982d05ac9063af"
   },
   "fotos/1933.0115.GACETA MADRID.DE IZNALLOZ A CHICLANA.AGT PADRE.jpg": {
-    "cid": "QmY72YdKTKZsvd744YGSZin14LQT8ueF7FMby4W4H7Z5Q9",
-    "hash": "9ce997d617aa9c57a503130002d6ba721b33b7003e39f2f7420c821f9bafcfc9"
+    "cid": "QmZmg61CMy3Rxph43QFNQw1C1QqqEddCQcjkiJk6nnCSCu",
+    "hash": "4a82d935087a190ec464331e69418956d62eaee1a21ef9c3202eb1278a404ca8"
   },
   "fotos/1936.AGT.1.jpg": {
     "cid": "QmQmXxhiqGUeRMmH2C9NzL6kwe5tvLEL4Yo8pRutSidw4y",
@@ -58555,6 +58587,10 @@
     "cid": "QmdkJBs9ZK31mENh9etV9EQZJcUKDLwhjnmMydsuq9mLAz",
     "hash": "cd6108d57569ef55b11bfa4480de84b28750c75aa0c9a5ed0ab0e583eff1d2f3"
   },
+  "fotos/1957.0828.BOE.OPOSICION NOTARIO AGT.jpg": {
+    "cid": "QmczhnuXmNQTi7sBCgDZC3ftyuXAd6br7y3exKVpHBwmk9",
+    "hash": "f0061aba34798a1c9993d87c1d7a1dc07fe22fc0b45ad1c2aab9a821e69f2c17"
+  },
   "fotos/1958.0324.1970.0322.IDEAL.ESQUELA AGT PADRE.12 ANIVERSARIO.jpg": {
     "cid": "QmaFoz71VtPCCHGW37pSWZB3Ymetj7sy3LxetSzJyhkFQv",
     "hash": "4546988617e62adfc679028d59f7d8aa79a07d3b8b91b0b828170b810ec4a8ac"
@@ -58567,7 +58603,11 @@
     "cid": "QmRjW1Ks9YifA89E8gZa5vTqmaL76bEn9tDnprUxDdFALV",
     "hash": "80958b6e112a95d91f0468140d4ee9767a035153c6acdcfff826e5366c0a5a5c"
   },
-  "fotos/1959. 1967. FRANCINE CHOURAKI LEVENT.jpg": {
+  "fotos/1958.1103.BOE.NOTARIO JARANDILLA. ERA DE MONTALBAN.AGT.jpg": {
+    "cid": "QmVb3V1FAdtJhiH513GkvEA7Tr6VURgeKpGnihg9Ge9CXo",
+    "hash": "362da6ed6d60250a94b69881052e56ae4682be11a9bf7730e1bac8e2a1920e0f"
+  },
+  "fotos/1959.1967.FRANCINE CHOURAKI LEVENT.jpg": {
     "cid": "QmQGgfgNAFHp8jXG664CY3NAkrG4aDQskuyzJRbpBWxtZ8",
     "hash": "a621bf3e7e10edf11e7892a04081e1aa312ed90c6a9f3e3779df952b6d8a7d5f"
   },
@@ -58582,6 +58622,10 @@
   "fotos/1961. PLAZA CRISTO REY,4. MADRID.jpg": {
     "cid": "QmY51oYhCFYCzJRGMHnq761xzfn23in52jijoMCCKkgM7Y",
     "hash": "e8af3385f535a27f1c07cef39f0a4f42c47620a38badf85c7b34a0b18ae9ff02"
+  },
+  "fotos/1964.0804.BOE.EXCEDENCIA NOTARIO JARANDILLA-AGT.jpg": {
+    "cid": "QmTvrFJA8FcuS5u55JvQfwabVb3UXi93ELuDxErPMizHEb",
+    "hash": "9f845c7f01b78af1a877de3816bfb108daf28e9dfe722f61e4e1c7aee799ce37"
   },
   "fotos/1964.0804.BOE.EXCEDENCIA NOTARIO JARANDILLA-AGT_001.jpg": {
     "cid": "Qmdx5z4jUfGUWi6kCZNt6K1ZwyrG7Ar4ynyNhVzmRhSZzQ",
@@ -58599,6 +58643,10 @@
     "cid": "QmNhL2ifkKJC1Zt1WU1YF9QDR7G3Py2Ne5ifUGnPA1AnTC",
     "hash": "0598d7b60e4e5e00a510158787ef3dfd29b7f7bc8f050cf246ce5d89e4d8080d"
   },
+  "fotos/1965.0803.BOE.AUTORIZACION PINOS PUENTE.jpg": {
+    "cid": "QmaBf37HxjVihztKPLJtyWLYPtEben4x16TNcVZNsxsb3u",
+    "hash": "53d595c47d5e8763865b0f3d10b99c866c21e25c78d753b3d0bbe9f20f1bb2b2"
+  },
   "fotos/1965.0803.BOE.AUTORIZACION PINOS PUENTE_002.jpg": {
     "cid": "QmVqwCNAVKMLXGic2imaoVKmyTocBLVMYz1s4RUcfN7f4Q",
     "hash": "4dc3aa9f639f9b3752818997f679105c347e2299f3c215b4b017f8c0851a5902"
@@ -58608,8 +58656,8 @@
     "hash": "711963384eba47fc51b786ba8a205dfc66a98f6f6490302ab32aa94d00f23c87"
   },
   "fotos/1965.1221.BOE. FORDRY.APROBACION PROYECTO.jpg": {
-    "cid": "QmRrmf9x8RoNubncNAoiTQQH5rmC62MpN44jLmRZw2wgZP",
-    "hash": "98c4748a620fea116a3911a4ce131f90f99eab09b597536ba4491cd9f6028dbd"
+    "cid": "QmRcKU7EBhLWc5ugxpyPuDVutx8oZ79dNaAGnQw698qBNx",
+    "hash": "d146541c3d13396989f674523992256b1a1b229924f5e739ceaf093f74bfa8a5"
   },
   "fotos/1967.0000.CCOO.MEDIAS VILMA.jpg": {
     "cid": "QmeYf7WaXv6xqzjizYBXf984KGG73aEFL3sLVL3E4NY6YG",
@@ -58674,6 +58722,10 @@
   "fotos/1970.0000.ENTREVISTA AGT.EL PODER Y LA OPOSICION_MANUEL PIZAN.jpg": {
     "cid": "QmVypCGYnA4BUKrBuGqpzyNACbCTRncQiBrw7BWcq9XpcV",
     "hash": "2a04a02c138ebc878e85136d3de31f22a5f0dd2acc35a1a31fc8724b55d313b5"
+  },
+  "fotos/1970.0600.PARIS.LIBRERIA RUEDO IBERICO.JPG": {
+    "cid": "Qmd6V471k6MV2o8MHSdrNpur4miTF1AstZ3bu7qP14oMcg",
+    "hash": "404564ef03e88a39bef95d9a878e5d5a3952e3c88ee9394c2ef51b8acc7eda9d"
   },
   "fotos/1970.LIBRERIA RUEDO IBERICO.PARIS.jpg": {
     "cid": "QmX4J8ysqqKQ3PBkeqiYik7PPrBN7S1Etc5G8uicxbuhgE",
@@ -58830,6 +58882,10 @@
   "fotos/1973.0400.DIARIO MADRID. VOLADURA.2.jpg": {
     "cid": "Qmf3VSjGghX2zRrSrHbNehKW6gVWJrAWtnfrqMM9RYk4LK",
     "hash": "042b16b4a0a75fbcc45cea81588fdea1c2ddcfa3d387d8ba113b5f885d476197"
+  },
+  "fotos/1973.0400.DIARIO MADRID. VOLADURA.3.jpg": {
+    "cid": "QmTPioQ5vAfZ4JUUZzchGs9GY1UiZb8X7xGz5m93fTLWfa",
+    "hash": "6e575d7ff116af2fbca6153e825e662ca657053fbe6a08f7e82ff69be17fbc15"
   },
   "fotos/1973.0402.EUROPA PRESS.AGT NO INJURIO.jpg": {
     "cid": "QmZzVnhvLrkTvwDBd3ZyNuEBFeKkezeNnxh64vhmxsxnLM",
@@ -58990,6 +59046,10 @@
   "fotos/1975.0628.IDEAL.CONVENIO FITESA.AGT.ZUBIA.jpg": {
     "cid": "QmavoSEu69tyGALikAd8UYkPrWEzSeQDarmaA51Bfkz7R8",
     "hash": "399e9ae6c9af4d7a1e27b8cf505a1eb65a3303c155b95e6cf2e841cf91eae3a1"
+  },
+  "fotos/1975.1014.LIBRERIA RUEDO IBERICO.PARIS.ATENTADO.1.jpg": {
+    "cid": "QmdVDH5J5bzTs32d4HSp2YEPkokpTXAz2YrENmsRsjECJQ",
+    "hash": "87c4f62c3f464072dc5a4a7aab7a6f8e6ceb980505b1240e7b36246cdf948f9f"
   },
   "fotos/1975.1014.LIBRERIA RUEDO IBERICO.PARIS.ATENTADO.1.webp": {
     "cid": "QmeHtkmXMMWbjWBRYEUXKH6AGjJR51WUjccFvc1vaDZ3ag",
@@ -59171,11 +59231,11 @@
     "cid": "QmTDr44G68yFcigbbnYPPjbbWmwFBgEjzyCYdqKEKYnWSd",
     "hash": "bda794a65b9ad70ae38664272534b585d80964d941dba2c3f8a728e8f2b50c3e"
   },
-  "fotos/1976.0327. HERMANO LOBO.ENTREVISTA AGT.1.JPG": {
+  "fotos/1976.0327.HERMANO LOBO.ENTREVISTA AGT.1.JPG": {
     "cid": "QmYvY2cqCiNAA2RFH6yxKHm2tPzf26SbMJqxSRcBUvaW5K",
     "hash": "d5f74fb7d6ab1307744466e86ef5aa7972c1c9ac3d4e36523677659f87fab039"
   },
-  "fotos/1976.0327. HERMANO LOBO.ENTREVISTA AGT.2.JPG": {
+  "fotos/1976.0327.HERMANO LOBO.ENTREVISTA AGT.2.JPG": {
     "cid": "QmcqFVEfSrnPPBAYZe8NVjjMY3wtrADM6eZBbfCSDKYvGP",
     "hash": "41cd69fcd85cb8890daf901235678b7fd3f0ffced4ab2f70d7f417e6874efcf7"
   },
@@ -59231,6 +59291,14 @@
     "cid": "QmNdoqqfkob3KDbCY9uNZM77NAPo97AnQycP9V52TPB1Uf",
     "hash": "bbe9fafd4896d5b8b00fe14cf11d77327923db84b596014e401b7cac545b898e"
   },
+  "fotos/1976.0602.SG.AGT.1.jpg": {
+    "cid": "QmbzXmSzWDM8rMYkFBUhrQCajjWvEVBZTWm7ZHMcMcGh9n",
+    "hash": "e5a1b8dbb9889f7d4121d8a8ddaa6e332b51d1d07d52198c6c4fba47f4a4e24f"
+  },
+  "fotos/1976.0602.SG.AGT.2.jpg": {
+    "cid": "QmUquJEFHuYseMyt1rq1Agx5NygLhyEnhMVoQhd9T7C3HA",
+    "hash": "6822d75bd75148bed0fcb53e673ccf94319d34071a37098c0d17f5267f1a4789"
+  },
   "fotos/1976.0605.CUADERNOS PARA EL DIALOGO.VIÑETA AGT.jpg": {
     "cid": "QmVBn3Rt3Sb2KRKJ6LnvzsaF6tpZRwj339Gbr6cK6zkp92",
     "hash": "acc8aca5df91dfc44fcfa967e9af1eb7a63786ceb595eedcda657a167323fd6c"
@@ -59250,6 +59318,10 @@
   "fotos/1976.0612.ARAGON EXPRESS.LIBERTAD AGT.jpg": {
     "cid": "QmNwQzsPEzmNG6HwJRrcpVYdRi4PoR5xztvUj32b84UTr2",
     "hash": "ddd3d6310a5d956f8ef304327da535c244f90229afb17f0ccec3eb75ecf9bfc4"
+  },
+  "fotos/1976.0612.CUADERNOS.DETENCION AGT.CD.jpg": {
+    "cid": "QmTTEpsKjhC8RtczVqskB4h9iiv1KjDmyhMDg8G1BcZ6om",
+    "hash": "5f551eeb35e67c4ddf985316ff82a9debb69c7f6e390b3c405c3ab7d044a588e"
   },
   "fotos/1976.0612.CUADERNOS.PLATAJUNTA.FOTO AGT.CALVO.1.JPG": {
     "cid": "QmfErcdqLgdPdtHynYggFb4SobXzvPiS6r7yQDxQFJ6YB7",
@@ -59294,6 +59366,10 @@
   "fotos/1976.0619.CUADERNOS PARA EL DIALOGO.TREVIJANO, LIBRE.jpg": {
     "cid": "QmVMQur1QpR82ucW4jmSqDy2SaCTdJVDorcZodGka2e8rM",
     "hash": "f9ecceb3868ef26437e2b4b3892438e325ac707b536b2ca5444a4cc308bd7ccc"
+  },
+  "fotos/1976.0619.CUADERNOS.164.CAMACHO.AGT.AGUADO.jpg": {
+    "cid": "Qmbo6JhtHT5eCMUUKA9Mw1Ns59nHUyyf78uqaz9fAf7M9z",
+    "hash": "ca10a6de39b8d69d5a29cb4ca5e0f1854cdb0e64891bd6f9a5aef4a756ea6d0a"
   },
   "fotos/1976.0619.DIARIO DE BARCELONA.LIBERTAD CALVO.AGT.jpg": {
     "cid": "QmQ9guCptEe32CKZgVCcgh5N9gLaArCA4UN3TYSJxLr4JE",
@@ -59399,33 +59475,73 @@
     "cid": "QmPNSoJaedg7tx11BiNxSUVeK26FdJnbhtYktkiRAfnmf4",
     "hash": "96b061e9e8577da277e47ca69aa2a32282ee336c41b8ca7293cb6d61025fc192"
   },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.1.jpg": {
+    "cid": "QmPtFzY6KQqHEALVhbtvMkYc8CWWvnSfWiy43XudC81obQ",
+    "hash": "8aec7a2f17a96ba6e3a08415f66decd1d12ae4b3eb3cde775bcff4e3444f13fe"
+  },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.2.JPG": {
     "cid": "QmRTUNE7LPP5nzq1dbvn7yk6mvkXfhvHAJs9yxZzKH3ETj",
     "hash": "65871696583145eb11f50e52f9beea90df4f6527f515a62c38bddeaa40a3b133"
+  },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.2.jpg": {
+    "cid": "QmYPqXSaBKsQzV8oE2HKaZEKS2HfnYmLjrkNAyy5bYNxkF",
+    "hash": "6f2cdebb84cd974e6fef4f45c7ea17b5d9262a1b456d8b7204726661e77f5b0e"
   },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.3.JPG": {
     "cid": "QmQ4WDxVRWbL4uD9JQeV2U3caXw6EHdghiSBHe1bHMuABn",
     "hash": "2e424faf6effc94d741ec8a1a40785e6997a6b434360e4be2d15661f81870bbd"
   },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.3.jpg": {
+    "cid": "QmNw4v8hahaURtyy8JfHGVcAyRcb4CVVXHDKWmZc49UTsm",
+    "hash": "892325c7e82c7c02a96b2c58255cade062dcbf398736aa9c073040db73416974"
+  },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.4.JPG": {
     "cid": "Qma1RUEpCXxRYfjz2Xy4UfPUd5q2jh8uJE895bWuUW3Vps",
     "hash": "efe1d93e4ec2821ee3c976681118d141ec808337b6da5eb9b27c25ed4ea1f1d5"
+  },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.4.jpg": {
+    "cid": "QmR1fAWPeVkZ2iGwuij7HrX8jHPbPNQt1PDRdL8Zawo53m",
+    "hash": "8b1ce9d32fda241376d4d3cd72abd8ea29d61c6f28591d2508c2ec3525c551ba"
   },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.5.JPG": {
     "cid": "QmaS3fAF1CWPkfWQFmqJhwmeiN1eeQ6gKj4VgARPLAXzwX",
     "hash": "a025c6f176cee1aa679cba710f55de450667ac8095561022b9fc33e9205fd39c"
   },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.5.jpg": {
+    "cid": "QmXWT6RLKwkUjd2YSZNLcSiXv7ggotx7EDKcVRyjAEyWUo",
+    "hash": "ad1d8629f89510b0faf8e5b129d74b891e706a8cf3387eb933cb71afef7ab677"
+  },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.6.JPG": {
     "cid": "QmSzptdEScKFsFaHYWQeKu15PmCFWwL9DUn6MkgdZ2zRHB",
     "hash": "409ac0e3e9575887d74f46d9af60036de62f76dab530dfe63cb71c63a67c1df8"
+  },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.6.jpg": {
+    "cid": "QmZHtESXg4f9aufTaw4YdZ3KVygv9awrK9PJ6DSUEPDm5s",
+    "hash": "0e06ea8cb6cacb55ee4212e7f793f5b62d38f305d5debf7dfc1599f7223b64ff"
   },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.7.JPG": {
     "cid": "QmPVUg8DpX4U4TDw6HJhWHwDiAFv9dKRUHtNTvtBPc6bve",
     "hash": "e8cdf0223e239b6c61dfca9310bfc12c4362ec218fddc5973b3be0ea36b71468"
   },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.7.jpg": {
+    "cid": "QmdCFuD9XFoKbmE8kgsRn2iVrpEv3etcxqwBoJt8pSMiAm",
+    "hash": "7ffb05464269e969cd621366e352991188283b7ace2c93b235a97b98b8c205e2"
+  },
   "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.8.JPG": {
     "cid": "QmUiziA3M4iAETQvrD2hvuL9nH8RH51x2NQe4fddaMRtwU",
     "hash": "98792e78f72e706a8a0fc6446383a8e22ca46b79c3238b89332dc82496588a71"
+  },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.8.jpg": {
+    "cid": "QmZN1mQ2BPDwvqM4Frq4nsQJjN8DqizzBPdHC9pGDPVauR",
+    "hash": "1ec690e068ad979176ac69d7d46456cf6c900f3e2c011dcecd81f10a48c58c3c"
+  },
+  "fotos/1976.0708.INTERVIU.ENTREVISTA AGT.9.jpg": {
+    "cid": "QmWj6mRqrBoQUWFeHkMmbrcd65zu2B1eUfrLHmmd3KWZBu",
+    "hash": "51962018eeae97c1c73788793189e480733cbcbb1c68d805d80488a99e58e5a9"
+  },
+  "fotos/1976.0708.INTERVIU.JPG": {
+    "cid": "QmX2dp1qTtf55txv4hQM8bv85daxPSNekvjyxXQEwiav2y",
+    "hash": "016a17242d3a0d4178a9abc6c9e8792a40c4937542a3cc390c7a2ba5e62a9b0f"
   },
   "fotos/1976.0712.CANARIAS MANI.AGT.jpg": {
     "cid": "QmdU88jd6MXB8uwP62GPe4iKJmmAcvzQmyUzHSUE4qaorD",
@@ -59459,6 +59575,10 @@
     "cid": "QmQwefX2u71HfHBRLVr3GryTzq8kVoNC2qUvdenmU1oSzH",
     "hash": "0ce584a677c9a62634188e4be2d3c026b0f84da9b70a319903f48c8fb9bf6bab"
   },
+  "fotos/1976.0717.TRIUNFO.703.LA OPOSICION ANTE LA CRISIS.0.jpg": {
+    "cid": "QmPLWyUfMgqG3tQt13811NyHPwbNtdJiddNFVaqXDpXHdn",
+    "hash": "3a24c6ad3fb264cceb3c01dd5c1e95f58162a326e44727f1183b1b3297044ca9"
+  },
   "fotos/1976.0717.TRIUNFO.703.LA OPOSICION ANTE LA CRISIS.01.JPG": {
     "cid": "QmTaEPRDkUHVGg2UnrfHLgWRrMsw7mUxmWPWZekpsYhHgh",
     "hash": "f2dfdee463af2ce9aac1cdbac4c5e4da8900b0a44c9b45cf7d141be5392474e5"
@@ -59467,9 +59587,21 @@
     "cid": "QmbuaXoV3CLGGJVynP24WzQQ7APbGvyTwGmYkoRfGbbEd2",
     "hash": "c9d7acfff859edfc4b51af962298df8dae8e4e01da457871a7c01724d062c432"
   },
+  "fotos/1976.0717.TRIUNFO.703.LA OPOSICION ANTE LA CRISIS.1.jpg": {
+    "cid": "Qmf757BnLBFpFd73Z7APAgheVnWyYBoS2kfbZpFWCxrTBW",
+    "hash": "06a7eeb9e3f87b9234f9e02129a6623efa8181331084cacdda2bc8ef7e827744"
+  },
   "fotos/1976.0717.TRIUNFO.703.LA OPOSICION ANTE LA CRISIS.2.JPG": {
     "cid": "QmUfpNriuTxLZKw9yRo27tqfapQrGagtoWBEj7KN77bGbd",
     "hash": "32079f28bd7d1b266189545f1cd889e59e356967471aad61980cc95578086315"
+  },
+  "fotos/1976.0717.TRIUNFO.703.LA OPOSICION ANTE LA CRISIS.2.jpg": {
+    "cid": "QmeD5Ckres4865JJAAiFXoAVXPYWDQ15Y389Mn3Du399HD",
+    "hash": "e0aca1831442586a012f439ec7d8e6da957d5729285fc5b4f56d066c2bab5c02"
+  },
+  "fotos/1976.0717.TRIUNFO.703.LA OPOSICION ANTE LA CRISIS.3.jpg": {
+    "cid": "QmesgEyZ4hmGk8qm9sFeSP5pjRh3Az3nPXmRUVcjCu6Ha8",
+    "hash": "0aa631c43116d23029a835c62ff058ffef597c48e1631fab4bc7f5e2e46ffdf5"
   },
   "fotos/1976.0719.ARAGON EXPRESS.AGT PUNTUALIZA.jpg": {
     "cid": "QmQJeGNqafSrBt93eJtihwzHKbXuXT8X9utfZfM7jkkqcF",
@@ -59535,6 +59667,14 @@
     "cid": "QmQYmSEHMaQv2pHEMKAAQkTwr61ziLpPF4Wo41tjxbTENF",
     "hash": "bd7469c2335974c36f45e5869c4decde8c3b02ddcd9bd7a26edcb6ae6c797f67"
   },
+  "fotos/1976.0923.INTERVIU.CUMBRE.jpg": {
+    "cid": "QmajHfx3yuumq4CutWcmkxnhMnTvSiymEWdMnhqWTv7Sg6",
+    "hash": "752fbdcc4dfdf858a33a76c10281890288cad5379e24b8c39f179b130afdf048"
+  },
+  "fotos/1976.0923.INTERVIU.SALIDA CARABANCHEL.AGT.CALVO.CAMACHO.jpg": {
+    "cid": "QmThaXbYD8wYVHguaNbmMzMNakjh9iQeUu48H7Px55q4ir",
+    "hash": "127ee1ede7fcced373d41400fdc7dd579b5b4c660743e48796c8f63fe7d11101"
+  },
   "fotos/1976.0924.ARAGON EXPRESS.CD CRISIS.AGT-PSOE.jpg": {
     "cid": "QmS5Kpz5c1ztq5LUhh1FXh7E5XrgAHDcfK96Qn52yMBLrJ",
     "hash": "566cc65a6889d1e07c10257b7dc6379c9c6fead9e5104301802ec3e2f7736cc4"
@@ -59582,6 +59722,10 @@
   "fotos/1976.1002.BN.GUERRA AGT-MUJICA.jpg": {
     "cid": "Qmb6ShyJoijZD1WrSS64zwbgj2ExVWDxo1ugvvjRAGjTti",
     "hash": "d53fb32b5178f74354f89d53a9133270c782aa231b481d2af086380bcde01df9"
+  },
+  "fotos/1976.1002.CUADERNOS.179.HACIA UNA SOLA VOZ.VALENCIA.jpg": {
+    "cid": "QmbJJvwnHWcHUfPrvSDHYvEeuaPzMqCteDDMfyqc6VxG1P",
+    "hash": "4d29f956d99bf6a0c35cf4509d2d53ca16897475f8456106e5b3c64fa23b719b"
   },
   "fotos/1976.1002.CUADERNOS.HACIA UNA SOLA VOZ.LA OPOSICION ATASCADA_PEDRO ALTARES.jpg": {
     "cid": "QmcfvjuJbVNsUwYRGKjNJFXdrzGHzE5bNq9PzL6aDWaB97",
@@ -59751,6 +59895,10 @@
     "cid": "Qmb4pGNpXJ4BUHn3EpzDv2e3r3rXu97XjHuVYWUeRMyKUP",
     "hash": "d4b56cd56f91cdc0ace458979470022817736e463367af9b4f20f20d7d651140"
   },
+  "fotos/1976.1202.POSIBLE.RUEDA PRENSA AGT.2.jpg": {
+    "cid": "QmeSEWuyVKJqUooa1dFaMQHx6kukbBdFzYWCTWQH6PmkRt",
+    "hash": "795bbc7f6e6388188909e1afc799ee812e72122da0c2835b2acb21b04ef78c4a"
+  },
   "fotos/1976.1206.CAMBIO16.261.TREVIJANO, SOLO FRENTE AL MUNDO.jpg": {
     "cid": "QmagSttd5h2g6X5eVZwc9Y9UbejJtRHkH1vdYSmExaBGDk",
     "hash": "42580c551a3843d2150e29c571cce667ba660f45ced52ed96d956c96eb50a1a3"
@@ -59855,6 +60003,18 @@
     "cid": "QmUWao8gGnp1fnpr5Q2o6ybLXnK3yBXFJuwQEGJmzCSPCm",
     "hash": "779640dffb8e8aee47c7f69142f3c11d1ba8ed58f04b200f2b4bef5fd4a6db6b"
   },
+  "fotos/1977.0124.POR FAVOR.AGT EL INDEPENDIENTE CON LEYENDAS.4.jpg": {
+    "cid": "QmTjUL9sgtgxR7Spf2bihG6TRevfMET8TqiZYMC9sLCd6G",
+    "hash": "6fc01a1719cae1ee9971a889d27e26cf55ed5309d14cf2ce33cb06a8c6adb541"
+  },
+  "fotos/1977.0124.POR FAVOR.AGT EL INDEPENDIENTE CON LEYENDAS.5.jpg": {
+    "cid": "QmeLzV67XA6w3YsKN8BH2zRbMWdti4EHAC67MagB63Awmu",
+    "hash": "3df53b3fc13ea678958b7e68a3f48082c530edd89f8a73a5a7861aa48d038020"
+  },
+  "fotos/1977.0124.POR FAVOR.AGT EL INDEPENDIENTE CON LEYENDAS.6.jpg": {
+    "cid": "QmaufQju9Fhuc88zbWpNeCFpgYGbesiyCNatNzP35SxhvJ",
+    "hash": "9137de03e913fa29f370d1447a63cb2aa99d3bb9ca791659dbbda64da881cdf0"
+  },
   "fotos/1977.0127.GENTES.AMNISTIA,LOPEZ SALINAS.JD.FOTO AGT.1.jpg": {
     "cid": "QmfCksz3ypaqtGc163yKD1JWkh9rtwuZS9q3bd9Cyx38ho",
     "hash": "6f75d30d3b7d7fd1b67a3708e99291ba63549fcbd886901505e752a8b1d183ec"
@@ -59890,6 +60050,14 @@
   "fotos/1977.0416.EL PAIS.AGT EN MURCIA.jpg": {
     "cid": "QmYUJJnLcgY2RC5yzEYFBeiHYpPU5abh5JYthWFm57uEBD",
     "hash": "496a3a3105f48609f8d731a0252c889d0bbca6a4b49b13cc570a1aea3ba74547"
+  },
+  "fotos/1977.0500.100 BESTIAS POLITICAS.AGT ESTA NEGRO_WIRTH-BACH.1.jpg": {
+    "cid": "Qmeu3kMgHkLzj7Rir7ZeuAM1kJ1JBtWdUVYUxQLUnjnAgd",
+    "hash": "7831e1a5afc608826b49c0ab7cd0e75085e5bd2e72192187f1e0ea134c96f522"
+  },
+  "fotos/1977.0500.100 BESTIAS POLITICAS.AGT ESTA NEGRO_WIRTH-BACH.2.jpg": {
+    "cid": "QmcH9w1oicr4ens6R3R3VrhKoc7fveVZzytH8uhCHDgKbe",
+    "hash": "94160bedba600da8fadc5ef5fd29b3dd8ad3f42318b2e7dcca71bd4f89679764"
   },
   "fotos/1977.0500.AGT ESTA NEGRO.100 BESTIAS POLITICAS_WIRTH-BACH.jpg": {
     "cid": "QmcH9w1oicr4ens6R3R3VrhKoc7fveVZzytH8uhCHDgKbe",
@@ -59987,10 +60155,6 @@
     "cid": "QmUJjhmHjU92JoRhsRw1KzMsawxVrqkYeWg45iVqZqfiTY",
     "hash": "ce5470a3ae86efc4d73aac1653e240aa8a1d1fc3be33af07e0293f17d0b79052"
   },
-  "fotos/1979. 0900.LUI.ENTREVISTA AGT.1.JPG": {
-    "cid": "QmVM1ty2B6oi43BKcUBZtn5Rr5f3NBLryh9kr8MogKY61Q",
-    "hash": "3c661f76a48d219a2da683c77aef0472f9f60bf919234534a5d29c0b7c7d6087"
-  },
   "fotos/1979.0512.AGT.LA CLAVE.DEMOCRACIA.1.jpg": {
     "cid": "QmUHxC17bo8tAwESMBEgdoruuPbwVhWLrk2gKXu7wUAsFE",
     "hash": "69aa818c6be2593a3bd41a0bf7c5e0cf5d6dd0f78247188f822cb05aee1f617f"
@@ -60010,6 +60174,18 @@
   "fotos/1979.0825.ARAGON EXPRESS.ENTREVISTA AGT.004.JPG": {
     "cid": "QmQnqcDSjwfGAreKFdtPneGK7uPuShWjFfr4YkhmwSU35J",
     "hash": "c41887e4375e2d8c69ab226110a4222ef4f8ae7bcdf90ce1822e8fc8a5feb761"
+  },
+  "fotos/1979.0900.LUI.32.AGT.0.jpg": {
+    "cid": "QmTNBtorEsWFnxEfP4UPTZQ6zb5SSoW5uSveD3D4fNYLro",
+    "hash": "55db98adc0b3858c559695d2a5b9959684775739cd5d99413f87bd7895bcd2f6"
+  },
+  "fotos/1979.0900.LUI.32.AGT.00.jpg": {
+    "cid": "QmRLB2Ra32N883TACednvvEd1fbi71R5PUXggXVXJgKwEE",
+    "hash": "e7a3b8d075ce0caa349a3248dd8dcc327dee17c5cec064b269655a04892bfc70"
+  },
+  "fotos/1979.0900.LUI.ENTREVISTA AGT.1.JPG": {
+    "cid": "QmVM1ty2B6oi43BKcUBZtn5Rr5f3NBLryh9kr8MogKY61Q",
+    "hash": "3c661f76a48d219a2da683c77aef0472f9f60bf919234534a5d29c0b7c7d6087"
   },
   "fotos/1979.0923.L'HORA DE CATALUNYA.ENTREVISTA AGT.GUINEA..JPG": {
     "cid": "QmYN9j18A3s8LwPJEiKfmiobGm44V2DD2jYMq1juVEsgds",
@@ -60138,6 +60314,10 @@
   "fotos/1993.1130.DIARIO16.GRANDES ABOGADOS.AGT_IGNACIO RUIZ QUINTANO.jpg": {
     "cid": "QmYT4Y1DGoBkzXtjKHgWEzNpH6618aqfZe75vySJLtzRaU",
     "hash": "2fede4905c3edc03d909ca38798b4d2972abb973306faff874813e8156d30272"
+  },
+  "fotos/1994.0600.AJOBLANCO.MANIFIESTO ELECTORAL POR LA DEMOCRACIA_AGT.JPG": {
+    "cid": "QmQs74M2jEqqdbPrtEE4zhJ3JDcbyMgVcV2SJJt2PfWzFH",
+    "hash": "27a7a62d1dabac1cb4e47b48997aef150d29baf735bcd3f8e9a53fe5501e58a7"
   },
   "fotos/1994.0721.ABC.ELOGIOS A AGT POR SU INTERVENCION CURSO JUNTA.jpg": {
     "cid": "QmXXgCWEU9AXemvscBdMmjX5S9HWWt6jTHFJCh931rb75g",
@@ -60287,6 +60467,14 @@
     "cid": "QmWgNHpTkDZuCXnJ3XkW6qP4H89pt3PNiP7CaTN7CZ2fAp",
     "hash": "cef87c11c65fbb18bd8b5e7588e5755982eb951e8a029b096c2ad81724b1303c"
   },
+  "fotos/1994.1200.AJOBLANCO.AGT.ANSON.R POZO.P SEBASTIAN.jpg": {
+    "cid": "QmbErBVK6Tfo9hjjrJoacWsgTx6wScj75D5eoWVM4mVxdq",
+    "hash": "e70d0ffea78354f91ded2d2ecc832d8c6e5f219c40df7e43429fa0a6fb5bf4c9"
+  },
+  "fotos/1994.1200.AJOBLANCO.AGT.BALBIN.R POZO.P SEBASTIAN.jpg": {
+    "cid": "QmbN36bqFAm7eCFEibPnanUcoFnYpHb74RnWejWQc7r97q",
+    "hash": "6ce4200463bbdd9ee589c8eec052368ebdc1abfa4f4ebc728fb3bc4ab2fec742"
+  },
   "fotos/1994.1227.EL PERIODICO.EL FUTURO DE LA MONARQUIA.jpg": {
     "cid": "QmUQVDeL5udJ89nxd6uZP5Qwgeku8iaKP1oaBsBNctBMfy",
     "hash": "736d215e8ccfeef6e6495c410a256219ebb633ad0a80f9e7ec71cd15df3b98c0"
@@ -60386,6 +60574,26 @@
   "fotos/1995.0427.ABC.FOTO AGT.RAUL DEL POZO.TERTULIA COLEGIO CHAMINADE.jpg": {
     "cid": "QmdbHuYXYPByUDcED9yy47kXRa1iVvkbhMGj9NtUBZCWo4",
     "hash": "ed2d60fef0ee60e5af8fa0c182de405d22341d145d0ca0031bcc25a435f44fd1"
+  },
+  "fotos/1995.0500.AOBLANCO.POR QUE EN ESPAÑA NO HAY DEMOCRACIA.AGT.0.jpg": {
+    "cid": "QmYf8ndMK2QWGK7cqfvgqRvK1qEKc6dN14hVV5yN3ZebvX",
+    "hash": "14c66a5d039b66bc025e28774bb2e2baaeda33ee65cf24aa571fc9bac7cb5054"
+  },
+  "fotos/1995.0500.AOBLANCO.POR QUE EN ESPAÑA NO HAY DEMOCRACIA.AGT.1.JPG": {
+    "cid": "QmWuh3mG8L9wn64fw53yBZE56itf4u1HduT7tnsd8XQWna",
+    "hash": "68858802f956814dd3918bc07838afcaa21e9f8268b35885dc97f3208383f08d"
+  },
+  "fotos/1995.0500.AOBLANCO.POR QUE EN ESPAÑA NO HAY DEMOCRACIA.AGT.2.jpg": {
+    "cid": "QmbbhY5Anj5zvrY6Jk8LcygoE5ekFGinsZJdTnJiDAGV9H",
+    "hash": "3255b359f655925bccfb4c6e32b0bdf43f86271b58f8c80d76eca290658da1c8"
+  },
+  "fotos/1995.0500.AOBLANCO.POR QUE EN ESPAÑA NO HAY DEMOCRACIA.AGT.3.JPG": {
+    "cid": "QmdbQDLsdSrnsBKeY9kjff2KSVd3dVWz1UV5kwUf6tDvzC",
+    "hash": "facf6a5019d38114ddda46bc2fce17ba314f1242c9c7baf7ac2726d2cda43f82"
+  },
+  "fotos/1995.0500.AOBLANCO.POR QUE EN ESPAÑA NO HAY DEMOCRACIA.AGT.4.jpg": {
+    "cid": "QmeLnoema8kvTKcJ3DNVp5D8ubs8HAtubHYx9aXUvbqPUS",
+    "hash": "e11199521fb4c5bfbaff5d84f5500228bb7d27221ad47079300515db709fad4a"
   },
   "fotos/1995.0516.EL MUNDO.CURSO AEPI.AGT.jpg": {
     "cid": "QmTsvp3ayV3JNAYrFCdJM4DNpxtZ1GVG5g9GAE3vp8UDRu",
@@ -60574,6 +60782,14 @@
   "fotos/1997.0915.INTERVIU.CONJURA A LA VISTA.SOGECABLE_ALBERTO GAYO.jpg": {
     "cid": "QmfASzrnJxw63DY8KBLfem6W5KNt2xQMTSquofbP6LK6vP",
     "hash": "aaf5dccea83b8ac2396ed01ec9a19cd04ea1a125b9f5727e6f15247f7e9c453e"
+  },
+  "fotos/1997.0915.TIEMPO.AGT.GORDILLO.jpg": {
+    "cid": "QmQSUsAZMEcwSPaojRohYdt6tiTZGTwtHgtS4CYG4doVys",
+    "hash": "51e702c3dbc2c301e3662473568859e1f4fc3c870d1f1e5215e0cb01f916f761"
+  },
+  "fotos/1997.0915.TIEMPO.AGT.LIAÑO.jpg": {
+    "cid": "QmVALKbMwXo2tqni1JGKqqeRCSAwbAahdRvYUNimnKCxcM",
+    "hash": "9c0bd9fac7fb7862cc89a3e46e9aaa304e73a2bd1bc1383b3ec22d9fe8353a4a"
   },
   "fotos/1997.0921.EL PERIODICO.EL RETRATO.AGT.CARICATURA.jpg": {
     "cid": "QmbnSmch745XrFrBXxkhzJbmygsqVXVHfa1EXVFBPoPLAW",
@@ -61003,7 +61219,7 @@
     "cid": "QmRuepdak6ZRyhfCMy2GwqjNAuWvHASvf2fy2BvJ74LtR4",
     "hash": "702597c81870f04dea8474be6b155a0c14ad49dffbf920d2be0f7f2487c64e37"
   },
-  "fotos/2011.0219. VIGO.AGT. ALFONSO ALVAREZ-GANDARA.jpg": {
+  "fotos/2011.0219.VIGO.AGT. ALFONSO ALVAREZ-GANDARA.jpg": {
     "cid": "QmchPP1G69b59fyf6cRgBubNxvxDGw6Kf2gWXLVPi74wqm",
     "hash": "eecf818c528cae711f9d6a3ebbb41c969ab1963a83dc728c6c9ac2dc17d37d06"
   },
@@ -61070,6 +61286,14 @@
   "fotos/2011.0400-LEER.REPUBLICA.ENTREVISTA AGT.6.JPG": {
     "cid": "QmX2Ce7mniVZwsUmHvRCjLoo3C4rsYs2PMDKXPKvVDfKGd",
     "hash": "73bbb541054c698d05df4476827909a8c4b81cffa4a54bf402ef544697ef763d"
+  },
+  "fotos/2011.0400.LEER.LA POSIBILIDAD DE LA REPUBLICA.AGT.6.jpg": {
+    "cid": "QmTYe7nWjQvwB5ye8oPWJ7Dk5w1c6ktaH2nHvensjJUsMY",
+    "hash": "2034bdc93f08620d87fa5b176775f19f5b72980f3563f1259e7103fc62fd3abc"
+  },
+  "fotos/2011.0400.LEER.LA POSIBILIDAD DE LA REPUBLICA.AGT.7.jpg": {
+    "cid": "QmWqokUzwCWWnqHce1Ei3B3s8Yefmtxb2kJLzfaLXKLJ8F",
+    "hash": "2215f8b25930cb0847a99f1b14279bd3b2aa416b11ed4cee6472c93502df9978"
   },
   "fotos/2011.0412.IDEAL.ORGIVA CON AGT.jpg": {
     "cid": "QmNvKGDZc5qCBExZQUKjGBxfvd1J6QBrf67A9ureWVJRdc",
@@ -61307,10 +61531,6 @@
     "cid": "QmNzLRGoUy3mpqt6zozio7naA1X372PKgvXsSg41ohVMCF",
     "hash": "494d2751b35a97f92a0e75f1fc6fac5bfd5839f5641d614a5e309e53bb57a821"
   },
-  "fotos/2016. 0729.ATLANTICA 831.AGT.jpg": {
-    "cid": "QmPq1MQHmRjT9Yc9L3DsNMvYPU8XTknf9r5jBbMc5bsX2X",
-    "hash": "ce3439b7a1fe1a293b61ac4791bd90955e9d9afad4d11765ab6cd77f26c31fee"
-  },
   "fotos/2016. REPORTAJE EL ESPAÑOL.AGT.1.jpg": {
     "cid": "QmV3jytBqWUiBJzbMWjFrSGCsvzSrD4tWo1sG9NZWKyRym",
     "hash": "c996516bde04bcc624fd9808ebb321fb5207e5377b8af9ca9a4ab93a72701aac"
@@ -61406,6 +61626,10 @@
   "fotos/2016.0719.IDEAL.AGT ORGIVA.1.JPG": {
     "cid": "QmRVYHVzMFtfcByh4VPmzzFqJBKYuT81tqPvTLaCVHQbEi",
     "hash": "1202bc932d9195cc662b65999dec2ad1447d5ebdd4769c4a2537aefc7e7279db"
+  },
+  "fotos/2016.0729.ATLANTICA 831.AGT.jpg": {
+    "cid": "QmPq1MQHmRjT9Yc9L3DsNMvYPU8XTknf9r5jBbMc5bsX2X",
+    "hash": "ce3439b7a1fe1a293b61ac4791bd90955e9d9afad4d11765ab6cd77f26c31fee"
   },
   "fotos/2016.0729.ATLANTICA.ABDICACION DEL REY.ENTREVISTA AGT.jpg": {
     "cid": "QmPq1MQHmRjT9Yc9L3DsNMvYPU8XTknf9r5jBbMc5bsX2X",
@@ -61867,7 +62091,7 @@
     "cid": "QmcLUY9EZcQzEQAG49jh6vsGzfezpKnQsLRyZVSMaQx7ks",
     "hash": "36fc8b9aaf40806b03a6d523568b2dd5acdba69d8316baff8a0efd2c74c05565"
   },
-  "prensa/1968.01.00. NUEVOS HORIZONTES.EL AFFAIRE SERVAN-SCHREIBER_NOVAIS.pdf": {
+  "prensa/1968.01.00.NUEVOS HORIZONTES.EL AFFAIRE SERVAN-SCHREIBER_NOVAIS.pdf": {
     "cid": "QmYyzz38jbfKi6jLyH3WeWMr97tvPw5ue1SgbRqak2HZnR",
     "hash": "7b6d4589235396e86368e91871a5217588bdf6edc6dd0e1bc2dd7c1c0f7d21c3"
   },
@@ -62175,7 +62399,7 @@
     "cid": "QmVHnPkM7WpNUJFUKfn6tYZyTTFUad8WD61QEqmu17XQiB",
     "hash": "9067376e112c08f797ae8547cc8212500a7d2077f67294051be841621b119d1f"
   },
-  "prensa/1971.1118. PUEBLO.TORMENTA PERIODISTICA.DIARIO MADRID.pdf": {
+  "prensa/1971.1118.PUEBLO.TORMENTA PERIODISTICA.DIARIO MADRID.pdf": {
     "cid": "QmNpxFonPJG71zioP5yca68iW2CrggyGnDhikkfoDTk9xr",
     "hash": "8334cdbcc1859772618975293a22fd4fe77b7ff8d004a7a20fd6c92e9d685c5f"
   },
@@ -62299,13 +62523,13 @@
     "cid": "QmZd9z6L5nyRcwkPcADs6vPewgG8QYfP7MGEanRLWsUTsV",
     "hash": "61e2775ca17ac91cc7a1107f3c76181e71dc7234a0b3bb3b9902e427d9b33d76"
   },
-  "prensa/1971.1203. INFORMACIONES.AGT-CALVO.pdf": {
-    "cid": "QmVJwH5jyZKPK87cCb7HPvGRY1d84oKfJuEwY8Z5fv7aEK",
-    "hash": "6737ac50031c061bb067f2abb5b011ce9612145b2def76772cedde84ca497306"
-  },
   "prensa/1971.1203.ARAGON EXPRESS.MADRID.SERER.AGT.pdf": {
     "cid": "QmXqVcu48Ec26MmJeQY5UttGSuAvLeBbwtgHARzdaTNmGy",
     "hash": "2a5b329a875ace818eb76aac329adf79e27b831e700337deb0f9425eda63de50"
+  },
+  "prensa/1971.1203.INFORMACIONES.AGT-CALVO.pdf": {
+    "cid": "QmVJwH5jyZKPK87cCb7HPvGRY1d84oKfJuEwY8Z5fv7aEK",
+    "hash": "6737ac50031c061bb067f2abb5b011ce9612145b2def76772cedde84ca497306"
   },
   "prensa/1971.1203.LAVOZDGALICIA.MADRID.pdf": {
     "cid": "QmZZ8hm1BxkyXnMaGq69B5eBuPZGiaYQsgkjjspHgWUAUA",
@@ -62450,10 +62674,6 @@
   "prensa/1971.1228.LAVOZDGALICIA.MADRID.pdf": {
     "cid": "QmSJHT3DMWYHQEz8G1KDRPoVoB6TAhJHgXxHuxzdvFDjBK",
     "hash": "3c0e2cfa7ebc3a0b9bb48a212c0881e6334de742da00fd8b4153d9809024d7f5"
-  },
-  "prensa/1972. 0220.DIARIO DE BARCELONA.MADRID.pdf": {
-    "cid": "Qmc8c5TRh4kanbA5g2uqPVA866KAb7ioQGvd3Ck4bbbV4F",
-    "hash": "bd99d364a189fe2540e85ab764ab0523690cb0d639588ba7652196f6cd809a76"
   },
   "prensa/1972.0100.RUEDO IBERICO.DIARIO MADRID.pdf": {
     "cid": "Qmdi9SctGvvVGB1APB38EWexy8jJNzmmG4anmYiHcHETsJ",
@@ -62775,6 +62995,10 @@
     "cid": "Qmc8sZG35NtaHHRMj2WCdu65dYPL8CJifCM3QtepGtS45j",
     "hash": "53234973f29ab2003fc6241cb57df3c202ee8c57ccf7b235433eac901e9d4b0a"
   },
+  "prensa/1972.0220.DIARIO DE BARCELONA.MADRID.pdf": {
+    "cid": "Qmc8c5TRh4kanbA5g2uqPVA866KAb7ioQGvd3Ck4bbbV4F",
+    "hash": "bd99d364a189fe2540e85ab764ab0523690cb0d639588ba7652196f6cd809a76"
+  },
   "prensa/1972.0220.DIARIO DE MALLORCA.EMILIO ROMERO.pdf": {
     "cid": "QmYV7W1z23yzBp8gHF7BzJbgNR3fZzafMeA82Lh1FiSXy3",
     "hash": "5402050716ca29dd2eae278e1e5844c83337de6f01efeaeaed2893cc04f09564"
@@ -62927,13 +63151,13 @@
     "cid": "QmREmTC3JrtuCsJfTM6CkAiukr1GdzFCveLg9LfWTbECDJ",
     "hash": "b37674b944d4ac4b26b0580342f1a11a3d9fbcb1f045883c82648967a19afae3"
   },
-  "prensa/1972.0306. INFORMACIONES.EMILIO ROMERO.pdf": {
-    "cid": "QmdUjANwMgVDsMtni9oTD7p1yEwXjPwLGCwUx3nh6c21Mz",
-    "hash": "e2748d8c7fa914382712e17d15fea9ba296fa82eec942369d7c874dec8b878b0"
-  },
   "prensa/1972.0306.HOJA DEL LUNES.MADRID.pdf": {
     "cid": "QmT4X8q5d1GRXSQi3VjCFuarXVrv9skmeKJgnMrGWZQikD",
     "hash": "98e32e4b9527ccc63fcdc06fee3980dba36d430a2ceeee86260c60171e0fc662"
+  },
+  "prensa/1972.0306.INFORMACIONES.EMILIO ROMERO.pdf": {
+    "cid": "QmdUjANwMgVDsMtni9oTD7p1yEwXjPwLGCwUx3nh6c21Mz",
+    "hash": "e2748d8c7fa914382712e17d15fea9ba296fa82eec942369d7c874dec8b878b0"
   },
   "prensa/1972.0308.EL ECO D CANARIAS.EMILIO ROMERO.pdf": {
     "cid": "QmNVKRDAHiSNRk7gWwMVHHmxCUgWwDfH4G6hb9ouoYwXLc",
@@ -63031,10 +63255,6 @@
     "cid": "QmT65FFy3eGoi8N22ahWap3hAkvqExk4zYz3hz3RajrATs",
     "hash": "6da02eae7e4e24aa3a4fd38618720e9b5c8f7470713afeb194f36823c224834d"
   },
-  "prensa/1972.0329. INFORMACIONES.MADRID.pdf": {
-    "cid": "QmT1zr6bZPa72V6YL7QofEdx9hbL1Ny4Pettcd7FzdtTEY",
-    "hash": "d0d78ca5b4fc18dc4f0b0d427cf3a184835f3611970d1e5c33e2b376ebb932cb"
-  },
   "prensa/1972.0329.ECO DE CANARIAS.MADRID.pdf": {
     "cid": "QmZ4M3qRz4966PqxQwQcrLALFWbzY6ZTtgUZx6B674Cj8a",
     "hash": "df6f350146274cb0695866d8af69aff3a6689ac3399084a6afa89f3f47fa3b22"
@@ -63046,6 +63266,10 @@
   "prensa/1972.0329.IDEAL.REUNION ACREEDORES MADRID.pdf": {
     "cid": "QmUmSxbCKVgEoUNYidbJv4ZiWJmGwKqp1NFbJYZKUrYa5o",
     "hash": "b84b745fd7670512c3076e482498c549b041a3b71a840eed1f9ec3f363a61f7d"
+  },
+  "prensa/1972.0329.INFORMACIONES.MADRID.pdf": {
+    "cid": "QmT1zr6bZPa72V6YL7QofEdx9hbL1Ny4Pettcd7FzdtTEY",
+    "hash": "d0d78ca5b4fc18dc4f0b0d427cf3a184835f3611970d1e5c33e2b376ebb932cb"
   },
   "prensa/1972.0329.LA NUEVA ESPAÑA.MADRID.pdf": {
     "cid": "QmR3sc1Vonc8vHqGVSxe3dqQv1XaPQBFMhzrPYEaT5yjL1",
@@ -63075,10 +63299,6 @@
     "cid": "QmUtt2tbpEdUjGaFuUWuj7rZZbZNwXsRiLSj4NPaXLVquX",
     "hash": "13c6741aeb794716a2d1b3d7dd03405bfbef36a6374e61185dc71e42dcb6b2bd"
   },
-  "prensa/1972.0413. INFORMACIONES.EMILIO ROMERO.pdf": {
-    "cid": "QmViGLvv5LmivVy8zthfSA2FpRi2DmSjNwSKvAQKgqfxL1",
-    "hash": "6f297147f159da33709d9558765f9cd3ad23b6f7f84d383b1a7b62b18156aae4"
-  },
   "prensa/1972.0413.DIARIO DE LERIDA.EMILIO ROMERO.pdf": {
     "cid": "QmZSDXbXy4RLJZLzQCQdDvcba4FjfiuF5wk4K1AZ1afSmt",
     "hash": "12282588d1c2a30e120de0deba4065dd5146ca340bf3227dedc3a9e083ba1934"
@@ -63094,6 +63314,10 @@
   "prensa/1972.0413.ELPUEBLOGALLEGO.ROMERO.JUICIO.pdf": {
     "cid": "QmV23FXDg9cjCqx1VyMJbrDBgBt9PfpRDnLoFjuSykLNkb",
     "hash": "f01473cd34deec66adecceb3958ee424e5fb9b903dca9633a5d38872d7c7a02f"
+  },
+  "prensa/1972.0413.INFORMACIONES.EMILIO ROMERO.pdf": {
+    "cid": "QmViGLvv5LmivVy8zthfSA2FpRi2DmSjNwSKvAQKgqfxL1",
+    "hash": "6f297147f159da33709d9558765f9cd3ad23b6f7f84d383b1a7b62b18156aae4"
   },
   "prensa/1972.0413.LA VANGUARDIA.EMILIO ROMERO.pdf": {
     "cid": "QmfL5gUyGBZ5bVGezqXxLScuaQPGGxtrrrRVPYzgmAmkSx",
@@ -63759,13 +63983,13 @@
     "cid": "QmUfNisQnn973D7RnrFHAWLVbMvTukK6gz3kmpU9BRVr57",
     "hash": "2521c90f142c1240763dd4ff51c6db18929d27937368a1d921a4c436fd5b65f7"
   },
-  "prensa/1973.0402. INFORMACIONES.PASAPORTE.PDF": {
-    "cid": "QmcH3dK4cGDLHEcYb2WY7uQ2UcmsPxy4tph53dfjANHfJ7",
-    "hash": "23ae5a7f53b4292c8c338616fef851199b11afbadbe74e79b2a60a971042f535"
-  },
   "prensa/1973.0402.EUROPA PRESS.AGT NO INJURIO.pdf": {
     "cid": "QmW2W3TXddMrwTRUxamMCc2oqPDgfyEdKduDtuNiSequyK",
     "hash": "52ec47cc73086c2528b0845992b055433ba449ec6f7f0a7873750e3db48cae98"
+  },
+  "prensa/1973.0402.INFORMACIONES.PASAPORTE.PDF": {
+    "cid": "QmcH3dK4cGDLHEcYb2WY7uQ2UcmsPxy4tph53dfjANHfJ7",
+    "hash": "23ae5a7f53b4292c8c338616fef851199b11afbadbe74e79b2a60a971042f535"
   },
   "prensa/1973.0403.DIARIO DE BARCELONA.ROMERO.pdf": {
     "cid": "QmZBW5B2B6GjuY6ssMRrDTSLMSPunQLWrmn8ruh9CCeW85",
@@ -63947,7 +64171,7 @@
     "cid": "QmW7wSPfTLRvK4Go4W4T6Y7AXBz9pMQQbcDQuSQJ8yTMiN",
     "hash": "e11b4b28aa2bec2396556fa1363171e7fc5880e01dc1d42cdfb8b70ea3961586"
   },
-  "prensa/1974.0211. DIARIO16.DON JUAN.pdf": {
+  "prensa/1974.0211.DIARIO16.DON JUAN.pdf": {
     "cid": "QmSAJMy41DsTT88jQGBpT1rzx34aTzUQtRzSe5Qfk7XaKD",
     "hash": "e8563d83b33b7a51b11f8a0b77d5440a4eec273aecfb892be99eb495ca99feae"
   },
@@ -64219,13 +64443,13 @@
     "cid": "QmRHwzQjDBNxK3VfK6FGzrkAyzqKAQSxBrmWUKQsDQqFov",
     "hash": "7d9630ee05c9251fe4de8968be1ebaf8eec5d912389ad0f78a30e48afdf06939"
   },
-  "prensa/1975.0412. INFORMACIONES.CONDE MOTRICO.pdf": {
-    "cid": "Qmexsm5B7H679Fhwdwys6ore9SaCBKV4tUj1DgbsCGuAns",
-    "hash": "22f18c71fc5b0725edd9a51c15356983841cadae88f0172cd7fb908964384c7f"
-  },
   "prensa/1975.0412.EL ECO DE CANARIAS.PARIS.pdf": {
     "cid": "QmQiAhttnivJr6H5W59DLWaBt3HDKqbTcexhVeuX6qktQC",
     "hash": "428a418315d0c868c357c950b277e577956f96ec85d1a64338dfe6e0c3da11ae"
+  },
+  "prensa/1975.0412.INFORMACIONES.CONDE MOTRICO.pdf": {
+    "cid": "Qmexsm5B7H679Fhwdwys6ore9SaCBKV4tUj1DgbsCGuAns",
+    "hash": "22f18c71fc5b0725edd9a51c15356983841cadae88f0172cd7fb908964384c7f"
   },
   "prensa/1975.0413.DIARIO DE BARCELONA.AGT ENTREGO DOCUMENTO A DON JUAN.1.12.pdf": {
     "cid": "QmZUMCrphXsiQCxiFNvoVUDpKW5QKWVFvrTmjKcWf4Dd9k",
@@ -64343,10 +64567,6 @@
     "cid": "QmaRzNy2oU9RUMdb5dbnuUY7ycz2H5XC3k4zzveibeDicB",
     "hash": "46029fb53c0e006b6921bc8e87798d02bcc0d5a2295371f178442a37113a1b08"
   },
-  "prensa/1975.0516. INFORMACIONES.DETENCION.pdf": {
-    "cid": "QmVpew1LPeekRWaMXPb1mkAtUVNQJNWFhAqsgCjDg1TT6D",
-    "hash": "53dfc42f76f9b3ccca1695f838b692f8be51ccd4907d7f366dfaa8361d5cdb26"
-  },
   "prensa/1975.0516.ABC.DETENCION.pdf": {
     "cid": "QmbdmYMuyouFNQT3Tqp6kHNUHdfkAJZBwG6pvrm2tsEV8a",
     "hash": "64ed431891ae41e1e1231b8d269ce1801a1e7f4ee79f775939975a6743578e61"
@@ -64362,6 +64582,10 @@
   "prensa/1975.0516.DIARIO DE PONTEVEDRA.TENERIFE.AGT DETENIDO.pdf": {
     "cid": "QmP7z9AVb6q9HxHduBpx9NZ1CN82jRjutNXsB8ZBTifS2t",
     "hash": "b82245a406c0435477051d5e23725f79adc1d6da8e07d162df20d429b4ea96be"
+  },
+  "prensa/1975.0516.INFORMACIONES.DETENCION.pdf": {
+    "cid": "QmVpew1LPeekRWaMXPb1mkAtUVNQJNWFhAqsgCjDg1TT6D",
+    "hash": "53dfc42f76f9b3ccca1695f838b692f8be51ccd4907d7f366dfaa8361d5cdb26"
   },
   "prensa/1975.0516.LA PROVINCIA.AGT DETENIDO.pdf": {
     "cid": "QmdHGQj5yYhymQwBK4yHxt5V2pvcwaCfStXE8uGEpNcgZx",
@@ -64407,7 +64631,7 @@
     "cid": "QmUv7WsLMVrgwJJ1km51QUotvZZHbRzVsPRVUjWmyZvPNN",
     "hash": "b419b0932f7652900c6452895e0d0f69578f44baa9cea41f1585414cad6a9bad"
   },
-  "prensa/1975.0521. INFORMACIONES.DEFENSA JOSE AUMENTE.pdf": {
+  "prensa/1975.0521.INFORMACIONES.DEFENSA JOSE AUMENTE.pdf": {
     "cid": "QmcVMjNe3ZHsj28JkudxQrDdGa2ZqFjwEry21YgmXanVhh",
     "hash": "929334ea0de0ab52f482c71d5634a02a0dbdc3a77a5e879ee4c95ed019e37ee7"
   },
@@ -64443,10 +64667,6 @@
     "cid": "QmXRi4Kq8sKvkFsDZURiZnGrW1aMZZ3rE2RTXnfNvgRRZY",
     "hash": "3882bde954048c5039912940ae0e411c380d5c70564c0da81b88967eae8d8f2c"
   },
-  "prensa/1975.0529. INFORMACIONES.MULTA.pdf": {
-    "cid": "QmV9yvBXVQMuqkfEWRX14ajist3kJtEzMgxZBfwNko39ru",
-    "hash": "e7eb74a84b08c85d83d1c71beac84081a0454b1d413f0c15eb82a2e1e0e3605d"
-  },
   "prensa/1975.0529.ABC.MULTA.DETENIDOS.JD.pdf": {
     "cid": "QmPkjYg6SNeAhcwBBoQXaA7EeNjqz7Z1czRJ2GLtA25KSF",
     "hash": "1c35fa03f2256200834966eed199dfe24f3512ddfff91c7301ce81c97f7f2efa"
@@ -64466,6 +64686,10 @@
   "prensa/1975.0529.HOY.DETENIDOS MIEMBROS JD.BENIDORN.pdf": {
     "cid": "QmcugHXX1oGMPMhpfzKY26eZxAusZmx17FR1oZRhmJQ4vW",
     "hash": "f8e6cead8717fbf8d6046301d75de61c2f4435b51ec40975b4f7dfcfa9ef735b"
+  },
+  "prensa/1975.0529.INFORMACIONES.MULTA.pdf": {
+    "cid": "QmV9yvBXVQMuqkfEWRX14ajist3kJtEzMgxZBfwNko39ru",
+    "hash": "e7eb74a84b08c85d83d1c71beac84081a0454b1d413f0c15eb82a2e1e0e3605d"
   },
   "prensa/1975.0529.LA PROVINCIA.MULTA..pdf": {
     "cid": "QmZCtjkEHZURqr8KePXsUkfWhw4wYNUTixbdd37F2Qemfu",
@@ -64819,10 +65043,6 @@
     "cid": "QmUFSSfNchPyQwyk6gkKmvnE78YCsC1w9D3ZQtFVCDSTC6",
     "hash": "e94e48c10bafc0f117e69f0e243f612b40639e6d55206d319f31aa348e138ac3"
   },
-  "prensa/1976.0109. INFORMACIONES.JUNTA PARIS.pdf": {
-    "cid": "QmfCgUgzWkxTLrj9aMm3pDuvubAfLkJzQLf9RVx6wuoeBi",
-    "hash": "e4f4d903665d9d00eca7e2d79fc9081eb181c7aa5504cfed00d7ab1ea9913144"
-  },
   "prensa/1976.0109.DIARIO DE BARCELONA.JD.pdf": {
     "cid": "QmSS41r1iFqEc5ksu4upghkRqutQRqV8iz6NRnKL9X41RG",
     "hash": "c1d996cf581f3e87fbaa8ad29cfe8d12ec7e7f9f866af486778486c4c6aac961"
@@ -64842,6 +65062,10 @@
   "prensa/1976.0109.EL NOTICIERO.REUNION JDE PARIS.pdf": {
     "cid": "QmcnPED64G26xkkznfeQ3WdyQ4G8MGHswZ7TG8Rom6o4jD",
     "hash": "27f1480b4055fbf3d2bfdc47a984185d46e06398442ab41e632d417addbe17f4"
+  },
+  "prensa/1976.0109.INFORMACIONES.JUNTA PARIS.pdf": {
+    "cid": "QmfCgUgzWkxTLrj9aMm3pDuvubAfLkJzQLf9RVx6wuoeBi",
+    "hash": "e4f4d903665d9d00eca7e2d79fc9081eb181c7aa5504cfed00d7ab1ea9913144"
   },
   "prensa/1976.0109.LA NUEVA ESPAÑA.JUNTA DEMOCRATICA.pdf": {
     "cid": "QmRmd2BUZAp6nzv4o4FdjnDNmGFP6crE5hAGiHRCy2s4SZ",
@@ -65027,7 +65251,7 @@
     "cid": "QmWVK4c54gUTjgNR7GqyPLsrvMrMJPz8jAnFnxXXup6iY7",
     "hash": "ac9fced5200829778e8f882a2f262130432677996203b4433785670eb6852283"
   },
-  "prensa/1976.0215. ANDALAN.83.ENTREVISTA AGT.LA JUNTA SE REUNE.pdf": {
+  "prensa/1976.0215.ANDALAN.83.ENTREVISTA AGT.LA JUNTA SE REUNE.pdf": {
     "cid": "QmRwo8iy5HAKzTpMRVKeXku4J3bwuhR2Rkr99NARWm9PxC",
     "hash": "438715180b7a1b5ba0c8d392cb5877b53bc2ce579a2a49f7996f6996797b0302"
   },
@@ -65043,7 +65267,7 @@
     "cid": "QmXhSiC8ShsjUzih9LFnYa1FDDRdkTtwUYyy6XEhueez8F",
     "hash": "e44f37a6f136c3b5b299e802cd3d10c23b41b74595f34c89e2636f63dcdec32d"
   },
-  "prensa/1976.0219. INFORMACIONES.CONFERENCIA LOGROÑO.pdf": {
+  "prensa/1976.0219.INFORMACIONES.CONFERENCIA LOGROÑO.pdf": {
     "cid": "QmRQ9kUoP6zbxQbmLT1GRAmCPDrPeHxJtB3Xbck1wKN1j3",
     "hash": "f51708181384a8bae21843eea8c80d660591d83dc557c5bfe0383caaf45adb3d"
   },
@@ -65555,7 +65779,7 @@
     "cid": "QmNgXZ3nTmJr3nppeEhfyEQY1sJ2M2EsWYfKsp6dXXf3TM",
     "hash": "ff62b8adf0958f5f98e6b922a1891568837dc6f6c2d0638688133cf23ec40790"
   },
-  "prensa/1976.0414. COMBATE.LC.pdf": {
+  "prensa/1976.0414.COMBATE.LC.pdf": {
     "cid": "QmRff9PmPkCqrcKdxsUDbhrdJSzD5YUG127Rm5rJTaGyaB",
     "hash": "78107df7fc12fbd46639867ef6312c989fc39c1cfc223769e177185f62def757"
   },
@@ -66747,10 +66971,6 @@
     "cid": "QmYNnZpZCcF6woyMh8UaiGQarVzNPVF4gkqytj6YbzCNVC",
     "hash": "54d62013795c2345cab8003720b6f8a4d34d400a7acc4d5cbf0060dcbd35f3ea"
   },
-  "prensa/1976.0629. EL PAÍS.HOMENAJE A DIONISIO RIDRUEJO.pdf": {
-    "cid": "QmTYmsvBzeD2QyXBfiRxxvAhBqqDywrxkkoq3AMur7mn5p",
-    "hash": "3448cdecbb71647764d9b28ba6ef782eef9d1f64f48a8479c00fbe328f9e8b64"
-  },
   "prensa/1976.0629.AVUI.HOMENAJE A RIDRUEJO.pdf": {
     "cid": "QmeMi5RJdSXPuGzyYJ7KA1P7YWCpdhHTQA7d3NCJrVAufN",
     "hash": "54a7b49f62a625afb14640595972a9cc559c3573b60d91e969c0227b39f84741"
@@ -66766,6 +66986,10 @@
   "prensa/1976.0629.EL PAIS.HOMENAJE A RIDRUEJO.pdf": {
     "cid": "QmYuWTy47X4XP6w4DGWHsQKCP3jc69LqskBWURxGC769tE",
     "hash": "05a41f1a07672a24d0fa24ec05d8e7683cd7bfee955e132b85ff62baed96347a"
+  },
+  "prensa/1976.0629.EL PAÍS.HOMENAJE A DIONISIO RIDRUEJO.pdf": {
+    "cid": "QmTYmsvBzeD2QyXBfiRxxvAhBqqDywrxkkoq3AMur7mn5p",
+    "hash": "3448cdecbb71647764d9b28ba6ef782eef9d1f64f48a8479c00fbe328f9e8b64"
   },
   "prensa/1976.0630.DIARIO DE MALLORCA.DETENIDOS.pdf": {
     "cid": "QmWtAhZ2urhEL9GVu4aXubjBaGG1uZXGYMFXRbez4voSA2",
@@ -66791,10 +67015,6 @@
     "cid": "QmZ32VJUWuqYYh7U8VVv1UW3UBRKYkEp9piraTc8FkSgTf",
     "hash": "c1973b279f800e4e876b945215a5eb18e58ad029ce59e02b260e57f70a39705d"
   },
-  "prensa/1976.0704. EL PAÍS.ENCUESTA DESIGNACION SUAREZ.pdf": {
-    "cid": "QmaNPwJdmY9SLG4tWv6Xdn5SdnmgSBYSfyapbxjWVfy4Ea",
-    "hash": "2bdb7698f7b17335b5e0b7ab88a0c30d861ca202205cce9d9aa6be2c3d195e6a"
-  },
   "prensa/1976.0704.DIARIO DE AVISOS.OPINIONES NOMBRAMIENTO SUAREZ.pdf": {
     "cid": "QmUjqLYZU6KuPGDMx9VjMmQpKb3PEqqzjhYK2JcB52URhr",
     "hash": "f40e21b6b90376d92eed032bd8a906a74d7556d7e118ded33c17920769f02c4b"
@@ -66810,6 +67030,10 @@
   "prensa/1976.0704.EL PAIS. SORPRESA GENERALIZADANOMBRAMIENTO SUAREZ.pdf": {
     "cid": "QmWxMT3F5wYxaUreyXXDEM6X6H4ZG2rzWLzaFR5fQrbEkz",
     "hash": "ebd5169ddb17a43aafc93c0bfac6ce1f321a137e034966138f5c503956eba386"
+  },
+  "prensa/1976.0704.EL PAÍS.ENCUESTA DESIGNACION SUAREZ.pdf": {
+    "cid": "QmaNPwJdmY9SLG4tWv6Xdn5SdnmgSBYSfyapbxjWVfy4Ea",
+    "hash": "2bdb7698f7b17335b5e0b7ab88a0c30d861ca202205cce9d9aa6be2c3d195e6a"
   },
   "prensa/1976.0704.ELPROGRESO.SUAREZ.AGT.pdf": {
     "cid": "QmTT94jNhs3PmSYRgFBngd58jCmTRjsGRU8A7r8jpJ1U9P",
@@ -68863,10 +69087,6 @@
     "cid": "QmWEPb1Y3THe34dEvm21rMMKP5PEmQYtG1oELmswYRHZJK",
     "hash": "ff70d2afc0321d09fe4332f67a96dd314f192788122eabda6e5acc03f3e86ee8"
   },
-  "prensa/1976.1201. EL PAIS.ACUERDO AGT-POSIBLE.docx": {
-    "cid": "QmNQ6JiCpzGF9FXy7BqE4WmiW7kBvG1Gw4cR5QmK8k8gaF",
-    "hash": "266f0ccdf4bde4e7c65b3886ece6eedcf3b89b29d4619eec428f86642c5817c7"
-  },
   "prensa/1976.1201.ARAGON EXPRESS.AVENENCIA AGT-POSIBLE.pdf": {
     "cid": "QmbceiyznJ1TXTuWMTkr5b3UWia4NiYcRzpHXnT3GB7ayL",
     "hash": "800a00b6a617c42483f136bd356715fa06777944dd78e540f4ed7b8c80a540ef"
@@ -68890,6 +69110,10 @@
   "prensa/1976.1201.EL PAIS.ACUERDO AGT-POSIBLE.NO CON NOVAIS.pdf": {
     "cid": "QmSVzYVvSUkA8JyGwuKAPxPFfwA5K5veSiurGU7MwAeD14",
     "hash": "759d8b1c148c870591f0206844cc1dd5e4c742d07e4e5e1115d4c9c519d45b7b"
+  },
+  "prensa/1976.1201.EL PAIS.ACUERDO AGT-POSIBLE.docx": {
+    "cid": "QmNQ6JiCpzGF9FXy7BqE4WmiW7kBvG1Gw4cR5QmK8k8gaF",
+    "hash": "266f0ccdf4bde4e7c65b3886ece6eedcf3b89b29d4619eec428f86642c5817c7"
   },
   "prensa/1976.1201.ELPROGRESO.ACTOCONCILIACION NOVAIS AGT.pdf": {
     "cid": "QmajXNjd5eqAG1VwyEG8ekKM54zqz1zunWJDooYR5GV1RN",
@@ -68959,7 +69183,7 @@
     "cid": "QmNjz4dD6MtBeqHckbi6KeMNA6eVfGozE5Gk7cvUayHtgR",
     "hash": "714cec21aa5b81a6a8fe540b5234ec2396c0e3104562acf6f491aeebe6bd354a"
   },
-  "prensa/1976.1209. OFICINA PRENSA EUZKADI.pdf": {
+  "prensa/1976.1209.OFICINA PRENSA EUZKADI.pdf": {
     "cid": "QmWbeANV6pukGCuRfNvyh829q6cStLwUdKbuzSJaALWpsv",
     "hash": "ad433bf2f8bee504152e87d2af5ee8dc1f98d6ee7bcbf0fd7a9a9dd90f09e71c"
   },
@@ -73767,7 +73991,7 @@
     "cid": "QmPfVbBKDBFYh1sdqbbKZFDn7pMfkUNknhDnGt9ikGr44F",
     "hash": "54b7ee1dc72ac39d6cae434aa5cc30a8c0af756249e07fdfee751b6cb8362c29"
   },
-  "prensa/1999.11.00. GENERACION XXI. FRASE AGT.pdf": {
+  "prensa/1999.11.00.GENERACION XXI. FRASE AGT.pdf": {
     "cid": "QmW5JG9C2W9XjLcBhZHYxb1sTpESYJKXFLUYjtcCQuHvtD",
     "hash": "0d79983b4160018a326da68a1116dbba35b7e976b44ce06fca60f5b5254d6f33"
   },
@@ -74475,7 +74699,7 @@
     "cid": "QmYufgmYuPna9XUbySZgDukkn5sfhY9h6NtgTkrxi67yM8",
     "hash": "88302694c51800d09510b8d43e8fb474bbe9b7a5ee4e762a7bd16ef3bd9955dd"
   },
-  "prensa/2011.0623. DIARIO DE AVISOS-AL VENT_CARMELO RIVERO.docx": {
+  "prensa/2011.0623.DIARIO DE AVISOS-AL VENT_CARMELO RIVERO.docx": {
     "cid": "Qmek8xHPtAywaLq4ANc1MvQ46iubqpBu2hmisyZM5ws5sv",
     "hash": "1f91c7d0b0b19c9e2e140a0281a25f1be58ccf8db6ac0d09049ca85c65637568"
   },
@@ -74515,7 +74739,7 @@
     "cid": "QmYa84QLEDUjPtFHyhpBKS4BfaYjo7Xg6r4Jk1D7weVmAR",
     "hash": "3a4e1b80121e84313b870414b1af87773242d897d1fd51a6c526b4ee33e7dc73"
   },
-  "prensa/2012.1004. LOS DIEZ LIBROS PROHIBIDOS DEL IMPERIO BORBÓNICO.docx": {
+  "prensa/2012.1004.LOS DIEZ LIBROS PROHIBIDOS DEL IMPERIO BORBÓNICO.docx": {
     "cid": "QmNor9Q3FuT23q3ZkjC7Vzqcxum4aCFFonbGDsFSnkb4XG",
     "hash": "dd9c3b7a238a1b007120033be78a5b090c6037d62b54da9c27908087d85e482d"
   },
@@ -74571,7 +74795,7 @@
     "cid": "QmfHs1iBjmhx13FprhuunzyFezkrrbGwJeUMefDKRTKLQn",
     "hash": "97510c3c7927d09bf95c3a5c0b2aba47300ff5ed9ed16d0c4bb5ccaa5873fe8c"
   },
-  "prensa/2014.0324. YA.SUÁREZ EN LO MILITAR, RELIGIOSO Y POLÍTICO.pdf": {
+  "prensa/2014.0324.YA.SUÁREZ EN LO MILITAR, RELIGIOSO Y POLÍTICO.pdf": {
     "cid": "QmVRnqaELy4ogKN4183suabwRCrJTQst2fuaRYM3iXxikg",
     "hash": "3af4c039848bb6230baf7ea86bd1d3bc3f911216a9b394cdaf3bc92e89ede35e"
   },
@@ -74755,7 +74979,7 @@
     "cid": "QmYSxLN3QNaUVqTFNNowVmCHkXXghJd9PHmHcgGQQE6Qd1",
     "hash": "a872d4ecdf6fb39f3b1c85de244ab4b732dce630ca368c3bcdd214e5bc05432d"
   },
-  "prensa/2017.0128. DIARIO NORTE CANTABRIA.JESUS PARDO.docx": {
+  "prensa/2017.0128.DIARIO NORTE CANTABRIA.JESUS PARDO.docx": {
     "cid": "QmeacgTeFmxXrjvzcEZuSf48g9XEaQuoiq4UAUXEu35r3a",
     "hash": "f39412464a8d93682d0d77e4fd3413bd2f7582cfac82a6845fbb6c9b5f3e139e"
   },
@@ -75051,11 +75275,11 @@
     "cid": "QmX9ADXM5w6AZK3Q1KVXxerxp9K76K4FRULKP2FxRoPnNA",
     "hash": "b2e15060f44e40ad551797583deaebd7a62b3db33ec3eea529438f6be2ba41bd"
   },
-  "prensa/2023.0328. HOMENAJE AGT.ALHAMA.pdf": {
+  "prensa/2023.0328.HOMENAJE AGT.ALHAMA.pdf": {
     "cid": "QmXcMuY84FR6cWfmMjGCYxuFuarhBTz6f2wTjMys3WnXVH",
     "hash": "2665dc494e008411f69731079223c62a158070a4983f6b444f8d29ffb6b47eb4"
   },
-  "prensa/2024. 0324.PUENTE CHICO.AGT.pdf": {
+  "prensa/2024.0324.PUENTE CHICO.AGT.pdf": {
     "cid": "QmRm2Eyz5eme8NdPrqYUvdA7p1hRhsbHruQsK4Lo8bknJm",
     "hash": "f8ae7203d7950496cae22068058d72b12bfa1ff8a64eb8d99d552bc958592677"
   },

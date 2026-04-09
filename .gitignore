@@ -30,3 +30,4 @@ infra/llm/models/
 
 # Duplicate font files (canonical copy in site/public/fonts/)
 myriad-pro/
+logs/

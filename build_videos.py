@@ -13,7 +13,7 @@ OVERLAP_FILE = Path("/tmp/video_audio_overlap_v2.json")
 AUDIO_DIR = Path("ficheros/publicos/audios")
 OUTPUT = Path("site/src/data/videos.json")
 
-CHANNEL_THRESHOLD = 10
+MAX_NAMED_CHANNELS = 25
 
 
 def load_audio_meta():
@@ -85,7 +85,8 @@ def main():
     for v in videos:
         channel_counts[v["channel"]] = channel_counts.get(v["channel"], 0) + 1
 
-    named_channels = {ch for ch, count in channel_counts.items() if count > CHANNEL_THRESHOLD}
+    top_channels = sorted(channel_counts.items(), key=lambda x: -x[1])[:MAX_NAMED_CHANNELS]
+    named_channels = {ch for ch, _ in top_channels}
     for v in videos:
         v["channel_display"] = v["channel"] if v["channel"] in named_channels else "Otros"
 

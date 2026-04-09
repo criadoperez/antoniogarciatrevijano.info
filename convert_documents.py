@@ -242,6 +242,38 @@ def output_path_for(file_path: Path, input_dir: Path, output_dir: Path) -> Path:
     return output_dir / relative.parent / relative.stem
 
 
+def cleanup_orphaned_output(input_dir: Path, output_dir: Path) -> list[Path]:
+    """
+    Remove output files (.json, .md) whose source file no longer exists in
+    ficheros/. Returns list of removed .json paths.
+    """
+    removed = []
+    for json_path in sorted(output_dir.rglob("*.json")):
+        if json_path.name == "conversion_report.json":
+            continue
+        # output/publicos/articulos/foo.json → ficheros/publicos/articulos/foo
+        relative_stem = json_path.relative_to(output_dir).with_suffix("")
+        source_base = input_dir / relative_stem
+        has_source = any(
+            source_base.with_suffix(ext).exists()
+            for ext in SUPPORTED_EXTENSIONS | {".doc"}
+        )
+        if not has_source:
+            print(f"  CLEANUP: {json_path.relative_to(output_dir)}")
+            json_path.unlink()
+            md_path = json_path.with_suffix(".md")
+            if md_path.exists():
+                md_path.unlink()
+            removed.append(json_path)
+
+    # Remove empty directories left behind
+    for dir_path in sorted(output_dir.rglob("*"), reverse=True):
+        if dir_path.is_dir() and not any(dir_path.iterdir()):
+            dir_path.rmdir()
+
+    return removed
+
+
 def file_hash(path: Path) -> str:
     """Return SHA-256 hex digest of a file's contents."""
     h = hashlib.sha256()
@@ -278,6 +310,11 @@ def main():
     for tmp in INPUT_DIR.rglob("*.pdfa.tmp.pdf"):
         print(f"  Removing leftover temp file: {tmp.name}")
         tmp.unlink()
+
+    # Remove output files whose source was deleted from ficheros/
+    orphans = cleanup_orphaned_output(INPUT_DIR, OUTPUT_DIR)
+    if orphans:
+        print(f"Cleaned up {len(orphans)} orphaned output file(s).\n")
 
     print(f"Scanning {INPUT_DIR}/ ...")
     all_files = collect_files(INPUT_DIR)
