@@ -281,6 +281,12 @@ def main():
     # Append to existing chunks.jsonl if resuming
     write_mode = "a" if already_done else "w"
 
+    # If starting fresh (not resuming), any existing qdrant_db is stale
+    # and must be wiped so embed_and_index.py rebuilds from the new chunks.jsonl.
+    if write_mode == "w" and QDRANT_PATH.exists():
+        shutil.rmtree(QDRANT_PATH)
+        print(f"Starting fresh — deleted {QDRANT_PATH}/ (will be rebuilt by embed_and_index.py)")
+
     with open(OUTPUT_FILE, write_mode, encoding="utf-8") as out_f:
         for i, json_path in enumerate(pending, 1):
             source_file = str(json_path.relative_to(INPUT_DIR).with_suffix(""))

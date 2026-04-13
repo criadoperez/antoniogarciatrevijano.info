@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Make python stdout line-buffered so progress prints appear in the log
+# in real time (otherwise they sit in an 8KB block buffer and we cannot
+# tell whether a long-running step is making progress or stuck).
+export PYTHONUNBUFFERED=1
+
 WORK_DIR="/root/antoniogarciatrevijano.info"
 LOCK_FILE="/tmp/agt_full_update.lock"
 LOG_DIR="$WORK_DIR/logs"

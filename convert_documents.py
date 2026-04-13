@@ -242,36 +242,129 @@ def output_path_for(file_path: Path, input_dir: Path, output_dir: Path) -> Path:
     return output_dir / relative.parent / relative.stem
 
 
-def cleanup_orphaned_output(input_dir: Path, output_dir: Path) -> list[Path]:
-    """
-    Remove output files (.json, .md) whose source file no longer exists in
-    ficheros/. Returns list of removed .json paths.
-    """
-    removed = []
-    for json_path in sorted(output_dir.rglob("*.json")):
-        if json_path.name == "conversion_report.json":
+SOURCE_INDEX_FILE = OUTPUT_DIR / ".source_index.json"
+
+
+def load_source_index() -> dict:
+    """Load the output→source manifest. Maps output relpath → {source_relpath, source_hash}."""
+    if SOURCE_INDEX_FILE.exists():
+        return json.loads(SOURCE_INDEX_FILE.read_text(encoding="utf-8"))
+    return {}
+
+
+def save_source_index(index: dict) -> None:
+    SOURCE_INDEX_FILE.write_text(
+        json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+def build_source_hash_index(input_dir: Path) -> dict:
+    """Hash every source file in ficheros/. Returns {sha256: first_source_path}."""
+    index: dict[str, Path] = {}
+    for path in sorted(input_dir.rglob("*")):
+        if not path.is_file():
             continue
-        # output/publicos/articulos/foo.json → ficheros/publicos/articulos/foo
-        relative_stem = json_path.relative_to(output_dir).with_suffix("")
-        source_base = input_dir / relative_stem
-        has_source = any(
-            source_base.with_suffix(ext).exists()
-            for ext in SUPPORTED_EXTENSIONS | {".doc"}
-        )
-        if not has_source:
-            print(f"  CLEANUP: {json_path.relative_to(output_dir)}")
+        if path.suffix.lower() not in SUPPORTED_EXTENSIONS | {".doc"}:
+            continue
+        h = file_hash(path)
+        if h not in index:
+            index[h] = path
+    return index
+
+
+def cleanup_orphaned_output(input_dir: Path, output_dir: Path) -> tuple:
+    """
+    Remove output files whose source content no longer exists in ficheros/.
+    Detects renames via content hashing (using .source_index.json manifest)
+    and renames the output to match the new source path, instead of deleting.
+
+    Outputs without a manifest entry are LEFT ALONE (safe default for legacy
+    outputs created before manifest tracking was added). They will be tracked
+    once the source is re-converted, or can be backfilled separately.
+
+    Returns (removed_jsons, renamed_pairs).
+    """
+    manifest = load_source_index()
+    removed: list[Path] = []
+    renamed: list[tuple[Path, Path]] = []
+
+    if not manifest:
+        return removed, renamed
+
+    source_hash_index = None  # built lazily
+
+    for json_rel in list(manifest.keys()):
+        entry = manifest[json_rel]
+        json_path = output_dir / json_rel
+
+        if not json_path.exists():
+            # Manifest is stale: JSON already gone. Drop entry.
+            del manifest[json_rel]
+            continue
+
+        expected_source = input_dir / entry["source_relpath"]
+        if expected_source.exists():
+            try:
+                if file_hash(expected_source) == entry["source_hash"]:
+                    continue  # source intact at expected path
+            except OSError:
+                pass
+
+        # Source missing or content changed — try to find by hash elsewhere
+        if source_hash_index is None:
+            print("  Building source hash index for rename detection...")
+            source_hash_index = build_source_hash_index(input_dir)
+
+        new_source = source_hash_index.get(entry["source_hash"])
+        if new_source is not None:
+            # Content found at a different source path → rename output to track
+            new_source_rel = new_source.relative_to(input_dir)
+            new_json_path = output_dir / new_source_rel.parent / (new_source_rel.stem + ".json")
+            new_json_rel = str(new_json_path.relative_to(output_dir))
+
+            if new_json_rel == json_rel:
+                continue  # paths happen to coincide; nothing to do
+
+            if new_json_path.exists():
+                # Another output already covers the new path — drop this duplicate
+                json_path.unlink()
+                md_old = json_path.with_suffix(".md")
+                if md_old.exists():
+                    md_old.unlink()
+                del manifest[json_rel]
+                removed.append(json_path)
+                print(f"  CLEANUP (duplicate of existing): {json_rel}")
+            else:
+                new_json_path.parent.mkdir(parents=True, exist_ok=True)
+                json_path.rename(new_json_path)
+                md_old = json_path.with_suffix(".md")
+                if md_old.exists():
+                    md_old.rename(new_json_path.with_suffix(".md"))
+                del manifest[json_rel]
+                manifest[new_json_rel] = {
+                    "source_relpath": str(new_source_rel),
+                    "source_hash": entry["source_hash"],
+                }
+                renamed.append((json_path, new_json_path))
+                print(f"  RENAME: {json_rel} → {new_json_rel}")
+        else:
+            # True orphan: content hash absent from ficheros/
+            print(f"  CLEANUP: {json_rel}")
             json_path.unlink()
             md_path = json_path.with_suffix(".md")
             if md_path.exists():
                 md_path.unlink()
+            del manifest[json_rel]
             removed.append(json_path)
+
+    save_source_index(manifest)
 
     # Remove empty directories left behind
     for dir_path in sorted(output_dir.rglob("*"), reverse=True):
         if dir_path.is_dir() and not any(dir_path.iterdir()):
             dir_path.rmdir()
 
-    return removed
+    return removed, renamed
 
 
 def file_hash(path: Path) -> str:
@@ -311,10 +404,16 @@ def main():
         print(f"  Removing leftover temp file: {tmp.name}")
         tmp.unlink()
 
-    # Remove output files whose source was deleted from ficheros/
-    orphans = cleanup_orphaned_output(INPUT_DIR, OUTPUT_DIR)
+    # Remove output files whose source was deleted from ficheros/.
+    # Renames in ficheros/ are detected via content hash and the matching
+    # output is renamed (not re-converted) to track the new source path.
+    orphans, renames = cleanup_orphaned_output(INPUT_DIR, OUTPUT_DIR)
     if orphans:
-        print(f"Cleaned up {len(orphans)} orphaned output file(s).\n")
+        print(f"Cleaned up {len(orphans)} orphaned output file(s).")
+    if renames:
+        print(f"Renamed {len(renames)} output(s) to match renamed source(s).")
+    if orphans or renames:
+        print()
 
     print(f"Scanning {INPUT_DIR}/ ...")
     all_files = collect_files(INPUT_DIR)
@@ -336,15 +435,27 @@ def main():
     skipped_already = []
     skipped_content_dupes = []  # files with identical content to an earlier file
     seen_hashes: dict[str, Path] = {}  # hash → first file path
+    source_index = load_source_index()
     start_time = time.time()
     n_files = len(files)
 
     for i, file_path in enumerate(files, 1):
         out_path = output_path_for(file_path, INPUT_DIR, OUTPUT_DIR)
+        out_json_rel = str(out_path.with_suffix(".json").relative_to(OUTPUT_DIR))
 
         # Skip if output already exists (allows resuming interrupted runs)
         if out_path.with_suffix(".json").exists():
             skipped_already.append(file_path)
+            # Backfill manifest entry if missing (legacy output without tracking)
+            if out_json_rel not in source_index:
+                try:
+                    source_index[out_json_rel] = {
+                        "source_relpath": str(file_path.relative_to(INPUT_DIR)),
+                        "source_hash": file_hash(file_path),
+                    }
+                    save_source_index(source_index)
+                except OSError:
+                    pass
             print(f"[{i}/{n_files}] SKIP (already converted): {file_path.name}")
             continue
 
@@ -377,6 +488,12 @@ def main():
             out_path.with_suffix(".md").write_text(
                 result.document.export_to_markdown(), encoding="utf-8"
             )
+            # Record in manifest for content-hash-based orphan detection
+            source_index[str(out_path.with_suffix(".json").relative_to(OUTPUT_DIR))] = {
+                "source_relpath": str(file_path.relative_to(INPUT_DIR)),
+                "source_hash": h,
+            }
+            save_source_index(source_index)
             succeeded.append(file_path)
             print(f"[{i}/{n_files}] OK: {file_path.name}")
         except Exception as e:
